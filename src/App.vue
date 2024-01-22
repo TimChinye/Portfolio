@@ -4,4 +4,5 @@ import PageHeader from './components/PageHeader.vue'
 
 <template>
   <PageHeader name="Tim Chinye" />
+  <!-- <Gallery /> -->
 </template>
