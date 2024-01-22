@@ -59,18 +59,27 @@
       <h1 :style="{ animationDelay: (animationDelay / 2) + 's', animationDuration: animationDelay + 's' }">{{ name }}</h1>
       <p id="jobTitle" :style="{ animationDelay: (animationDelay / 2) + 's', animationDuration: animationDelay + 's' }">Not just a {{ attribute }}</p>
     </div>
+
+    <div id="headerOffsets">Test</div>
   </header>
 </template>
 
 <style scoped>
   header {
-    width: 100%;
+    position: relative;
+    width: 100dvw;
     height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     gap: 1vh;
+  }
+  
+  #headerOffsets {
+    position: absolute;
+    bottom: 32px;
+    left: 0;
   }
 
   @media (orientation: landscape) {
@@ -111,22 +120,10 @@
   #headerText > #jobTitle {
     font-family: 'Titillium Web';
     font-weight: 100;
+    text-align: center;
   }
 
   #headerText > h1 {
     margin: 0;
-  }
-
-  @keyframes blink {
-    0%, 45% {
-      border-color: transparent;
-    }
-    50%, 100% {
-      border-color: white;
-    }
-  }
-
-  #jobTitle {
-    animation: typing 2s steps(30) forwards, blink 1s infinite;
   }
 </style>
