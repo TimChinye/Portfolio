@@ -64,7 +64,7 @@
 
 <style scoped>
   header {
-    width: 100dvw;
+    width: 100%;
     height: 100dvh;
     display: flex;
     align-items: center;
