@@ -2,26 +2,31 @@
   import { ref } from 'vue';
   defineProps<{ name: string }>();
 
-  const animationDelay = 3;
+  window.addEventListener('resize', () => {
+    const root = document.querySelector(':root');
+    if (root instanceof HTMLElement) root.style.setProperty('--vh', window.innerHeight/100 + 'px');
+  });
+
 
   const attribute = ref('');
   const personalAttributes: string[] = [
-      "Software Engineer",
-      "Vector Artist",
-      "Video Editor",
-      "Voice Actor",
-      "Tim",
-      "hard worker",
-      "team leader",
-      "creative",
-      "perfectionist",
-      "logical thinker",
-      "creative thinker",
-      "learner"
-    ];
+    "Software Engineer",
+    "Vector Artist",
+    "Video Editor",
+    "Voice Actor",
+    "Tim",
+    "hard worker",
+    "team leader",
+    "creative",
+    "perfectionist",
+    "logical thinker",
+    "creative thinker",
+    "learner"
+  ];
 
-    attribute.value = personalAttributes[0];
+  attribute.value = personalAttributes[0];
 
+  const animationDelay = 3;
   let typingCheck = false;
   const typingEffect = (i: number, char: number) => {
     if (typingCheck) {
@@ -64,7 +69,7 @@
 
 <style scoped>
   header {
-    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
     display: flex;
     align-items: center;
     justify-content: center;
