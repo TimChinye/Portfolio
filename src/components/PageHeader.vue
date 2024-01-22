@@ -2,11 +2,6 @@
   import { ref } from 'vue';
   defineProps<{ name: string }>();
 
-  window.addEventListener('resize', () => {
-    const root = document.querySelector(':root');
-    if (root instanceof HTMLElement) root.style.setProperty('--vh', window.innerHeight/100 + 'px');
-  });
-
 
   const attribute = ref('');
   const personalAttributes: string[] = [
@@ -69,7 +64,7 @@
 
 <style scoped>
   header {
-    height: calc(var(--vh, 1vh) * 100);
+    height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
