@@ -101,7 +101,7 @@
 	header {
 		position: relative;
 		width: 100%;
-		height: 100svh;
+		height: 100dvh;
 		display: inherit;
 		align-items: center;
 		justify-content: center;
