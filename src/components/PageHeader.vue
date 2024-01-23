@@ -100,8 +100,8 @@
 <style scoped>
 	header {
 		position: relative;
-		width: 100dvw;
-		height: 100dvh;
+		width: 100%;
+		height: 100svh;
 		display: inherit;
 		align-items: center;
 		justify-content: center;
@@ -165,7 +165,7 @@
 
 	#headerOffsets > * {
 		display: flex;
-		position: absolute;
+		position: fixed;
 		bottom: 0;
 		margin: 0 2rem;
 	}
