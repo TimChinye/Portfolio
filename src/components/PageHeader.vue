@@ -165,7 +165,7 @@
 
 	#headerOffsets > * {
 		display: flex;
-		position: absolute;
+		position: fixed;
 		bottom: 0;
 		margin: 0 2rem;
 	}
