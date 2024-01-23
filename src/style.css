@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap');
 
 :root {
+  font-size: 1.2vh;
   font-family: 'Inter', 'Avenir', 'Helvetica', 'Calibri', sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -19,6 +20,13 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+@media (prefers-color-scheme: light) {
+  :root {
+    --background-color: #473121;
+    --text-color: #ffffff;
+  }
+}
+
 body {
   margin: 0;
   display: flex;
@@ -32,9 +40,6 @@ h1 {
   line-height: 1.1;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --background-color: #473121;
-    --text-color: #ffffff;
-  }
+#site {
+  display: inherit;
 }

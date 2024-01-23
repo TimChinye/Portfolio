@@ -13,14 +13,14 @@
 				if (!( r instanceof CSSStyleRule)) continue;
 				if (r.selectorText?.startsWith("#headerOffsets") && r.selectorText?.endsWith(" > :first-child::after")) {
 					console.log(r.style.cssText);
-					(r as CSSStyleRule).style.cssText = "animation-delay: 0s, 1.5s; --height: " + (currentTime.getHours() + currentTime.getMinutes() / 60 + currentTime.getSeconds() / 3600) * 8 + "px;";
+					(r as CSSStyleRule).style.cssText = "animation-delay: 0s, 1.5s; --height: " + (currentTime.getHours() + currentTime.getMinutes() / 60 + currentTime.getSeconds() / 3600) * 0.5 + "rem;";
 				} else if (r.selectorText?.startsWith("#headerOffsets") && r.selectorText?.endsWith(" > :last-child::after")) {
-					(r as CSSStyleRule).style.cssText = "animation-delay: 0s, 1.5s; --height: " + (currentTime.getMinutes() + currentTime.getSeconds() / 60) * 3 + "px;";
+					(r as CSSStyleRule).style.cssText = "animation-delay: 0s, 1.5s; --height: " + (currentTime.getMinutes() + currentTime.getSeconds() / 60) * 0.2 + "rem;";
 				}
 			}
 		}
 		return timeBasedHeights;
-	})(), 1000);
+	})(), 100);
 
 	const attribute = ref('');
 	const personalAttributes: string[] = [
@@ -100,7 +100,7 @@
 		position: relative;
 		width: 100dvw;
 		height: 100dvh;
-		display: flex;
+		display: inherit;
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
@@ -131,9 +131,9 @@
 	}
 
 	#headerText {
-		display: flex;
+		display: inherit;
 		flex-direction: column;
-		justify-content: center;
+		text-align: center;
 	}
 
 	#headerText > h1, #headerText > #jobTitle, #headerLogo img {
@@ -145,7 +145,6 @@
 	#headerText > #jobTitle {
 		font-family: 'Titillium Web';
 		font-weight: 100;
-		text-align: center;
 	}
 
 	#headerText > h1 {
@@ -153,26 +152,27 @@
 	}
 
 	@keyframes scaling {
-			from { height: var(--height); }
-			to   { height: calc(var(--height) - 16px); }
+		from { height: var(--height); }
+		to   { height: calc(var(--height) - 1rem); }
 	}
 
 	@keyframes scaleUp {
-			from { height: 0; }
-			to   { height: var(--height); }
+		from { height: 0; }
+		to   { height: var(--height); }
 	}
 
 	#headerOffsets > * {
 		display: flex;
 		position: absolute;
 		bottom: 0;
+		margin: 0 2rem;
 	}
 
 	#headerOffsets > *::after {
 		position: relative;
 		content: '';
 		width: 0;
-		margin: 8px auto 16px;
+		margin: 0.5rem auto 1rem;
 		border: #BAB9B8 solid 1px;
 		animation-name: scaleUp, scaling;
 		animation-duration: 1.5s, 2.5s;
@@ -193,7 +193,7 @@
 	}
 
 	#headerOffsets > :first-child {
-		left: 32px;
+		left: 0;
 		flex-direction: column;
 		color: #BAB9B8;
 		transition: 0.5s;
@@ -220,7 +220,7 @@
 	}
 
 	#headerOffsets > :last-child {
-		right: 32px;
+		right: 0;
 		writing-mode: vertical-lr;
 		color: #BAB9B8;
 		text-decoration: none;
