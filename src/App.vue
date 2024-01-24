@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import PageHeader from './components/PageHeader.vue'
-import Gallery from './components/Gallery.vue'
+import PageContent from './components/PageContent.vue'
 </script>
 
 <template>
   <PageHeader name="Tim Chinye" />
-  <Gallery />
+  <PageContent />
 </template>

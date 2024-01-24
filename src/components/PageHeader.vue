@@ -75,9 +75,7 @@
 		</nav>
 
 		<div id="headerLogo">
-			<a href="https://www.linkedin.com/in/timchinye/" target="_blank">
-				<img src="../assets/TigerYT PFP.svg" alt="Tim's logo" :style="{ animationDuration: (animationDelay / 2) + 's' }" />
-			</a>
+			<img src="../assets/TigerYT PFP.svg" alt="Tim's logo" :style="{ animationDuration: (animationDelay / 2) + 's' }" />
 		</div>
 
 		<div id="headerText">
@@ -105,26 +103,31 @@
 		display: inherit;
 		align-items: center;
 		justify-content: center;
-		flex-direction: column;
-		gap: 1vh;
-	}
-
-	@media (orientation: landscape) {
-		header {
 			flex-direction: row;
 			gap: 1vw;
+	}
+
+	@media (orientation: portrait) {
+		header {
+			flex-direction: column;
+			gap: 1vh;
 		}
 	}
 
 	#headerLogo img {
 		height: 6em;
 		padding: 1.5em;
+		cursor: pointer;
 		will-change: filter;
 		transition: filter 300ms;
 	}
 
 	#headerLogo img:hover {
 		filter: drop-shadow(0 0 2em var(--accent-color));
+	}
+
+	#headerLogo img:active {
+		filter: drop-shadow(0 0 2em var(--text-color));
 	}
 
 	@keyframes fadeIn {
