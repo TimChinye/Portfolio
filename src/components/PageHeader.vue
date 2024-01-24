@@ -30,7 +30,6 @@
 		"a Software Engineer",
 		"a Vector Artist",
 		"a Video Editor",
-		"a Voice Actor",
 		"a Tim",
 		"a hard worker",
 		"a team leader",
