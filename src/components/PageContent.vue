@@ -33,39 +33,39 @@
 					</thead>
 					<tbody>
 						<tr>
-							<td>HTML, CSS & JS</td>
-							<td>Node.js</td>
+							<td class="clickable">HTML, CSS & JS</td>
+							<td class="clickable">Node.js</td>
 						</tr>
 						<tr>
-							<td>SQL</td>
-							<td>React</td>
+							<td class="clickable">SQL</td>
+							<td class="clickable">React</td>
 						</tr>
 						<tr>
 							<td>Python</td>
-							<td>jQuery</td>
+							<td class="clickable">jQuery</td>
 						</tr>
 						<tr>
-							<td>Java</td>
+							<td class="clickable">Java</td>
 							<td>Express</td>
 						</tr>
 						<tr>
-							<td>C#</td>
+							<td class="clickable">C#</td>
 							<td>Angular & ..JS</td>
 						</tr>
 						<tr>
 							<td>PHP</td>
-							<td>Vue.js (& Vite)</td>
+							<td class="clickable">Vue.js (& Vite)</td>
 						</tr>
 						<tr>
-							<td>C++</td>
-							<td>.NET (C#)</td>
+							<td class="clickable">C++</td>
+							<td class="clickable">.NET (C#)</td>
 						</tr>
 						<tr>
-							<td>TypeScript</td>
+							<td class="clickable">TypeScript</td>
 							<td>Spring Boot</td>
 						</tr>
 						<tr>
-							<td>Assembly</td>
+							<td class="clickable">Assembly</td>
 							<td>Bootstrap</td>
 						</tr>
 						<tr>
@@ -87,19 +87,19 @@
 					</thead>
 					<tbody>
 						<tr>
-							<td>Git & Github</td>
-							<td>Figma</td>
+							<td class="clickable">Git & Github</td>
+							<td class="clickable">Figma</td>
 						</tr>
 						<tr>
 							<td>Postman</td>
-							<td>Photoshop</td>
+							<td class="clickable">Photoshop</td>
 						</tr>
 						<tr>
 							<td>CLI</td>
-							<td>Affinity Designer</td>
+							<td class="clickable">Affinity Designer</td>
 						</tr>
 						<tr>
-							<td>Font Awesome</td>
+							<td class="clickable">Font Awesome</td>
 							<td>Android Studio</td>
 						</tr>
 						<tr>
@@ -108,14 +108,14 @@
 						</tr>
 						<tr>
 							<td>AutoHotkey</td>
-							<td>Replit</td>
+							<td class="clickable">Replit</td>
 						</tr>
 						<tr>
-							<td>Discord & Slack</td>
-							<td>StackBlitz</td>
+							<td class="clickable">Discord & Slack</td>
+							<td class="clickable">StackBlitz</td>
 						</tr>
 						<tr>
-							<td>Stack Overflow</td>
+							<td class="clickable">Stack Overflow</td>
 							<td>Visual Studio</td>
 						</tr>
 						<tr>
@@ -127,7 +127,7 @@
 							<td>IntelliJ IDEA</td>
 						</tr>
 						<tr>
-							<td>SQLite</td>
+							<td class="clickable">SQLite</td>
 							<td>Sublime Text 3</td>
 						</tr>
 					</tbody>
@@ -192,8 +192,27 @@
 		white-space: nowrap;
 	}
 
-	@media (orientation: portrait) {
+	#skills > #lists td.clickable {
+		position: relative;
+		cursor: pointer;
+	}
 
+	#skills > #lists td.clickable:after {
+		position: absolute;
+		content: '';
+		left: 0;
+		bottom: 3px;
+		width: 0%;
+		height: 1px;
+		transition: 0.5s;
+		background: var(--accent-color);
+	} 
+
+	#skills > #lists td.clickable:hover:after {
+		width: 100%;
+	}
+
+	@media (orientation: portrait) {
 		#skills > #lists {
 			flex-direction: column;
 			gap: 2rem;
