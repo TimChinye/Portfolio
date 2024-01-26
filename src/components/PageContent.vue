@@ -4,7 +4,11 @@
 <template>
 	<section>
 		<div id="skills">
-			<header><span></span>MY SKILLS<span></span></header>
+			<header>
+				<span></span>
+				<div>MY SKILLS</div>
+				<span></span>
+			</header>
 			<div id="lists">
 				<!--
 
@@ -198,7 +202,7 @@
 			<p>
 				Back in 2016, on my 11th birthday, I viewed the page source for google.com. Fast forward 8 years later, I'm a <span><u>Full Stack Developer</u></span> focused on coding digital solutions to real-world problems.
 				<br><br>
-				With years of professional experience and a diverse skillset, I am a developer capable of handling various aspects of any project. Free to <span>connect</span> and <span>follow</span> my story on <span><b><a href="https://www.linkedin.com/in/timchinye/" target="_blank">LinkedIn</a></b></span>.
+				With years of professional experience and a diverse skillset, I am a developer capable of handling various aspects of any project. Free to connect and follow my story on <span><b><a href="https://www.linkedin.com/in/timchinye/" target="_blank">LinkedIn</a></b></span>.
 			</p>
 		</div>
 	</section>
@@ -260,7 +264,6 @@
 		align-items: center;
 		flex-direction: row;
 		gap: 2rem;
-		white-space: nowrap;
 	}
 
 	section > div > header > span {
@@ -300,7 +303,7 @@
 	}
 
 	section > #about span:has(u):hover:after {
-		transition: 1s;
+		transition: 1.25s;
 	}
 
 	section > #about span u:after {
@@ -326,15 +329,15 @@
 	}
 
 	section:has(p > span:first-child:hover) > #skills > #lists table:nth-child(2) td {
-		transition-delay: 0.125s;
-	}
-
-	section:has(p > span:first-child:hover) > #skills > #lists table:nth-child(3) td {
 		transition-delay: 0.25s;
 	}
 
-	section:has(p > span:first-child:hover) > #skills > #lists table:nth-child(4) td {
+	section:has(p > span:first-child:hover) > #skills > #lists table:nth-child(3) td {
 		transition-delay: 0.5s;
+	}
+
+	section:has(p > span:first-child:hover) > #skills > #lists table:nth-child(4) td {
+		transition-delay: 1s;
 	}
 
 	section > #about span a {
@@ -391,7 +394,7 @@
 		width: 100%;
 	}
 
-	@media (width < 1356px) {
+	@media (width < 2104px) {
 
 		section > #skills > #lists > table {
 			border-spacing: 0;
@@ -408,9 +411,35 @@
 
 	}
 
+	@media (width < 1002px) {
+		section {
+			flex-direction: column;
+		}
+
+		section > #about {
+			padding-bottom: 0;
+		}
+
+		section > #about > p {
+			width: 100%;
+		}
+	}
+
+	@media (width <= 720px) {
+		section > #featured > header > div {
+			width: min-content;
+		}
+	}
+
 	@media (width <= 568px) {
 		section > #skills > #lists > table {
 			flex: 1 0 50%;
+		}
+	}
+
+	@media (width < 508px) {
+		section > #skills > header {
+			white-space: nowrap;
 		}
 	}
 </style>
