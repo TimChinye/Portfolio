@@ -9,6 +9,7 @@
 	--accent-color: #FFAE63;
 	--text-color: #DEDEDE;
 	--background-color: #242424;
+	--divider-color: #555453;
 
 	color-scheme: light dark;
 	color: var(--text-color);

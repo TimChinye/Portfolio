@@ -4,199 +4,218 @@
 <template>
 	<section>
 		<div id="skills">
-			<header>SKILLS</header>
+			<header><span></span>MY SKILLS<span></span></header>
 			<div id="lists">
-<!--
+				<!--
 
-	LANGUAGES		FRAMEWORKS		TOOLS & DMS 	SOFTWARE			
-																			
-	HTML, CSS & JS	Node.js			Git & Github		Discord				
-	SQL				React			Postman				Replit				
-	Python			jQuery			CLI					Figma				
-	Java			Express			Font Awesome		Photoshop			
-	C#				Angular/JS		Chrome DevTools		Android Studio		
-	PHP				Vue.js (& Vite)	AutoHotkey			StackBlitz			
-	C++				.NET (C#)		Slack				Affintiy Designer	
-	TypeScript		Spring Boot		Stack Overflow		Visual Studio		
-	Assembly		Bootstrap		PostgreSQL			VS Code				
-	Kotlin			TailwindCSS		MySQL				IntelliJ IDEA		
-	SASS & SCSS		Material UI		SQLite				Sublime Text 3	 	
-	
--->
+					LANGUAGES		FRAMEWORKS		TOOLS & DATABASES 	SOFTWARE			
+																							
+					HTML, CSS & JS	Node.js			Git & Github		Figma				
+					SQL				React			Postman				Photoshop			
+					Python			jQuery			CLI					Affinity Designer	
+					Java			Express			Font Awesome		Google Workspace	
+					C#				Angular/JS		Chrome DevTools		Replit		        
+					PHP				Vue.js (& Vite)	AutoHotkey			Stack Blitz			
+					C++				.NET (C#)		Discord & Slack		Android Studio	    
+					TypeScript		Spring Boot		Stack Overflow		Visual Studio		
+					Assembly		Bootstrap		PostgreSQL			VS Code				
+					Kotlin			TailwindCSS		MySQL				IntelliJ IDEA		
+					SASS & SCSS		Material UI		SQLite				Sublime Text 3	 	
 
-<table>
-    <thead>
-        <tr>
-            <th>LANGUAGES</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td class="clickable">HTML, CSS & JS</td>
-        </tr>
-        <tr>
-            <td class="clickable">SQL</td>
-        </tr>
-        <tr>
-            <td>Python</td>
-        </tr>
-        <tr>
-            <td class="clickable">Java</td>
-        </tr>
-        <tr>
-            <td class="clickable">C#</td>
-        </tr>
-        <tr>
-            <td>PHP</td>
-        </tr>
-        <tr>
-            <td class="clickable">C++</td>
-        </tr>
-        <tr>
-            <td class="clickable">TypeScript</td>
-        </tr>
-        <tr>
-            <td class="clickable">Assembly</td>
-        </tr>
-        <tr>
-            <td>Kotlin</td>
-        </tr>
-        <tr>
-            <td>SASS & SCSS</td>
-        </tr>
-    </tbody>
-</table>
-<table>
-    <thead>
-        <tr>
-            <th>FRAMEWORKS</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td class="clickable">Node.js</td>
-        </tr>
-        <tr>
-            <td class="clickable">React</td>
-        </tr>
-        <tr>
-            <td class="clickable">jQuery</td>
-        </tr>
-        <tr>
-            <td>Express</td>
-        </tr>
-        <tr>
-            <td>Angular/JS</td>
-        </tr>
-        <tr>
-            <td class="clickable">Vue.js (& Vite)</td>
-        </tr>
-        <tr>
-            <td class="clickable">.NET (C#)</td>
-        </tr>
-        <tr>
-            <td>Spring Boot</td>
-        </tr>
-        <tr>
-            <td>Bootstrap</td>
-        </tr>
-        <tr>
-            <td>TailwindCSS</td>
-        </tr>
-        <tr>
-            <td>Material UI</td>
-        </tr>
-    </tbody>
-</table>
-<table>
-    <thead>
-        <tr>
-            <th>TOOLS & DATABASES</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td class="clickable">Git & Github</td>
-        </tr>
-        <tr>
-            <td>Postman</td>
-        </tr>
-        <tr>
-            <td>CLI</td>
-        </tr>
-        <tr>
-            <td class="clickable">Font Awesome</td>
-        </tr>
-        <tr>
-            <td>Chrome DevTools</td>
-        </tr>
-        <tr>
-            <td>AutoHotkey</td>
-        </tr>
-        <tr>
-            <td class="clickable">Discord & Slack</td>
-        </tr>
-        <tr>
-            <td class="clickable">Stack Overflow</td>
-        </tr>
-        <tr>
-            <td>PostgreSQL</td>
-        </tr>
-        <tr>
-            <td>MySQL</td>
-        </tr>
-        <tr>
-            <td class="clickable">SQLite</td>
-        </tr>
-    </tbody>
-</table>
-<table>
-    <thead>
-        <tr>
-            <th>SOFTWARE</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td class="clickable">Figma</td>
-        </tr>
-        <tr>
-            <td class="clickable">Photoshop</td>
-        </tr>
-        <tr>
-            <td class="clickable">Affinity Designer</td>
-        </tr>
-        <tr>
-            <td>Android Studio</td>
-        </tr>
-        <tr>
-            <td>Google Workspace</td>
-        </tr>
-        <tr>
-            <td class="clickable">Replit</td>
-        </tr>
-        <tr>
-            <td class="clickable">StackBlitz</td>
-        </tr>
-        <tr>
-            <td>Visual Studio</td>
-        </tr>
-        <tr>
-            <td>VS Code</td>
-        </tr>
-        <tr>
-            <td>IntelliJ IDEA</td>
-        </tr>
-        <tr>
-            <td>Sublime Text 3</td>
-        </tr>
-    </tbody>
-</table>
+				-->
+				<table>
+					<thead>
+						<tr>
+							<th>LANGUAGES</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="clickable">HTML, CSS & JS</td>
+						</tr>
+						<tr>
+							<td class="clickable">SQL</td>
+						</tr>
+						<tr>
+							<td>Python</td>
+						</tr>
+						<tr>
+							<td class="clickable">Java</td>
+						</tr>
+						<tr>
+							<td class="clickable">C#</td>
+						</tr>
+						<tr>
+							<td>PHP</td>
+						</tr>
+						<tr>
+							<td class="clickable">C++</td>
+						</tr>
+						<tr>
+							<td class="clickable">TypeScript</td>
+						</tr>
+						<tr>
+							<td class="clickable">Assembly</td>
+						</tr>
+						<tr>
+							<td>Kotlin</td>
+						</tr>
+						<tr>
+							<td>SASS & SCSS</td>
+						</tr>
+					</tbody>
+				</table>
+				<table>
+					<thead>
+						<tr>
+							<th>FRAMEWORKS</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="clickable">Node.js</td>
+						</tr>
+						<tr>
+							<td class="clickable">React</td>
+						</tr>
+						<tr>
+							<td class="clickable">jQuery</td>
+						</tr>
+						<tr>
+							<td>Express</td>
+						</tr>
+						<tr>
+							<td>Angular/JS</td>
+						</tr>
+						<tr>
+							<td class="clickable">Vue.js (& Vite)</td>
+						</tr>
+						<tr>
+							<td class="clickable">.NET (C#)</td>
+						</tr>
+						<tr>
+							<td>Spring Boot</td>
+						</tr>
+						<tr>
+							<td>Bootstrap</td>
+						</tr>
+						<tr>
+							<td>TailwindCSS</td>
+						</tr>
+						<tr>
+							<td>Material UI</td>
+						</tr>
+					</tbody>
+				</table>
+				<table>
+					<thead>
+						<tr>
+							<th>TOOLS & DATABASES</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="clickable">Git & Github</td>
+						</tr>
+						<tr>
+							<td>Postman</td>
+						</tr>
+						<tr>
+							<td>CLI</td>
+						</tr>
+						<tr>
+							<td class="clickable">Font Awesome</td>
+						</tr>
+						<tr>
+							<td>Chrome DevTools</td>
+						</tr>
+						<tr>
+							<td>AutoHotkey</td>
+						</tr>
+						<tr>
+							<td class="clickable">Discord & Slack</td>
+						</tr>
+						<tr>
+							<td class="clickable">Stack Overflow</td>
+						</tr>
+						<tr>
+							<td>PostgreSQL</td>
+						</tr>
+						<tr>
+							<td>MySQL</td>
+						</tr>
+						<tr>
+							<td class="clickable">SQLite</td>
+						</tr>
+					</tbody>
+				</table>
+				<table>
+					<thead>
+						<tr>
+							<th>SOFTWARE</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="clickable">Figma</td>
+						</tr>
+						<tr>
+							<td class="clickable">Photoshop</td>
+						</tr>
+						<tr>
+							<td class="clickable">Affinity Designer</td>
+						</tr>
+						<tr>
+							<td>Google Workspace</td>
+						</tr>
+						<tr>
+							<td class="clickable">Replit</td>
+						</tr>
+						<tr>
+							<td class="clickable">StackBlitz</td>
+						</tr>
+						<tr>
+							<td>Android Studio</td>
+						</tr>
+						<tr>
+							<td>Visual Studio</td>
+						</tr>
+						<tr>
+							<td>VS Code</td>
+						</tr>
+						<tr>
+							<td>IntelliJ IDEA</td>
+						</tr>
+						<tr>
+							<td>Sublime Text 3</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
+		</div>
+		<div id="about">
+			<header>ABOUT ME<span></span></header>
+			<p>
+				Back in 2016, on my 11th birthday, I viewed the page source for google.com. Fast forward 8 years later, I'm a <span><u>Full Stack Developer</u></span> focused on coding digital solutions to real-world problems.
+				<br><br>
+				With years of professional experience and a diverse skillset, I am a developer capable of handling various aspects of any project. Free to <span>connect</span> and <span>follow</span> my story on <span><b><a href="https://www.linkedin.com/in/timchinye/" target="_blank">LinkedIn</a></b></span>.
+			</p>
 		</div>
 	</section>
 	<section>
 		<!-- Featured Projects -->
+		<!-- 
+			1. C# Computer Project
+			2. This website
+			3. CreatorTube
+		 -->
+		 <div id="featured">
+			<header>
+				<span></span>
+				<div>3 MOST RECENT PROJECTS</div>
+				<span></span>
+			</header>
+		 </div>
 	</section>
 	<section>
 		<!-- Public Projects -->
@@ -209,11 +228,17 @@
 		padding: 0 5.5rem 0 6.5rem;
 		box-sizing: border-box;
 		width: 100%;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-evenly;
+	}
+
+	section > div {
+		padding: 6rem 5vw;
 	}
 
 	section > #skills {
 		width: fit-content;
-		margin: 0 auto;
 		padding: 6rem 7.5vw;
 		border-radius: 1rem;
 		--background: #262626;
@@ -223,11 +248,97 @@
 		box-shadow: 1rem 1rem 2rem #1f1f1f, inset 0.5rem 0.5rem 1rem #2b2b2b;
 	}
 
-	section > #skills > header {
+	section > #featured {
+		width: 100%;
+	}
+
+	section > div > header {
 		font-weight: bold;
 		font-size: 1.5rem;
-		text-align: center;
 		padding-bottom: 4rem;
+		display: flex;
+		align-items: center;
+		flex-direction: row;
+		gap: 2rem;
+	}
+
+	section > div > header > span {
+		flex: 1;
+		border: 1px solid var(--divider-color);
+	}
+
+	section > #featured > header > div::first-letter {
+		font-weight: 200;
+	}
+
+	section > #about > p {
+		width: 25vw;
+	}
+
+	section > #about > p > span {
+		position: relative;
+	}
+
+	section > #about span u {
+		text-decoration: none;
+	}
+
+	section > #about span u:after, section > #about span:after {
+		position: absolute;
+		content: '';
+		left: 0;
+		bottom: 1px;
+		width: 0%;
+		height: 1px;
+		transition: 0.25s;
+		background: var(--accent-color);
+	}
+
+	section > #about span:has(u):after {
+		transition: 0.25s;
+	}
+
+	section > #about span:has(u):hover:after {
+		transition: 1s;
+	}
+
+	section > #about span u:after {
+		width: 100%;
+		background: var(--text-color);
+	}
+
+	section > #about span:has(a):after {
+		bottom: 0px;
+		height: 2px;
+	}
+
+	section > #about span:hover:after {
+		width: 100%;
+	}
+
+	section:has(p > span:first-child:hover) > #skills > #lists td {
+		color: var(--accent-color);
+	}
+
+	section:has(p > span:first-child:hover) > #skills > #lists table:nth-child(1) td {
+		transition-delay: 0s;
+	}
+
+	section:has(p > span:first-child:hover) > #skills > #lists table:nth-child(2) td {
+		transition-delay: 0.125s;
+	}
+
+	section:has(p > span:first-child:hover) > #skills > #lists table:nth-child(3) td {
+		transition-delay: 0.25s;
+	}
+
+	section:has(p > span:first-child:hover) > #skills > #lists table:nth-child(4) td {
+		transition-delay: 0.5s;
+	}
+
+	section > #about span a {
+		color: unset;
+		text-decoration: unset;
 	}
 
 	section > #skills > #lists {
@@ -246,7 +357,7 @@
 	}
 
 	section > #skills > #lists th {
-		max-width: 10vw;
+		max-width: 12.5vw;
 		text-align: left;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -256,6 +367,7 @@
 	section > #skills > #lists td {
 		font-size: 0.75rem;
 		white-space: nowrap;
+		transition: 0.25s;
 	}
 
 	section > #skills > #lists td.clickable {
@@ -270,7 +382,7 @@
 		bottom: 3px;
 		width: 0%;
 		height: 1px;
-		transition: 0.5s;
+		transition: 0.25s;
 		background: var(--accent-color);
 	} 
 
