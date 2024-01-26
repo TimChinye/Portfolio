@@ -269,7 +269,7 @@
 	}
 
 	section > #featured > header > div::first-letter {
-		font-weight: 200;
+		font-weight: 300;
 	}
 
 	section > #about > p {
