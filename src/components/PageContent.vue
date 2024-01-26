@@ -260,6 +260,7 @@
 		align-items: center;
 		flex-direction: row;
 		gap: 2rem;
+		white-space: nowrap;
 	}
 
 	section > div > header > span {
