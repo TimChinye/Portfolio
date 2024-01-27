@@ -218,7 +218,7 @@
 	#offsets :first-child > svg {
 		stroke: var(--background-color);
 		stroke-linejoin: round;
-		stroke-width: 0.125rem;
+		stroke-width: calc(1rem / 16);
 		fill: var(--icon-color);
 	}
 
