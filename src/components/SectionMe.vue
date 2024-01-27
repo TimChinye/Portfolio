@@ -19,7 +19,7 @@
 					Python			jQuery			CLI					Affinity Designer	
 					Java			Express			Font Awesome		Google Workspace	
 					C#				Angular/JS		Chrome DevTools		Replit		        
-					PHP				Vue.js (& Vite)	AutoHotkey			Stack Blitz			
+					PHP				Vue.js (& Vite)	Vercel				Stack Blitz			
 					C++				.NET (C#)		Discord & Slack		Android Studio	    
 					TypeScript		Spring Boot		Stack Overflow		Visual Studio		
 					Assembly		Bootstrap		PostgreSQL			VS Code				
@@ -134,7 +134,7 @@
 							<td>Chrome DevTools</td>
 						</tr>
 						<tr>
-							<td>AutoHotkey</td>
+							<td>Vercel</td>
 						</tr>
 						<tr>
 							<td class="clickable">Discord & Slack</td>
@@ -212,7 +212,7 @@
 	section > #skills {
 		width: fit-content;
 		padding: 6rem 7.5vw;
-		border-radius: 1rem;
+		border-radius: 0.5rem;
 		--background: #262626;
 		--accent-background: #292929;
 		background: var(--background);
@@ -278,14 +278,14 @@
 		position: absolute;
 		content: '';
 		left: 0;
-		bottom: 3px;
+		bottom: calc((1rem / 16) * 3);
 		width: 0%;
-		height: 1px;
+		height: calc(1rem / 32);
 		transition: 0.25s;
 		background: var(--accent-color);
 	}
 
-	section > #skills > #lists td.clickable:hover:after {
+	section > #skills > #lists tr:has(td.clickable):hover > td.clickable:after {
 		width: 100%;
 	}
 
@@ -306,15 +306,11 @@
 		position: absolute;
 		content: '';
 		left: 0;
-		bottom: 1px;
+		bottom: 0;
 		width: 0%;
-		height: 1px;
+		height: 0.125rem;
 		transition: 0.25s;
 		background: var(--accent-color);
-	}
-
-	section > #about span:has(u):after {
-		transition: 0.25s;
 	}
 
 	section > #about span:has(u):hover:after {
@@ -324,11 +320,6 @@
 	section > #about span u:after {
 		width: 100%;
 		background: var(--text-color);
-	}
-
-	section > #about span:has(a):after {
-		bottom: 0px;
-		height: 2px;
 	}
 
 	section > #about span:hover:after {

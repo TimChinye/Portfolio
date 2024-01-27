@@ -12,13 +12,14 @@
 
 <style scoped>
 	section:deep() {
-		margin: 100px 0;
+		margin: 6rem 0;
 		padding: 0 5.5rem 0 6.5rem;
 		box-sizing: border-box;
 		width: 100%;
 		display: flex;
 		flex-direction: row;
 		justify-content: space-evenly;
+		align-items: center;
 	}
 
 	section:deep() header {
@@ -33,7 +34,7 @@
 
 	section:deep() header > span {
 		flex: 1;
-		border: 1px solid var(--divider-color);
+		border: 0.125rem solid var(--divider-color);
 	}
 
 	section:deep() > article {

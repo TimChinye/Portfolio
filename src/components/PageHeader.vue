@@ -180,7 +180,7 @@
 		content: '';
 		width: 0;
 		margin: 0.5rem auto 1rem;
-		border: var(--divider-color) solid 1px;
+		border: var(--divider-color) solid calc(1rem / 16);
 		animation-name: scaleUp, scaling;
 		animation-duration: 1.5s, 2.5s;
 		animation-timing-function: linear, cubic-bezier(0.5, 0.25, 0.5, 0.75);
@@ -210,7 +210,7 @@
 		height: 2.5rem;
 		width: 2.5rem;
 		stroke: var(--icon-color);
-		stroke-width: 1px;
+		stroke-width: calc(1rem / 16);
 		transition: 0.5s;
 		--icon-color: #BAB9B8;
 	}
@@ -218,7 +218,7 @@
 	#offsets :first-child > svg {
 		stroke: var(--background-color);
 		stroke-linejoin: round;
-		stroke-width: 2px;
+		stroke-width: 0.125rem;
 		fill: var(--icon-color);
 	}
 
