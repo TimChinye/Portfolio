@@ -72,6 +72,7 @@
 
 <style scoped>
     section > #featured {
+		width: 100%;
         max-width: 80rem;
     }
 
@@ -81,7 +82,7 @@
 
     section > #featured > main {
 		width: 100%;
-        padding: 0 4rem;
+        padding: 0 2.75vw;
 		display: flex;
 		flex-direction: column;
 		gap: 6rem;
@@ -176,4 +177,30 @@
             width: min-content;
         }
     }
+
+	@media (width < 1002px) {
+		section > #featured .content ul {
+			flex-flow: wrap;
+			justify-content: left;
+		}
+		
+		section > #featured .content + img {
+			width: 100%;
+			min-height: 100%;
+			filter: brightness(0.125);
+			object-fit: cover;
+		}
+
+		section > #featured .content {
+			width: 100%;
+			float: none;
+			padding: 2rem;
+		}
+
+		section > #featured .content p {
+			padding: 0;
+			background: none;
+			box-shadow: none;
+		}
+	}
 </style>
