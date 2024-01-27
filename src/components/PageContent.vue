@@ -3,13 +3,13 @@
 
 <template>
 	<section>
-		<div id="skills">
+		<article id="skills">
 			<header>
 				<span></span>
 				<div>MY SKILLS</div>
 				<span></span>
 			</header>
-			<div id="lists">
+			<main id="lists">
 				<!--
 
 					LANGUAGES		FRAMEWORKS		TOOLS & DATABASES 	SOFTWARE			
@@ -195,34 +195,40 @@
 						</tr>
 					</tbody>
 				</table>
-			</div>
-		</div>
-		<div id="about">
+			</main>
+		</article>
+		<article id="about">
 			<header>ABOUT ME<span></span></header>
 			<p>
 				Back in 2016, on my 11th birthday, I viewed the page source for google.com. Fast forward 8 years later, I'm a <span><u>Full Stack Developer</u></span> focused on coding digital solutions to real-world problems.
 				<br><br>
 				With years of professional experience and a diverse skillset, I am a developer capable of handling various aspects of any project. Free to connect and follow my story on <span><b><a href="https://www.linkedin.com/in/timchinye/" target="_blank">LinkedIn</a></b></span>.
 			</p>
-		</div>
+		</article>
 	</section>
 	<section>
 		<!-- Featured Projects -->
-		<!-- 
-			1. C# Computer Project
-			2. This website
-			3. CreatorTube
-		 -->
-		 <div id="featured">
+		 <article id="featured">
 			<header>
 				<span></span>
 				<div>3 MOST RECENT PROJECTS</div>
 				<span></span>
 			</header>
-		 </div>
+			<main>
+				<div>
+					<!-- This website -->
+				</div>
+				<div>
+					<!-- C# Computer Project -->
+				</div>
+				<div>
+					<!-- CreatorTube -->
+				</div>
+			</main>
+		</article>
 	</section>
 	<section>
-		<!-- Public Projects -->
+		<!-- Other Public Projects -->
 	</section>
 </template>
 
@@ -237,7 +243,22 @@
 		justify-content: space-evenly;
 	}
 
-	section > div {
+	section header {
+		font-weight: bold;
+		font-size: 1.5rem;
+		padding-bottom: 4rem;
+		display: flex;
+		align-items: center;
+		flex-direction: row;
+		gap: 2rem;
+	}
+
+	section header > span {
+		flex: 1;
+		border: 1px solid var(--divider-color);
+	}
+
+	section > article {
 		padding: 6rem 5vw;
 	}
 
@@ -252,97 +273,24 @@
 		box-shadow: 1rem 1rem 2rem #1f1f1f, inset 0.5rem 0.5rem 1rem #2b2b2b;
 	}
 
-	section > #featured {
-		width: 100%;
-	}
-
-	section > div > header {
-		font-weight: bold;
-		font-size: 1.5rem;
-		padding-bottom: 4rem;
-		display: flex;
-		align-items: center;
-		flex-direction: row;
-		gap: 2rem;
-	}
-
-	section > div > header > span {
-		flex: 1;
-		border: 1px solid var(--divider-color);
-	}
-
-	section > #featured > header > div::first-letter {
-		font-weight: 300;
-	}
-
-	section > #about > p {
-		width: 25vw;
-	}
-
-	section > #about > p > span {
-		position: relative;
-	}
-
-	section > #about span u {
-		text-decoration: none;
-	}
-
-	section > #about span u:after, section > #about span:after {
-		position: absolute;
-		content: '';
-		left: 0;
-		bottom: 1px;
-		width: 0%;
-		height: 1px;
-		transition: 0.25s;
-		background: var(--accent-color);
-	}
-
-	section > #about span:has(u):after {
-		transition: 0.25s;
-	}
-
-	section > #about span:has(u):hover:after {
-		transition: 1.25s;
-	}
-
-	section > #about span u:after {
-		width: 100%;
-		background: var(--text-color);
-	}
-
-	section > #about span:has(a):after {
-		bottom: 0px;
-		height: 2px;
-	}
-
-	section > #about span:hover:after {
-		width: 100%;
-	}
-
-	section:has(p > span:first-child:hover) > #skills > #lists td {
+	section:has(p  >  span:first-child:hover) > #skills > #lists td {
 		color: var(--accent-color);
 	}
 
-	section:has(p > span:first-child:hover) > #skills > #lists table:nth-child(1) td {
+	section:has(p  >  span:first-child:hover) > #skills > #lists table:nth-child(1) td {
 		transition-delay: 0s;
 	}
 
-	section:has(p > span:first-child:hover) > #skills > #lists table:nth-child(2) td {
+	section:has(p  >  span:first-child:hover) > #skills > #lists table:nth-child(2) td {
 		transition-delay: 0.25s;
 	}
 
-	section:has(p > span:first-child:hover) > #skills > #lists table:nth-child(3) td {
+	section:has(p  >  span:first-child:hover) > #skills > #lists table:nth-child(3) td {
 		transition-delay: 0.5s;
 	}
 
-	section:has(p > span:first-child:hover) > #skills > #lists table:nth-child(4) td {
+	section:has(p  >  span:first-child:hover) > #skills > #lists table:nth-child(4) td {
 		transition-delay: 1s;
-	}
-
-	section > #about span a {
-		color: unset;
-		text-decoration: unset;
 	}
 
 	section > #skills > #lists {
@@ -388,10 +336,69 @@
 		height: 1px;
 		transition: 0.25s;
 		background: var(--accent-color);
-	} 
+	}
 
 	section > #skills > #lists td.clickable:hover:after {
 		width: 100%;
+	}
+
+	section > #about > p {
+		width: 25vw;
+	}
+
+	section > #about > p > span {
+		position: relative;
+	}
+
+	section > #about span u {
+		text-decoration: none;
+	}
+
+	section > #about span u:after,
+	section > #about span:after {
+		position: absolute;
+		content: '';
+		left: 0;
+		bottom: 1px;
+		width: 0%;
+		height: 1px;
+		transition: 0.25s;
+		background: var(--accent-color);
+	}
+
+	section > #about span:has(u):after {
+		transition: 0.25s;
+	}
+
+	section > #about span:has(u):hover:after {
+		transition: 1.25s;
+	}
+
+	section > #about span u:after {
+		width: 100%;
+		background: var(--text-color);
+	}
+
+	section > #about span:has(a):after {
+		bottom: 0px;
+		height: 2px;
+	}
+
+	section > #about span:hover:after {
+		width: 100%;
+	}
+
+	section > #about span a {
+		color: unset;
+		text-decoration: unset;
+	}
+
+	section > #featured {
+		width: 100%;
+	}
+
+	section > #featured > header > div::first-letter {
+		font-weight: 300;
 	}
 
 	@media (width < 2104px) {
@@ -425,13 +432,13 @@
 		}
 	}
 
-	@media (width <= 720px) {
+	@media (width <=720px) {
 		section > #featured > header > div {
 			width: min-content;
 		}
 	}
 
-	@media (width <= 568px) {
+	@media (width <=568px) {
 		section > #skills > #lists > table {
 			flex: 1 0 50%;
 		}

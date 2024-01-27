@@ -69,18 +69,18 @@
 
 <template>
 	<header>
-		<nav>
+		<!-- <nav></nav> -->
 
-		</nav>
+		<main>
+			<div id="headerLogo">
+				<img src="../assets/TigerYT PFP.svg" alt="Tim's logo" :style="{ animationDuration: (animationDelay / 2) + 's' }" />
+			</div>
 
-		<div id="headerLogo">
-			<img src="../assets/TigerYT PFP.svg" alt="Tim's logo" :style="{ animationDuration: (animationDelay / 2) + 's' }" />
-		</div>
-
-		<div id="headerText">
-			<h1 :style="{ animationDelay: (animationDelay / 2) + 's', animationDuration: animationDelay + 's' }">{{ name }}</h1>
-			<p id="jobTitle" :style="{ animationDelay: (animationDelay / 2) + 's', animationDuration: animationDelay + 's' }">Not just {{ attribute }}</p>
-		</div>
+			<div id="headerText">
+				<h1 :style="{ animationDelay: (animationDelay / 2) + 's', animationDuration: animationDelay + 's' }">{{ name }}</h1>
+				<p id="jobTitle" :style="{ animationDelay: (animationDelay / 2) + 's', animationDuration: animationDelay + 's' }">Not just {{ attribute }}</p>
+			</div>
+		</main>
 
 		<div id="headerOffsets">
 			<div>
@@ -97,17 +97,20 @@
 <style scoped>
 	header {
 		position: relative;
+	}
+
+	main {
+		display: flex;
 		width: 100%;
 		height: 100dvh;
-		display: inherit;
 		align-items: center;
 		justify-content: center;
-			flex-direction: row;
-			gap: 1vw;
+		flex-direction: row;
+		gap: 1vw;
 	}
 
 	@media (orientation: portrait) {
-		header {
+		main {
 			flex-direction: column;
 			gap: 1vh;
 		}
