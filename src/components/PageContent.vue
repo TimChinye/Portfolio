@@ -50,6 +50,10 @@
 			padding-top: 0!important;
 		}
 
+		section:deep() > #skills {
+			margin-bottom: 6rem;
+		}
+
 		section:deep() > article:last-child {
 			padding-bottom: 0!important;
 		}

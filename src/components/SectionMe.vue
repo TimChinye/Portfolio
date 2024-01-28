@@ -159,18 +159,20 @@
 		margin-left: -4ch;
 	}
 
+	section > #skills > #lists tr {
+		white-space: nowrap;
+	}
+
 	section > #skills > #lists th {
 		max-width: 12.5vw;
 		text-align: left;
 		text-overflow: ellipsis;
-		white-space: nowrap;
 		overflow: hidden;
 	}
 
 	section > #skills > #lists td {
 		float: left;
 		font-size: 0.75rem;
-		white-space: nowrap;
 		transition: 0.25s;
 	}
 
