@@ -137,24 +137,24 @@
 		to   { opacity: 1; }
 	}
 
-	#lcontent {
+	#content {
 		display: inherit;
 		flex-direction: column;
 		text-align: center;
 	}
 
-	#lcontent > h1, #lcontent > #jobTitle, #logo img {
+	#content > h1, #content > #jobTitle, #logo img {
 		opacity: 0;
 		animation-name: fadeIn;
 		animation-fill-mode: forwards;
 	}
 
-	#lcontent > #jobTitle {
+	#content > #jobTitle {
 		font-family: 'Titillium Web';
 		font-weight: 100;
 	}
 
-	#lcontent > h1 {
+	#content > h1 {
 		margin: 0;
 	}
 

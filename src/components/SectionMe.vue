@@ -205,6 +205,7 @@
 
 	section > #about > p > span {
 		position: relative;
+		display: inline-block;
 	}
 
 	section > #about span u {
