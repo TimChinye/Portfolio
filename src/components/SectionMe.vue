@@ -16,7 +16,7 @@
 																							
 					HTML, CSS & JS	Node.js			Git & Github		Figma				
 					SQL				React			Postman				Photoshop			
-					Python			jQuery			CLI					Affinity Designer	
+					Python			jQuery			Console / CLI		Affinity Designer	
 					Java			Express			Font Awesome		Google Workspace	
 					C#				Angular/JS		Chrome DevTools		Replit		        
 					PHP				Vue.js (& Vite)	Vercel				Stack Blitz			
@@ -24,7 +24,7 @@
 					TypeScript		Spring Boot		Stack Overflow		Visual Studio		
 					Assembly		Bootstrap		PostgreSQL			VS Code				
 					Kotlin			TailwindCSS		MySQL				IntelliJ IDEA		
-					SASS & SCSS		Material UI		SQLite				Sublime Text 3	 	
+					SASS & SCSS		Android			SQLite				Sublime Text 3	 	
 
 				-->
 				<table>
@@ -56,11 +56,11 @@
 						<tr><td>Express</td></tr>
 						<tr><td>Angular/JS</td></tr>
 						<tr><td class="clickable">Vue.js (& Vite)</td></tr>
-						<tr><td class="clickable">.NET (C#)</td></tr>
+						<tr><td class="clickable">.NET</td></tr>
 						<tr><td>Spring Boot</td></tr>
 						<tr><td>Bootstrap</td></tr>
 						<tr><td>TailwindCSS</td></tr>
-						<tr><td>Material UI</td></tr>
+						<tr><td>Android</td></tr>
 					</tbody>
 				</table>
 				<table>
@@ -70,9 +70,9 @@
 					<tbody>
 						<tr><td class="clickable">Git & Github</td></tr>
 						<tr><td>Postman</td></tr>
-						<tr><td>CLI</td></tr>
+						<tr><td>Console / CLI</td></tr>
 						<tr><td class="clickable">Font Awesome</td></tr>
-						<tr><td>Chrome DevTools</td></tr>
+						<tr><td class="clickable">Icons8</td></tr>
 						<tr><td>Vercel</td></tr>
 						<tr><td class="clickable">Discord & Slack</td></tr>
 						<tr><td class="clickable">Stack Overflow</td></tr>

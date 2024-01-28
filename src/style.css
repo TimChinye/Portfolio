@@ -28,6 +28,25 @@
 	user-select: none;
 }
 
+p:not(#jobTitle) {
+	-webkit-touch-callout: text;
+	-webkit-user-select: text;
+	-khtml-user-select: text;
+	-moz-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
+}
+
+::-moz-selection { /* Firefox */
+	color: var(--accent-color);
+	background: transparent;
+}
+  
+::selection {
+	color: var(--accent-color);
+	background: transparent;
+}
+
 @media (prefers-color-scheme: light) {
 	:root {
 		--background-color: #f7f1ee;
