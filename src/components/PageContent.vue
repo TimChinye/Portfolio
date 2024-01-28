@@ -43,7 +43,15 @@
 
 	@media (width < 1002px) {
 		section:deep() {
-			flex-direction: column;
+			flex-direction: column!important;
+		}
+
+		section:deep() > article:first-child:not(#skills) {
+			padding-top: 0!important;
+		}
+
+		section:deep() > article:last-child {
+			padding-bottom: 0!important;
 		}
 	}
 </style>

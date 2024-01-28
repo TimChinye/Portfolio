@@ -257,10 +257,6 @@
 	}
 
 	@media (width < 1002px) {
-		section > #about {
-			padding-bottom: 0;
-		}
-
 		section > #about > p {
 			width: 100%;
 		}

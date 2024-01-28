@@ -73,7 +73,7 @@
 <style scoped>
     section > #featured {
 		width: 100%;
-        max-width: 80rem;
+        max-width: 1280px;
     }
 
     section > #featured > header > div::first-letter {
