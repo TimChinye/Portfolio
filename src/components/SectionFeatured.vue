@@ -107,6 +107,7 @@
 		width: calc((100% / 7) * 4);
 		filter: brightness(0.5);
 		z-index: -1;
+		transition: 0.5s;
 	}
 
 	section > #featured > main > div {
@@ -164,8 +165,8 @@
 		-moz-transition: ease-out 0.5s;
 	}
 
-	section > #featured .content li::after,
-	section > #featured .content li::before {
+	section > #featured .content li::before,
+	section > #featured .content li::after {
 		position: absolute;
 		content: "";
 		width: 0;

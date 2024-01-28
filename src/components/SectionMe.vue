@@ -212,12 +212,11 @@
 		text-decoration: none;
 	}
 
-	section > #about span u:after,
-	section > #about span:after {
+	section > #about :is(span, span u):after {
 		position: absolute;
 		content: '';
 		left: 0;
-		bottom: 0;
+		bottom: 3px;
 		width: 0%;
 		height: 0.125rem;
 		transition: 0.25s;
@@ -230,7 +229,7 @@
 
 	section > #about span u:after {
 		width: 100%;
-		background: var(--text-color);
+		background: #b48050;
 	}
 
 	section > #about span:hover:after {
