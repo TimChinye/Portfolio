@@ -229,7 +229,7 @@
 	#offsets > :last-child {
 		right: 0;
 		writing-mode: vertical-lr;
-		color: var(--lighter-text-colour);
+		color: var(--icon-colour);
 		text-decoration: none;
 		transition: 0.5s;
 	}

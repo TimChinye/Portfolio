@@ -10,7 +10,7 @@
 	--icon-colour: #BAB9B8;
 	--accent-colour: #FFAE63;
 	--darker-accent-colour: #BAB9B8;
-	--lighter-text-colour: #BAB9B8;
+	--icon-colour: #BAB9B8;
 	--text-colour: #DEDEDE;
 	--background-colour: #242424;
 	--divider-colour: #555453;
@@ -79,10 +79,10 @@ h1 {
 @media (prefers-color-scheme: light) {
 	:root {
 		--another-colour: #dc9a61;
-		--icon-colour: #774418;
+		--icon-colour: #b08056;
 		--accent-colour: #ec8526;
 		--darker-accent-colour: #dfba9a;
-		--lighter-text-colour: #774418;
+		--icon-colour: #774418;
 		--text-colour: #b7651c;
 		--background-colour: #fff2e6;
 		--divider-colour: #ffe3cb;

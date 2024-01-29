@@ -309,8 +309,8 @@
 			}
 
 			section > #featured .content li {
-				box-shadow: 0 0 0.5rem var(--lighter-text-colour);
-				border-color: var(--lighter-text-colour);
+				box-shadow: 0 0 0.5rem var(--icon-colour);
+				border-color: var(--icon-colour);
 				background: transparent;
 			}
 		}
