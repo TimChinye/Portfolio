@@ -14,7 +14,7 @@
 				<div>
 					<!-- This website -->
 					<div class="content">
-						<h3>Portfolio</h3>
+						<h2>Portfolio</h2>
 						<p>An open-source website to clearly demostrate how I code and showcase my skills to recruiters in a minimalistic, straight-to-the-point manner.<br><br>This project proves that I am up to date with the latest web technologies, designs and conventions.</p>
 						<ul>
 							<li>HTML, CSS & JS</li>
@@ -35,7 +35,7 @@
 				<div>
 					<!-- C# Computer Project -->
 					<div class="content">
-						<h3>Unnamed C# Console Application</h3>
+						<h2>Unnamed C# Console Application</h2>
 						<p usage="description of the project">Tasked at university to make a program with 4 functions; 1. A menu selector, 2. Trinary Converter, 3. School Roster 4, ISBN Verifier.<br><br>I did this to an exceptional first-class level as I show off several tools and techniques in C# that weren't taught in lectures.<br><br>In addition to this, I built a simulation of a computer screen display to view the program and a number of other fun features.</p>
 						<ul>
 							<li>C#</li>
@@ -53,7 +53,7 @@
 				<div>
 					<!-- CreatorTube -->
 					<div class="content">
-						<h3>CreatorTube</h3>
+						<h2>CreatorTube</h2>
 						<p usage="description of the project">A closed-source android mobile app that I've designed and developed both the front and back ends for.<br><br>This projects has allowed me to further my knowledge on Java and build upon my understanding of mobile app development.</p>
 						<ul>
 							<li>SQL</li>
@@ -95,35 +95,36 @@
 		gap: 6rem;
     }
 
-	div:has(.content + img) {
+	div:has(.content) {
 		position: relative;
 		overflow: hidden;
 	}
 
 	section > #featured .content + img {
 		position: absolute;
-		top: 50%;
 		transform: translateY(-50%);
+		top: 50%;
+		z-index: -1;
 		width: calc((100% / 7) * 4);
 		filter: brightness(0.5);
 		z-index: -1;
 		transition: 0.5s;
 	}
 
-	section > #featured > main > div {
-		border-radius: 0.5rem;
-	}
-
-	section > #featured > main > div:has(:is(h3, p, ul):hover) img {
+	section > #featured > main > div:has(:is(h2, p, ul):hover) img {
 		filter: brightness(0.75);
 	}
 
-	section > #featured div:nth-child(3) img {
+	section > #featured div:nth-child(3) .content + img {
 		filter: brightness(0.25);
 	}
 
-	section > #featured > main > div:nth-child(3):has(:is(h3, p, ul):hover) img {
+	section > #featured > main > div:nth-child(3):has(:is(h2, p, ul):hover) img {
 		filter: brightness(0.375);
+	}
+
+	section > #featured > main > div {
+		border-radius: 0.5rem;
 	}
 
 	section > #featured .content {
@@ -131,11 +132,11 @@
 		float: right;
 	}
 
-	section > #featured .content h3 {
+	section > #featured .content h2 {
 		cursor: e-resize;
 		transition: 0.5s;
 	}
-	section > #featured .content h3:hover {
+	section > #featured .content h2:hover {
 		letter-spacing: 0.25rem;
 		transition: 10s;
 	}
@@ -155,8 +156,10 @@
 		line-height: 0.75rem;
 		white-space: nowrap;
 		padding: 0.25rem 0.5rem;
-		color: #BAB9B8;
-		border: 0.125rem solid var(--divider-color);
+		color: var(--another-colour);
+		background: var(--background-colour);
+		border: 0.125rem solid var(--divider-colour);
+		box-shadow: 0 0 0.5rem var(--background-colour);
 		border-radius: 0.25rem;
 		cursor: pointer;
 		position: relative;
@@ -196,14 +199,14 @@
 	section > #featured .content li:hover::before {
 		width: 0.5rem;
 		height: 0.5rem;
-		border-color: var(--text-color);
+		border-color: var(--text-colour);
 	}
 
 	section > #featured .content p {
 		padding: 1.5rem;
-		background: #2a2a2a;
+		background: var(--panel-colour);
 		border-radius: 0.25rem;
-		box-shadow: 0 0 2rem #1f1f1f;
+		box-shadow: 0 0 1rem var(--panel-shadow-colour);
 	}
 
     @media (width <= 720px) {
@@ -218,6 +221,10 @@
 			justify-content: left;
 		}
 		
+		section > #featured .content {
+			pointer-events: none;
+		}
+		
 		section > #featured .content + img {
 			width: 100%;
 			min-height: 100%;
@@ -226,7 +233,7 @@
 		}
 		
 		section > #featured div:hover img {
-			filter: brightness(0.5) !important;
+			filter: brightness(0.5);
 		}
 		
 		section > #featured div:nth-child(3) img {
@@ -234,7 +241,7 @@
 		}
 		
 		section > #featured div:nth-child(3):hover img {
-			filter: brightness(0.25) !important;
+			filter: brightness(0.375);
 		}
 
 		section > #featured .content {
@@ -247,6 +254,60 @@
 			padding: 0;
 			background: none;
 			box-shadow: none;
+		}
+	}
+
+	@media (prefers-color-scheme: light) {
+		section > #featured .content h2 { 
+			--text-shadow-colour: rgb(255 255 255 / 33%);
+			text-shadow: -1px -1px 0 var(--text-shadow-colour), 1px -1px 0 var(--text-shadow-colour), -1px 1px 0 var(--text-shadow-colour), 1px 1px 0 var(--text-shadow-colour);
+		}
+
+		section > #featured .content + img {
+			filter: contrast(0.5) sepia(1) blur(1px);
+		}
+
+		section > #featured > main > div:has(:is(h2, p, ul):hover) img {
+			filter: contrast(0.5) sepia(0) blur(0);
+		}
+
+		section > #featured div:nth-child(3) .content + img {
+			filter: contrast(0.5) sepia(1) blur(1px);
+		}
+
+		section > #featured > main > div:nth-child(3):has(:is(h2, p, ul):hover) img {
+			filter: contrast(0.5) sepia(0) blur(0);
+		}
+
+		@media (width < 1002px) {
+			section > #featured .content h2 { 
+				text-shadow: 0 0 0.5rem var(--text-colour);
+			}
+		
+			section > #featured .content + img {
+				width: 100%;
+				min-height: 100%;
+				filter: sepia(1) brightness(0.25);
+				object-fit: cover;
+			}
+			
+			section > #featured div:hover img {
+				filter: sepia(1) brightness(0.5);
+			}
+			
+			section > #featured div:nth-child(3) .content + img {
+				filter: sepia(1) brightness(0.125);
+			}
+			
+			section > #featured div:nth-child(3):hover .content + img {
+				filter: sepia(1) brightness(calc((1 / 16) * 3));
+			}
+
+			section > #featured .content li {
+				box-shadow: 0 0 0.5rem var(--lighter-text-colour);
+				border-color: var(--lighter-text-colour);
+				background: transparent;
+			}
 		}
 	}
 </style>

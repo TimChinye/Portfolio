@@ -125,11 +125,11 @@
 	}
 
 	#logo img:hover {
-		filter: drop-shadow(0 0 2em var(--accent-color));
+		filter: drop-shadow(0 0 2em var(--accent-colour));
 	}
 
 	#logo img:active {
-		filter: drop-shadow(0 0 2em var(--text-color));
+		filter: drop-shadow(0 0 2em var(--text-colour));
 	}
 
 	@keyframes fadeIn {
@@ -180,7 +180,7 @@
 		content: '';
 		width: 0;
 		margin: 0.5rem auto 1rem;
-		border: var(--divider-color) solid calc(1rem / 16);
+		border: var(--divider-colour) solid calc(1rem / 16);
 		animation-name: scaleUp, scaling;
 		animation-duration: 1.5s, 2.5s;
 		animation-timing-function: linear, cubic-bezier(0.5, 0.25, 0.5, 0.75);
@@ -202,39 +202,39 @@
 	#offsets > :first-child {
 		left: 0;
 		flex-direction: column;
-		color: var(--divider-color);
+		color: var(--divider-colour);
 		transition: 0.5s;
 	}
 
 	#offsets svg {
 		height: 2.5rem;
 		width: 2.5rem;
-		stroke: var(--icon-color);
+		stroke: var(--svg-color);
 		stroke-width: calc(1rem / 16);
 		transition: 0.5s;
-		--icon-color: #BAB9B8;
+		--svg-color: var(--icon-colour);
 	}
 
 	#offsets :first-child > svg {
-		stroke: var(--background-color);
+		stroke: var(--background-colour);
 		stroke-linejoin: round;
 		stroke-width: calc(1rem / 16);
-		fill: var(--icon-color);
+		fill: var(--svg-color);
 	}
 
 	#offsets svg:hover {
-		--icon-color: var(--accent-color);
+		--svg-color: var(--accent-colour);
 	}
 
 	#offsets > :last-child {
 		right: 0;
 		writing-mode: vertical-lr;
-		color: #BAB9B8;
+		color: var(--lighter-text-colour);
 		text-decoration: none;
 		transition: 0.5s;
 	}
 
 	#offsets > :last-child:hover {
-		color: var(--accent-color);
+		color: var(--accent-colour);
 	}
 </style>

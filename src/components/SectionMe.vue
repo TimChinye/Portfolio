@@ -117,12 +117,12 @@
 		width: fit-content;
 		padding: 6rem 7.5vw;
 		border-radius: 0.5rem;
-		background: #2a2a2a;
-		box-shadow: 1rem 1rem 2rem #1f1f1f, inset 0.5rem 0.5rem 1rem #2b2b2b;
+		background: var(--panel-colour);
+		box-shadow: 1rem 1rem 2rem var(--panel-shadow-colour), inset 0.5rem 0.5rem 1rem var(--panel-inner-shadow-colour);
 	}
 
 	section:has(p  >  span:first-child:hover) > #skills > #lists td {
-		color: var(--accent-color);
+		color: var(--accent-colour);
 	}
 
 	section:has(p  >  span:first-child:hover) > #skills > #lists table:nth-child(1) td {
@@ -189,7 +189,7 @@
 		width: 0%;
 		height: calc(1rem / 32);
 		transition: 0.25s;
-		background: var(--accent-color);
+		background: var(--accent-colour);
 	}
 
 	section > #skills > #lists tr:has(td.clickable):hover > td.clickable:after {
@@ -213,11 +213,11 @@
 		position: absolute;
 		content: '';
 		left: 0;
-		bottom: calc((1rem / 16) * 3);
+		bottom: 0.125rem;
 		width: 0%;
 		height: 0.125rem;
 		transition: 0.25s;
-		background: var(--accent-color);
+		background: var(--accent-colour);
 	}
 
 	section > #about span:has(u):hover:after {
@@ -226,7 +226,7 @@
 
 	section > #about span u:after {
 		width: 100%;
-		background: #b48050;
+		background: var(--darker-accent-colour);
 	}
 
 	section > #about span:hover:after {

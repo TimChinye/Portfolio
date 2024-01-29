@@ -6,20 +6,24 @@
 	line-height: 1.5;
 	font-weight: 400;
 
-	--accent-color: #FFAE63;
-	--text-color: #DEDEDE;
-	--background-color: #242424;
-	--divider-color: #555453;
+	--another-colour: #BAB9B8;
+	--icon-colour: #BAB9B8;
+	--accent-colour: #FFAE63;
+	--darker-accent-colour: #BAB9B8;
+	--lighter-text-colour: #BAB9B8;
+	--text-colour: #DEDEDE;
+	--background-colour: #242424;
+	--divider-colour: #555453;
 
 	color-scheme: light dark;
-	color: var(--text-color);
-	background-color: var(--background-color);
+	color: var(--text-colour);
+	background-color: var(--background-colour);
 
 	font-display: block;
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+	-moz-osx-font-smoothing: sepia;
 	
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -39,12 +43,12 @@ p:not(#jobTitle) {
 }
 
 ::-moz-selection { /* Firefox */
-	color: var(--accent-color);
+	color: var(--accent-colour);
 	background: transparent;
 }
   
 ::selection {
-	color: var(--accent-color);
+	color: var(--accent-colour);
 	background: transparent;
 }
 
@@ -74,7 +78,27 @@ h1 {
 
 @media (prefers-color-scheme: light) {
 	:root {
-		--background-color: #f7f1ee;
-		--text-color: #662b00;
+		--another-colour: #dc9a61;
+		--icon-colour: #774418;
+		--accent-colour: #ec8526;
+		--darker-accent-colour: #dfba9a;
+		--lighter-text-colour: #774418;
+		--text-colour: #b7651c;
+		--background-colour: #fff2e6;
+		--divider-colour: #ffe3cb;
+		--panel-colour: #ffeede;
+		--panel-shadow-colour: #f5dbc6;
+		--panel-inner-shadow-colour: #fae9db;
+	}
+
+
+	::-moz-selection { /* Firefox */
+		color: var(--accent-colour);
+		background: transparent;
+	}
+	
+	::selection {
+		color: var(--accent-colour);
+		background: transparent;
 	}
 }
