@@ -117,10 +117,7 @@
 		width: fit-content;
 		padding: 6rem 7.5vw;
 		border-radius: 0.5rem;
-		--background: #262626;
-		--accent-background: #292929;
-		background: var(--background);
-		background-image: linear-gradient(to bottom right, var(--background) 0%, var(--accent-background) 100%);
+		background: #2a2a2a;
 		box-shadow: 1rem 1rem 2rem #1f1f1f, inset 0.5rem 0.5rem 1rem #2b2b2b;
 	}
 
@@ -216,7 +213,7 @@
 		position: absolute;
 		content: '';
 		left: 0;
-		bottom: 3px;
+		bottom: calc((1rem / 16) * 3);
 		width: 0%;
 		height: 0.125rem;
 		transition: 0.25s;
