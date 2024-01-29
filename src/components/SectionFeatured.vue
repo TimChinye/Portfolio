@@ -372,7 +372,7 @@
 			}
 			
 			section > #featured div:nth-child(3) .content + img {
-				filter: sepia(1) brightness(0.125);
+				filter: sepia(1) brightness(0.25);
 			}
 			
 			section > #featured div:nth-child(3):hover .content + img {
