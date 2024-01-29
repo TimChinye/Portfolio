@@ -108,7 +108,7 @@
 		width: calc((100% / 7) * 4);
 		filter: brightness(0.5);
 		z-index: -1;
-		transition: 0.5s;
+		transition: 1.25s;
 	}
 
 	section > #featured > main > div:has(:is(h2, p, ul):hover) img {
@@ -258,9 +258,14 @@
 	}
 
 	@media (prefers-color-scheme: light) {
-		section > #featured .content h2 { 
-			--text-shadow-colour: rgb(255 255 255 / 33%);
-			text-shadow: -1px -1px 0 var(--text-shadow-colour), 1px -1px 0 var(--text-shadow-colour), -1px 1px 0 var(--text-shadow-colour), 1px 1px 0 var(--text-shadow-colour);
+		section > #featured .content h2 {
+			border-radius: 0.25rem;
+			background: var(--panel-colour);
+			padding: 0 0.5rem;
+		}
+
+		section > #featured .content p {
+			box-shadow: none;
 		}
 
 		section > #featured .content + img {
