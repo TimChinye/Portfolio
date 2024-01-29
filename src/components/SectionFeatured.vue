@@ -26,8 +26,8 @@
 							<li>Vercel</li>
 						</ul>
 						<div>
-							<a usage="a link to github"><!-- Font Awesome --></a>
-							<a usage="a 'link' to scroll to the top (up arrow)"><!-- Font Awesome --></a>
+							<a href="https://www.google.com/" target="_blank" @mouseenter="jumpAnimation" @mouseleave="stopAnimation"><font-awesome-icon icon="fa-brands fa-github" /></a>
+							<a href="https://www.google.com/" target="_blank" @mouseenter="jumpAnimation" @mouseleave="stopAnimation"><font-awesome-icon icon="fa-solid fa-angles-up" /></a>
 						</div>
 					</div>
 					<img src="../assets/portfolio.png">
@@ -44,8 +44,8 @@
 							<li>Console / CLI</li>
 						</ul>
 						<div>
-							<a usage="a link to github"><!-- Font Awesome --></a>
-							<a usage="a 'link' to scroll to the top (up arrow)"><font-awesome-icon icon="fa-regular fa-circle-up" /></a>
+							<a href="https://www.google.com/" target="_blank" @mouseenter="jumpAnimation" @mouseleave="stopAnimation"><font-awesome-icon icon="fa-brands fa-github" /></a>
+							<!-- Maybe, a link to run it online -->
 						</div>
 					</div>
 					<img src="../assets/uniproject.png">
@@ -66,8 +66,7 @@
 							<li>Vercel</li>
 						</ul>
 						<div>
-							<a usage="a link to github"><!-- Font Awesome --></a>
-							<a usage="a 'link' to scroll to the top (up arrow)"><!-- Font Awesome --></a>
+							<!-- <a usage="a link to google play store"></a> -->
 						</div>
 					</div>
 					<img src="../assets/creatortube.png">
@@ -76,6 +75,44 @@
 		</article>
 	</section>
 </template>
+
+<script lang="ts">
+	export default {
+		data() {
+			return {
+				counts: new Map(),
+			};
+		},
+		methods: {
+			jumpAnimation(event: Event) {
+				const target = (event.target as HTMLElement).children[0];
+
+				if (!this.counts.has(target) || this.counts.get(target) == 0) {
+					this.counts.set(target, 0);
+					target.classList.add('jump-animation');
+				}
+
+				this.counts.set(target, this.counts.get(target) + 1);
+			},
+			stopAnimation(event: Event) {
+				const target = (event.target as HTMLElement).children[0];
+
+				if (this.counts.has(target) && this.counts.get(target) > 0) {
+					const quitAnimation = () => {
+						target.removeEventListener('animationiteration', quitAnimation);
+						target.removeEventListener('webkitAnimationIteration', quitAnimation);
+						this.counts.set(target, this.counts.get(target) - 1);
+
+						if (this.counts.get(target) == 0) target.classList.remove('jump-animation');
+					};
+
+					target.addEventListener('animationiteration', quitAnimation);
+					target.addEventListener('webkitAnimationIteration', quitAnimation);
+				}
+			}
+		}
+	};
+</script>
 
 <style scoped>
     section > #featured {
@@ -135,16 +172,18 @@
 	section > #featured .content h2 {
 		cursor: e-resize;
 		transition: 0.5s;
+		padding: 1.5em 0;
+		margin: 0;
 	}
 	section > #featured .content h2:hover {
-		letter-spacing: 0.25rem;
+		letter-spacing: 0.125rem;
 		transition: 10s;
 	}
 
 	section > #featured .content ul {
 		list-style-type: none;
-		padding: 0;
-		margin: 0.5rem;
+		padding: 1rem 0.5rem;
+		margin: 0;
 		margin-right: 0.5rem;
 		display: flex;
 		justify-content: right;
@@ -203,10 +242,29 @@
 	}
 
 	section > #featured .content p {
-		padding: 1.5rem;
+		margin: 0;
+		padding: 2.5rem;
 		background: var(--panel-colour);
 		border-radius: 0.25rem;
 		box-shadow: 0 0 1rem var(--panel-shadow-colour);
+	}
+
+	section > #featured .content div {
+		display: flex;
+		justify-content: right;
+		gap: 0.5rem;
+		padding: 1rem 0;
+	}
+
+	section > #featured .content div svg {
+		color: var(--another-colour);
+		height: 1.5rem;
+	}
+
+	section > #featured .content div svg.jump-animation {
+-webkit-animation: fa-bounce 1.5s cubic-bezier(0.28, 0.84, 0.42, 1) 0s infinite;
+		animation: fa-bounce 1.5s cubic-bezier(0.28, 0.84, 0.42, 1) 0s infinite;
+		color: var(--text-colour);
 	}
 
     @media (width <= 720px) {
@@ -259,9 +317,22 @@
 
 	@media (prefers-color-scheme: light) {
 		section > #featured .content h2 {
+			position: relative;
+			padding: 2.25rem;
+			box-sizing: border-box;
+		}
+
+		section > #featured .content h2:after {
+			position: absolute;
+			content: '';
+			top: 50%;
+			left: 0;
+			transform: translateY(-50%);
 			border-radius: 0.25rem;
 			background: var(--panel-colour);
-			padding: 0 0.5rem;
+			width: 100%;
+			height: calc(100% - 3.5rem);
+			z-index: -1;
 		}
 
 		section > #featured .content p {
@@ -313,6 +384,41 @@
 				border-color: var(--icon-colour);
 				background: transparent;
 			}
+		}
+	}
+
+	@keyframes fa-bounce {
+		0% {
+		}
+
+		10% {
+			-webkit-transform: scale(var(--fa-bounce-start-scale-x, 1.1), var(--fa-bounce-start-scale-y, 0.9)) translateY(0);
+			transform: scale(var(--fa-bounce-start-scale-x, 1.1), var(--fa-bounce-start-scale-y, 0.9)) translateY(0);
+		}
+
+		30% {
+			-webkit-transform: scale(var(--fa-bounce-jump-scale-x, 0.9), var(--fa-bounce-jump-scale-y, 1.1)) translateY(var(--fa-bounce-height, -0.5em));
+			transform: scale(var(--fa-bounce-jump-scale-x, 0.9), var(--fa-bounce-jump-scale-y, 1.1)) translateY(var(--fa-bounce-height, -0.5em));
+		}
+
+		50% {
+			-webkit-transform: scale(var(--fa-bounce-land-scale-x, 1.05), var(--fa-bounce-land-scale-y, 0.95)) translateY(0);
+			transform: scale(var(--fa-bounce-land-scale-x, 1.05), var(--fa-bounce-land-scale-y, 0.95)) translateY(0);
+		}
+
+		57% {
+			-webkit-transform: scale(1, 1) translateY(var(--fa-bounce-rebound, -0.125em));
+			transform: scale(1, 1) translateY(var(--fa-bounce-rebound, -0.125em));
+		}
+
+		64% {
+			-webkit-transform: scale(1, 1) translateY(0);
+			transform: scale(1, 1) translateY(0);
+		}
+
+		100% {
+			-webkit-transform: scale(1, 1) translateY(0);
+			transform: scale(1, 1) translateY(0);
 		}
 	}
 </style>
