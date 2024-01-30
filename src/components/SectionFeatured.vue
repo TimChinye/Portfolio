@@ -195,9 +195,9 @@
 		line-height: 0.75rem;
 		white-space: nowrap;
 		padding: 0.25rem 0.5rem;
-		color: var(--another-colour);
+		color: var(--darker-text-colour);
 		background: var(--background-colour);
-		border: 0.125rem solid var(--divider-colour);
+		border: 0.125rem solid var(--line-colour);
 		box-shadow: 0 0 0.5rem var(--background-colour);
 		border-radius: 0.25rem;
 		cursor: pointer;
@@ -257,7 +257,8 @@
 	}
 
 	section > #featured .content div svg {
-		color: var(--another-colour);
+		transition: 0.5s;
+		color: var(--darker-text-colour);
 		height: 1.5rem;
 	}
 
@@ -344,7 +345,7 @@
 		}
 
 		section > #featured > main > div:has(:is(h2, p, ul):hover) img {
-			filter: contrast(0.5) sepia(0) blur(0);
+			filter: contrast(1) sepia(0) blur(0);
 		}
 
 		section > #featured div:nth-child(3) .content + img {
@@ -380,8 +381,8 @@
 			}
 
 			section > #featured .content li {
-				box-shadow: 0 0 0.5rem var(--icon-colour);
-				border-color: var(--icon-colour);
+				box-shadow: 0 0 0.5rem var(--overlay-colour);
+				border-color: var(--overlay-colour);
 				background: transparent;
 			}
 		}
