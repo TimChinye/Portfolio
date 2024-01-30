@@ -6,17 +6,16 @@
 	line-height: 1.5;
 	font-weight: 400;
 
-	--another-colour: #BAB9B8;
-	--icon-colour: #BAB9B8;
-	--accent-colour: #FFAE63;
-	--darker-accent-colour: #BAB9B8;
-	--icon-colour: #BAB9B8;
-	--text-colour: #DEDEDE;
-	--background-colour: #242424;
-	--divider-colour: #555453;
-	--panel-colour: #202020;
-	--panel-shadow-colour: #181818;
-	--panel-inner-shadow-colour: #191919;
+    --overlay-colour: #BAB9B8;
+    --accent-colour: #FFAE63;
+    --darker-accent-colour: #5f544a;
+    --text-colour: #DEDEDE;
+    --darker-text-colour: #BAB9B8;
+    --background-colour: #242424;
+    --line-colour: #555453;
+    --panel-colour: #202020;
+    --panel-shadow-colour: #1c1c1c;
+    --panel-inner-shadow-colour: #1c1c1c;
 
 	color-scheme: light dark;
 	color: var(--text-colour);
@@ -81,14 +80,14 @@ h1 {
 
 @media (prefers-color-scheme: light) {
 	:root {
-		--another-colour: #dc9a61;
-		--icon-colour: #b08056;
+		--darker-text-colour: #dc9a61;
+		--overlay-colour: #b08056;
 		--accent-colour: #ec8526;
 		--darker-accent-colour: #dfba9a;
-		--icon-colour: #774418;
+		--overlay-colour: #774418;
 		--text-colour: #b7651c;
 		--background-colour: #ffe5cd;
-		--divider-colour: #eabb93;
+		--line-colour: #eabb93;
 		--panel-colour: #ffdfc3;
 		--panel-shadow-colour: #f9d5b9;
 		--panel-inner-shadow-colour: #ffd8b8;
