@@ -137,7 +137,7 @@
 		overflow: hidden;
 	}
 
-	section > #featured .content + img {
+	section > #featured > main > div img {
 		position: absolute;
 		transform: translateY(-50%);
 		top: 50%;
@@ -152,7 +152,7 @@
 		filter: brightness(0.75);
 	}
 
-	section > #featured div:nth-child(3) .content + img {
+	section > #featured > main >  div:nth-child(3) img {
 		filter: brightness(0.25);
 	}
 
@@ -284,22 +284,22 @@
 			pointer-events: none;
 		}
 		
-		section > #featured .content + img {
+		section > #featured > main > div img {
 			width: 100%;
 			min-height: 100%;
 			filter: brightness(0.25);
 			object-fit: cover;
 		}
 		
-		section > #featured div:hover img {
+		section > #featured > main > div:hover img {
 			filter: brightness(0.5);
 		}
 		
-		section > #featured div:nth-child(3) img {
+		section > #featured > main > div:nth-child(3) img {
 			filter: brightness(0.125);
 		}
 		
-		section > #featured div:nth-child(3):hover img {
+		section > #featured > main > div:nth-child(3):hover img {
 			filter: brightness(0.375);
 		}
 
@@ -340,7 +340,7 @@
 			box-shadow: none;
 		}
 
-		section > #featured .content + img {
+		section > #featured > main > div img {
 			filter: contrast(0.5) sepia(1) blur(1px);
 		}
 
@@ -348,7 +348,7 @@
 			filter: contrast(1) sepia(0) blur(0);
 		}
 
-		section > #featured div:nth-child(3) .content + img {
+		section > #featured > main > div:nth-child(3) img {
 			filter: contrast(0.5) sepia(1) blur(1px);
 		}
 
@@ -361,22 +361,24 @@
 				text-shadow: 0 0 0.5rem var(--text-colour);
 			}
 		
-			section > #featured .content + img {
+			section > #featured > main > div img {
 				width: 100%;
 				min-height: 100%;
 				filter: sepia(1) brightness(0.25);
 				object-fit: cover;
 			}
 			
-			section > #featured div:hover img {
+			section > #featured > main > div:hover img,
+			section > #featured > main > div:has(:is(h2, p, ul):hover) img {
 				filter: sepia(1) brightness(0.5);
 			}
 			
-			section > #featured div:nth-child(3) .content + img {
+			section > #featured > main > div:nth-child(3) img {
 				filter: sepia(1) brightness(0.25);
 			}
 			
-			section > #featured div:nth-child(3):hover .content + img {
+			section > #featured > main > div:nth-child(3):hover img,
+			section > #featured > main > div:nth-child(3):has(:is(h2, p, ul):hover) img {
 				filter: sepia(1) brightness(calc((1 / 16) * 3));
 			}
 
