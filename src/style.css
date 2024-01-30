@@ -95,12 +95,12 @@ h1 {
 
 
 	::-moz-selection { /* Firefox */
-		color: var(--accent-colour);
+		color: var(--panel-shadow-colour);
 		background: transparent;
 	}
 	
 	::selection {
-		color: var(--accent-colour);
+		color: var(--panel-shadow-colour);
 		background: transparent;
 	}
 }
