@@ -253,7 +253,7 @@
 		display: flex;
 		justify-content: right;
 		gap: 0.5rem;
-		padding: 1rem 0;
+		padding: 1rem 0.25rem;
 	}
 
 	section > #featured .content div svg {
