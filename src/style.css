@@ -6,16 +6,16 @@
 	line-height: 1.5;
 	font-weight: 400;
 
-    --overlay-colour: #BAB9B8;
-    --accent-colour: #FFAE63;
-    --darker-accent-colour: #5f544a;
-    --text-colour: #DEDEDE;
-    --darker-text-colour: #BAB9B8;
-    --background-colour: #242424;
-    --line-colour: #555453;
-    --panel-colour: #202020;
-    --panel-shadow-colour: #1c1c1c;
-    --panel-inner-shadow-colour: #1c1c1c;
+	--overlay-colour: #BAB9B8;
+	--accent-colour: #FFAE63;
+	--darker-accent-colour: #5f544a;
+	--text-colour: #DEDEDE;
+	--darker-text-colour: #BAB9B8;
+	--background-colour: #242424;
+	--line-colour: #555453;
+	--panel-colour: #202020;
+	--panel-shadow-colour: #1c1c1c;
+	--panel-inner-shadow-colour: #1c1c1c;
 
 	color-scheme: light dark;
 	color: var(--text-colour);
@@ -95,12 +95,12 @@ h1 {
 
 
 	::-moz-selection { /* Firefox */
-		color: var(--panel-shadow-colour);
-		background: transparent;
+		color: var(--accent-colour);
+		background: var(--panel-shadow-colour);
 	}
 	
 	::selection {
-		color: var(--panel-shadow-colour);
-		background: transparent;
+		color: var(--accent-colour);
+		background: var(--panel-shadow-colour);
 	}
 }
