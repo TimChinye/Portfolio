@@ -34,7 +34,7 @@
 
 	section:deep() header > span {
 		flex: 1;
-		border: 0.125rem solid var(--divider-colour);
+		border: 0.125rem solid var(--line-colour);
 	}
 
 	section:deep() > article {
