@@ -180,7 +180,7 @@
 		content: '';
 		width: 0;
 		margin: 0.5rem auto 1rem;
-		border: var(--divider-colour) solid calc(1rem / 16);
+		border: var(--line-colour) solid calc(1rem / 16);
 		animation-name: scaleUp, scaling;
 		animation-duration: 1.5s, 2.5s;
 		animation-timing-function: linear, cubic-bezier(0.5, 0.25, 0.5, 0.75);
@@ -202,7 +202,7 @@
 	#offsets > :first-child {
 		left: 0;
 		flex-direction: column;
-		color: var(--divider-colour);
+		color: var(--line-colour);
 		transition: 0.5s;
 	}
 
@@ -212,7 +212,7 @@
 		stroke: var(--svg-color);
 		stroke-width: calc(1rem / 16);
 		transition: 0.5s;
-		--svg-color: var(--icon-colour);
+		--svg-color: var(--overlay-colour);
 	}
 
 	#offsets :first-child > svg {
@@ -229,7 +229,7 @@
 	#offsets > :last-child {
 		right: 0;
 		writing-mode: vertical-lr;
-		color: var(--icon-colour);
+		color: var(--overlay-colour);
 		text-decoration: none;
 		transition: 0.5s;
 	}
