@@ -280,10 +280,6 @@
 			justify-content: left;
 		}
 		
-		section > #featured .content {
-			pointer-events: none;
-		}
-		
 		section > #featured > main > div img {
 			width: 100%;
 			min-height: 100%;
@@ -368,7 +364,8 @@
 				object-fit: cover;
 			}
 			
-			section > #featured > main > div:hover img {
+			section > #featured > main > div:hover img,
+			section > #featured > main > div:has(:is(h2, p, ul):hover) img {
 				filter: sepia(1) brightness(0.5);
 			}
 			
@@ -376,7 +373,8 @@
 				filter: sepia(1) brightness(0.25);
 			}
 			
-			section > #featured > main > div:nth-child(3):hover img {
+			section > #featured > main > div:nth-child(3):hover img,
+			section > #featured > main > div:nth-child(3):has(:is(h2, p, ul):hover) img {
 				filter: sepia(1) brightness(calc((1 / 16) * 3));
 			}
 
