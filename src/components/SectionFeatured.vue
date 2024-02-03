@@ -231,7 +231,7 @@
 	}
 
 	section > #featured .content li:hover {
-		font-weight: bold;
+		color: var(--accent-colour);
 	}
 
 	section > #featured .content li:hover::after,
@@ -257,8 +257,8 @@
 	}
 
 	section > #featured .content div svg {
-		transition: 0.5s;
 		color: var(--darker-text-colour);
+		transition: 0.5s;
 		height: 1.5rem;
 	}
 
