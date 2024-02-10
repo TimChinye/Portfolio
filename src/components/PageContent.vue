@@ -18,11 +18,13 @@
 		width: 100%;
 		display: flex;
 		flex-direction: row;
-		justify-content: space-evenly;
+		justify-content: center;
 		align-items: center;
+		gap: 2rem;
 	}
 
 	section:deep() header {
+		white-space: nowrap;
 		font-weight: bold;
 		font-size: 1.5rem;
 		padding-bottom: 4rem;
@@ -43,19 +45,22 @@
 
 	@media (width < 1002px) {
 		section:deep() {
-			flex-direction: column!important;
+			gap: 0;
+			flex-direction: column;
+			padding: 0;
 		}
 
 		section:deep() > article:first-child:not(#skills) {
-			padding-top: 0!important;
+			padding-top: 0;
 		}
 
 		section:deep() > #skills {
+			margin: 0 1.5rem;
 			margin-bottom: 6rem;
 		}
 
 		section:deep() > article:last-child {
-			padding-bottom: 0!important;
+			padding: 0 5vw;
 		}
 	}
 </style>

@@ -275,11 +275,6 @@
     }
 
 	@media (width < 1002px) {
-		section > #featured .content ul {
-			flex-flow: wrap;
-			justify-content: left;
-		}
-		
 		section > #featured > main > div img {
 			width: 100%;
 			min-height: 100%;
@@ -310,9 +305,35 @@
 			background: none;
 			box-shadow: none;
 		}
+		section > #featured .content ul {
+			flex-flow: wrap;
+			justify-content: left;
+		}
+
+		section > #featured .content li {
+			background: color-mix(in srgb, var(--background-colour) 50%, transparent);
+			border-color: color-mix(in srgb, var(--line-colour) 75%, transparent);
+			box-shadow: 0 0 0.5rem color-mix(in srgb, var(--background-colour) 50%, transparent);
+		}
 	}
 
 	@media (prefers-color-scheme: light) {
+		section > #featured > main > div img {
+			filter: contrast(0.5) sepia(1) blur(1px);
+		}
+
+		section > #featured > main > div:has(:is(h2, p, ul):hover) img {
+			filter: contrast(1) sepia(0) blur(0);
+		}
+
+		section > #featured > main > div:nth-child(3) img {
+			filter: contrast(0.5) sepia(1) blur(1px);
+		}
+
+		section > #featured > main > div:nth-child(3):has(:is(h2, p, ul):hover) img {
+			filter: contrast(0.5) sepia(0) blur(0);
+		}
+
 		section > #featured .content h2 {
 			position: relative;
 			padding: 2.25rem;
@@ -336,27 +357,7 @@
 			box-shadow: none;
 		}
 
-		section > #featured > main > div img {
-			filter: contrast(0.5) sepia(1) blur(1px);
-		}
-
-		section > #featured > main > div:has(:is(h2, p, ul):hover) img {
-			filter: contrast(1) sepia(0) blur(0);
-		}
-
-		section > #featured > main > div:nth-child(3) img {
-			filter: contrast(0.5) sepia(1) blur(1px);
-		}
-
-		section > #featured > main > div:nth-child(3):has(:is(h2, p, ul):hover) img {
-			filter: contrast(0.5) sepia(0) blur(0);
-		}
-
 		@media (width < 1002px) {
-			section > #featured .content h2 { 
-				text-shadow: 0 0 0.5rem var(--text-colour);
-			}
-		
 			section > #featured > main > div img {
 				width: 100%;
 				min-height: 100%;
@@ -376,6 +377,10 @@
 			section > #featured > main > div:nth-child(3):hover img,
 			section > #featured > main > div:nth-child(3):has(:is(h2, p, ul):hover) img {
 				filter: sepia(1) brightness(calc((1 / 16) * 3));
+			}
+
+			section > #featured .content h2 { 
+				text-shadow: 0 0 0.5rem var(--text-colour);
 			}
 
 			section > #featured .content li {

@@ -109,16 +109,9 @@
 		gap: 1vw;
 	}
 
-	@media (orientation: portrait) {
-		main {
-			flex-direction: column;
-			gap: 1vh;
-		}
-	}
-
 	#logo img {
+		margin: 0;
 		height: 6em;
-		padding: 1.5em;
 		cursor: pointer;
 		will-change: filter;
 		transition: filter 300ms;
@@ -236,5 +229,16 @@
 
 	#offsets > :last-child:hover {
 		color: var(--accent-colour);
+	}
+
+	@media (width < 1002px) {
+		main {
+			flex-direction: column;
+			gap: 1vh;
+		}
+		
+		#offsets {
+			display: none;
+		}
 	}
 </style>
