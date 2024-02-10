@@ -106,7 +106,7 @@
 			<p>
 				Back in 2016, on my 11th birthday, I viewed the page source for google.com. Fast forward 8 years later, I'm a <span><u>Full Stack Developer</u></span> focused on coding digital solutions to real-world problems.
 				<br><br>
-				With years of professional experience and a diverse skillset, I am a developer capable of handling various aspects of any project. Free to connect and follow my story on <span><b><a href="https://www.linkedin.com/in/timchinye/" target="_blank">LinkedIn</a></b></span>.
+				With years of professional experience and a diverse skillset, I am a developer capable of handling various aspects of any project. Free to connect and follow my story on <span><b><a href="https://www.linkedin.com/in/timchinye/" target="_blank">LinkedIn</a></b>.</span>
 			</p>
 		</article>
 	</section>
@@ -230,7 +230,7 @@
 	}
 
 	section > #about span:hover:after {
-		width: 100%;
+		width: calc(100% - 0.4ch);
 	}
 
 	section > #about span a {
