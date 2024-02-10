@@ -36,7 +36,7 @@
 					<!-- C# Computer Project -->
 					<div class="content">
 						<h2>Unnamed C# Console Application</h2>
-						<p usage="description of the project">Tasked at university to make a program with 4 functions; 1. A menu selector, 2. Trinary Converter, 3. School Roster 4, ISBN Verifier.<br><br>I did this to an exceptional first-class level as I show off several tools and techniques in C# that weren't taught in lectures.<br><br>In addition to this, I built a simulation of a computer screen display to view the program and a number of other fun features.</p>
+						<p usage="description of the project">Tasked at university to make a program with 4 functions; 1. A menu selector, 2. Trinary Converter, 3. School Roster 4, ISBN Verifier.<br><br>I did this to an exceptional first-class level as I show off several tools and techniques in C# that I learnt through self-study.<br><br>In addition to this, I built a simulation of a computer screen display to view the program and a number of other fun features.</p>
 						<ul>
 							<li>C#</li>
 							<li>.NET</li>

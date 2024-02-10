@@ -209,8 +209,7 @@
 		stroke-width: calc(1rem / 32);
 		fill: var(--svg-color);
 		transition: 0.5s;
-		--svg-color: var(
-		--overlay-colour);
+		--svg-color: var(--overlay-colour);
 	}
 
 	#offsets svg:hover {
