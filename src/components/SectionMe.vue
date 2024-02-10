@@ -10,23 +10,6 @@
 				<span></span>
 			</header>
 			<main id="lists">
-				<!--
-
-					LANGUAGES		FRAMEWORKS		TOOLS & DATABASES 	SOFTWARE			
-																							
-					HTML, CSS & JS	Node.js			Git & Github		Figma				
-					SQL				React			Postman				Photoshop			
-					Python			jQuery			Console / CLI		Affinity Designer	
-					Java			Express			Font Awesome		Google Workspace	
-					C#				Angular/JS		Chrome DevTools		Replit		        
-					PHP				Vue.js (& Vite)	Vercel				Stack Blitz			
-					C++				.NET (C#)		Discord & Slack		Android Studio	    
-					TypeScript		Spring Boot		Stack Overflow		Visual Studio		
-					Assembly		Bootstrap		PostgreSQL			VS Code				
-					Kotlin			TailwindCSS		MySQL				IntelliJ IDEA		
-					SASS & SCSS		Android			SQLite				Sublime Text 3	 	
-
-				-->
 				<table>
 					<thead>
 						<tr><th>LANGUAGES</th></tr>
