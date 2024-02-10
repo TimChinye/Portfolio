@@ -2,9 +2,9 @@
 	import { ref } from 'vue';
 	defineProps<{ name: string }>();
 
-	/* The height of the line under the contact info show the current time, purely for fun  */
+	/* The length of the line under the contact info show the current time, purely for fun  */
 
-	setInterval((function timeBasedHeights() {
+	setInterval((function timeBasedLengths() {
 		const currentTime: Date = new Date();
 
 		const ss: StyleSheetList = document.styleSheets;
@@ -14,13 +14,13 @@
 				const r: CSSRule = rules[j] as CSSStyleRule;
 				if (!( r instanceof CSSStyleRule)) continue;
 				if (r.selectorText?.startsWith("#offsets") && r.selectorText?.endsWith(" > :first-child::after")) {
-					(r as CSSStyleRule).style.cssText = "animation-delay: 0s, 1.5s; --height: " + (currentTime.getHours() + currentTime.getMinutes() / 60 + currentTime.getSeconds() / 3600) * 0.5 + "rem;";
+					(r as CSSStyleRule).style.cssText = "animation-delay: 0s, 1.5s; --length: " + (currentTime.getHours() + currentTime.getMinutes() / 60 + currentTime.getSeconds() / 3600) * 0.5 + "rem;";
 				} else if (r.selectorText?.startsWith("#offsets") && r.selectorText?.endsWith(" > :last-child::after")) {
-					(r as CSSStyleRule).style.cssText = "animation-delay: 0s, 1.5s; --height: " + (currentTime.getMinutes() + currentTime.getSeconds() / 60) * 0.2 + "rem;";
+					(r as CSSStyleRule).style.cssText = "animation-delay: 0s, 1.5s; --length: " + (currentTime.getMinutes() + currentTime.getSeconds() / 60) * 0.2 + "rem;";
 				}
 			}
 		}
-		return timeBasedHeights;
+		return timeBasedLengths;
 	})(), 100);
 
 	/* Animated typing effect showing some personal attributes I have that I think are important */
@@ -152,13 +152,13 @@
 	}
 
 	@keyframes scaling {
-		from { height: var(--height); }
-		to   { height: calc(var(--height) - 1rem); }
+		from { height: var(--length); }
+		to   { height: calc(var(--length) - 1rem); }
 	}
 
 	@keyframes scaleUp {
 		from { height: 0; }
-		to   { height: var(--height); }
+		to   { height: var(--length); }
 	}
 
 	#offsets > * {
@@ -166,13 +166,16 @@
 		position: fixed;
 		bottom: 0;
 		margin: 0 2rem;
+		align-items: center;
 	}
 
 	#offsets > *::after {
 		position: relative;
 		content: '';
 		width: 0;
-		margin: 0.5rem auto 1rem;
+		height: 0;
+		margin-top: 0.5rem;
+		margin-bottom: 1rem;
 		border: var(--line-colour) solid calc(1rem / 16);
 		animation-name: scaleUp, scaling;
 		animation-duration: 1.5s, 2.5s;
@@ -238,7 +241,37 @@
 		}
 		
 		#offsets {
-			display: none;
+			/* display: none; */
+		}
+		#offsets > * {
+			position: absolute;
+			margin: 2rem 0;
+		}
+
+		#offsets > *::after {
+			margin-left: 1rem;
+			margin-right: 0.5rem;
+		}
+
+		#offsets > :first-child {
+			height: fit-content;
+			top: 0;
+			left: 0;
+			flex-direction: row-reverse;
+		}
+
+		#offsets > :last-child {
+			writing-mode: horizontal-tb;
+		}
+		
+		@keyframes scaling {
+			from { width: var(--length); }
+			to   { width: calc(var(--length) - 1rem); }
+		}
+
+		@keyframes scaleUp {
+			from { width: 0; }
+			to   { width: var(--length); }
 		}
 	}
 </style>

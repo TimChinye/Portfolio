@@ -242,7 +242,7 @@
 
 		section > #skills > #lists > table {
 			border-spacing: 0;
-			flex: 1 0 33%;
+			flex: 1 0 calc(100% / 3);
 		}
 
 		section > #skills > #lists {
