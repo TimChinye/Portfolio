@@ -54,11 +54,6 @@
 			padding-top: 0;
 		}
 
-		section:deep() > #skills {
-			margin: 0 clamp(0px, 25dvw, calc(3840px * 0.25));
-			margin-bottom: 6rem;
-		}
-
 		section:deep() > article:last-child {
 			padding: 0 clamp(0px, 5dvw, calc(3840px * 0.05));
 		}

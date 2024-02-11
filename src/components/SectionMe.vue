@@ -239,6 +239,10 @@
 	}
 
 	@media (width <= 1484px) {
+		section > #skills {
+			margin: 0 clamp(0px, 25dvw, calc(3840px * 0.25)) 6rem;
+		}
+
 		section > #about > header { 
 			padding-bottom: clamp(0px, 2.5dvw, calc(3840px * 0.025));
 		}
@@ -251,7 +255,7 @@
 
 	@media (width <= 1028px) {
 		section > #skills {
-			margin: 0 12.5dvw;
+			margin: 0 12.5dvw 6rem;
 		}
 	}
 

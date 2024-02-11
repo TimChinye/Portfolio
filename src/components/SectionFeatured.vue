@@ -270,7 +270,7 @@
 
     @media (width <= 720px) {
         section > #featured > header > div {
-            width: min-content;
+            width: fit-content;
         }
     }
 
