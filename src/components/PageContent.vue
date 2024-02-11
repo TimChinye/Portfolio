@@ -12,10 +12,10 @@
 
 <style scoped>
 	section:deep() {
-		margin: 6rem 0;
+		margin: 6rem auto;
 		padding: 0 5.5rem 0 6.5rem;
 		box-sizing: border-box;
-		width: 100%;
+		width: clamp(1px, 100dvw, calc(3840px * 1.00));
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
@@ -27,7 +27,7 @@
 		white-space: nowrap;
 		font-weight: bold;
 		font-size: 1.5rem;
-		padding-bottom: 4rem;
+		padding-bottom: 2rem;
 		display: flex;
 		align-items: center;
 		flex-direction: row;
@@ -40,10 +40,10 @@
 	}
 
 	section:deep() > article {
-		padding: 6rem 5vw;
+		padding: 6rem clamp(0px, 5dvw, calc(3840px * 0.05));
 	}
 
-	@media (width < 1002px) {
+	@media (width <= 1484px) {
 		section:deep() {
 			gap: 0;
 			flex-direction: column;
@@ -55,12 +55,19 @@
 		}
 
 		section:deep() > #skills {
-			margin: 0 1.5rem;
+			margin: 0 clamp(0px, 25dvw, calc(3840px * 0.25));
 			margin-bottom: 6rem;
 		}
 
 		section:deep() > article:last-child {
-			padding: 0 5vw;
+			padding: 0 clamp(0px, 5dvw, calc(3840px * 0.05));
+		}
+	}
+
+	@media (width <= 1028px) {
+		section:deep() header {
+			font-size: 1rem;
+			white-space: normal;
 		}
 	}
 </style>

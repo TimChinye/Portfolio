@@ -74,7 +74,7 @@ h1 {
 #site {
 	display: inherit;
 	flex-direction: column;
-	width: 100dvw;
+	width: 100%;
 	
 }
 

@@ -98,7 +98,7 @@
 <style scoped>
 	section > #skills {
 		width: fit-content;
-		padding: 6rem 7.5vw;
+		padding: 6rem clamp(0px, 7.5dvw, calc(3840px * 0.075));
 		border-radius: 0.5rem;
 		background: var(--panel-colour);
 		box-shadow: 1rem 1rem 2rem var(--panel-shadow-colour), inset 0.5rem 0.5rem 1rem var(--panel-inner-shadow-colour);
@@ -144,7 +144,7 @@
 	}
 
 	section > #skills > #lists th {
-		max-width: 12.5vw;
+		max-width: clamp(0px, 12.5dvw, calc(3840px * 0.125));
 		text-align: left;
 		text-overflow: ellipsis;
 		overflow: hidden;
@@ -180,7 +180,7 @@
 	}
 
 	section > #about > p {
-		width: 25vw;
+		width: clamp(0px, 25dvw, calc(3840px * 0.25));
 	}
 
 	section > #about > p > span {
@@ -221,7 +221,7 @@
 		text-decoration: unset;
 	}
 
-	@media (width < 2104px) {
+	@media (width <= 2906px) {
 
 		section > #skills > #lists > table {
 			border-spacing: 0;
@@ -238,21 +238,20 @@
 
 	}
 
-	@media (width < 1002px) {
+	@media (width <= 1484px) {
+		section > #about > header { 
+			padding-bottom: clamp(0px, 2.5dvw, calc(3840px * 0.025));
+		}
+
 		section > #about > p {
 			width: 100%;
+			padding: 0 clamp(0px, 5dvw, calc(3840px * 0.05));
 		}
 	}
 
-	@media (width <= 568px) {
+	@media (width <= 1028px) {
 		section > #skills > #lists > table {
 			flex: 1 0 50%;
-		}
-	}
-
-	@media (width < 508px) {
-		section > #skills > header {
-			white-space: nowrap;
 		}
 	}
 </style>

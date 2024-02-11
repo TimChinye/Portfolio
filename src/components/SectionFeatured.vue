@@ -116,8 +116,7 @@
 
 <style scoped>
     section > #featured {
-		width: 100%;
-        max-width: 1280px;
+		width: clamp(1px, 100%, calc(3840px * 0.50));
     }
 
     section > #featured > header > div::first-letter {
@@ -126,7 +125,7 @@
 
     section > #featured > main {
 		width: 100%;
-        padding: 0 2.75vw;
+        padding: 0 clamp(0px, 2.75dvw, calc(3840px * 0.0275));
 		display: flex;
 		flex-direction: column;
 		gap: 6rem;
@@ -186,6 +185,7 @@
 		margin: 0;
 		margin-right: 0.5rem;
 		display: flex;
+		flex-flow: wrap;
 		justify-content: right;
 		gap: 1rem;
 	}
@@ -274,7 +274,7 @@
         }
     }
 
-	@media (width < 1002px) {
+	@media (width <= 1484px) {
 		section > #featured > main > div img {
 			width: 100%;
 			min-height: 100%;
@@ -306,7 +306,6 @@
 			box-shadow: none;
 		}
 		section > #featured .content ul {
-			flex-flow: wrap;
 			justify-content: left;
 		}
 
@@ -357,7 +356,7 @@
 			box-shadow: none;
 		}
 
-		@media (width < 1002px) {
+		@media (width <= 1484px) {
 			section > #featured > main > div img {
 				width: 100%;
 				min-height: 100%;

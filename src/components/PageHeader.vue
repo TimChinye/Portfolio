@@ -106,7 +106,7 @@
 		align-items: center;
 		justify-content: center;
 		flex-direction: row;
-		gap: 1vw;
+		gap: clamp(0px, 1dvw, calc(3840px * 0.01));
 	}
 
 	#logo img {
@@ -228,7 +228,7 @@
 		color: var(--accent-colour);
 	}
 
-	@media (width < 1002px) {
+	@media (width <= 1484px) {
 		main {
 			flex-direction: column;
 			gap: 1vh;
