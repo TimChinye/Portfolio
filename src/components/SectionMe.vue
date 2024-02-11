@@ -250,6 +250,12 @@
 	}
 
 	@media (width <= 1028px) {
+		section > #skills {
+			margin: 0 12.5dvw;
+		}
+	}
+
+	@media (width <= 266px) {
 		section > #skills > #lists > table {
 			flex: 1 0 50%;
 		}
