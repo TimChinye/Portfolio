@@ -97,7 +97,6 @@
 <style scoped>
 	header {
 		position: relative;
-		min-width: 384px;
 	}
 
 	main {
@@ -107,7 +106,7 @@
 		align-items: center;
 		justify-content: center;
 		flex-direction: row;
-		gap: clamp(0px, 1dvw, calc(3840px * 0.01));
+		gap: clamp(0px, 1dvw, calc(var(--site-width) * 0.01));
 	}
 
 	#logo img {

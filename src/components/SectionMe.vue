@@ -98,7 +98,7 @@
 <style scoped>
 	section > #skills {
 		width: fit-content;
-		padding: 6rem clamp(0px, 7.5dvw, calc(3840px * 0.075));
+		padding: 6rem clamp(0px, 7.5dvw, calc(var(--site-width) * 0.075));
 		border-radius: 0.5rem;
 		background: var(--panel-colour);
 		box-shadow: 1rem 1rem 2rem var(--panel-shadow-colour), inset 0.5rem 0.5rem 1rem var(--panel-inner-shadow-colour);
@@ -144,7 +144,7 @@
 	}
 
 	section > #skills > #lists th {
-		max-width: clamp(0px, 12.5dvw, calc(3840px * 0.125));
+		max-width: clamp(0px, 12.5dvw, calc(var(--site-width) * 0.125));
 		text-align: left;
 		text-overflow: ellipsis;
 		overflow: hidden;
@@ -180,7 +180,7 @@
 	}
 
 	section > #about > p {
-		width: clamp(0px, 25dvw, calc(3840px * 0.25));
+		width: clamp(0px, 25dvw, calc(var(--site-width) * 0.25));
 	}
 
 	section > #about > p > span {
@@ -240,16 +240,16 @@
 
 	@media (width <= 1484px) {
 		section > #skills {
-			margin: 0 clamp(0px, 25dvw, calc(3840px * 0.25)) 6rem;
+			margin: 0 clamp(0px, 25dvw, calc(var(--site-width) * 0.25)) 6rem;
 		}
 
 		section > #about > header { 
-			padding-bottom: clamp(0px, 2.5dvw, calc(3840px * 0.025));
+			padding-bottom: clamp(0px, 2.5dvw, calc(var(--site-width) * 0.025));
 		}
 
 		section > #about > p {
 			width: 100%;
-			padding: 0 clamp(0px, 5dvw, calc(3840px * 0.05));
+			padding: 0 clamp(0px, 5dvw, calc(var(--site-width) * 0.05));
 		}
 	}
 

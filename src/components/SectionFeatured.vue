@@ -45,7 +45,6 @@
 						</ul>
 						<div>
 							<a href="https://www.google.com/" target="_blank" @mouseenter="jumpAnimation" @mouseleave="stopAnimation"><font-awesome-icon icon="fa-brands fa-github" /></a>
-							<!-- Maybe, a link to run it online -->
 						</div>
 					</div>
 					<img src="../assets/uniproject.png">
@@ -116,7 +115,7 @@
 
 <style scoped>
     section > #featured {
-		width: clamp(1px, 100%, calc(3840px * 0.50));
+		width: clamp(1px, 100%, calc(var(--site-width) * 0.50));
     }
 
     section > #featured > header > div::first-letter {
@@ -125,7 +124,7 @@
 
     section > #featured > main {
 		width: 100%;
-        padding: 0 clamp(0px, 2.75dvw, calc(3840px * 0.0275));
+        padding: 0 clamp(0px, 2.75dvw, calc(var(--site-width) * 0.0275));
 		display: flex;
 		flex-direction: column;
 		gap: 6rem;

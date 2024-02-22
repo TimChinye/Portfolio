@@ -15,7 +15,7 @@
 		margin: 6rem auto;
 		padding: 0 5.5rem 0 6.5rem;
 		box-sizing: border-box;
-		width: clamp(384px, 100dvw, 3840px);
+		width: clamp(1px, 100dvw, calc(var(--site-width) * 1.00));
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
@@ -40,7 +40,7 @@
 	}
 
 	section:deep() > article {
-		padding: 6rem clamp(0px, 5dvw, calc(3840px * 0.05));
+		padding: 6rem clamp(0px, 5dvw, calc(var(--site-width) * 0.05));
 	}
 
 	@media (width <= 1484px) {
@@ -55,7 +55,7 @@
 		}
 
 		section:deep() > article:last-child {
-			padding: 0 clamp(0px, 5dvw, calc(3840px * 0.05));
+			padding: 0 clamp(0px, 5dvw, calc(var(--site-width) * 0.05));
 		}
 	}
 
