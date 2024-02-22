@@ -97,6 +97,7 @@
 <style scoped>
 	header {
 		position: relative;
+		min-width: 384px;
 	}
 
 	main {

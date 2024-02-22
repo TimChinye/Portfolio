@@ -15,7 +15,7 @@
 		margin: 6rem auto;
 		padding: 0 5.5rem 0 6.5rem;
 		box-sizing: border-box;
-		width: clamp(1px, 100dvw, calc(3840px * 1.00));
+		width: clamp(384px, 100dvw, 3840px);
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
