@@ -18,12 +18,15 @@
       window.addEventListener('mousemove', (e) => moveCursorBackground(e));
 
       function moveCursorBackground(e) {
-          var elementToMove = document.getElementById('cursor');
-          if (elementToMove) {
-              let x = e.clientX - (elementToMove.offsetWidth / 2), y = e.clientY - (elementToMove.offsetHeight / 2);
+        var elementToMove = document.getElementById('cursor');
+        if (elementToMove) {
+            let x = e.clientX - (elementToMove.offsetWidth / 2), y = e.clientY - (elementToMove.offsetHeight / 2);
 
-              elementToMove.style.translate = `${x}px ${y}px`;
-          }
+            let elementBox = elementToMove.getBoundingClientRect();
+
+            elementToMove.style.translate = `${x}px ${y}px`;
+            document.body.style.backgroundImage = `radial-gradient(at ${elementBox.left}px ${elementBox.top}px, color-mix(in srgb, var(--background-colour), black 25%), var(--background-colour))`;
+        }
       };
     </script>
   </body>
