@@ -56,7 +56,7 @@ body {
     transition: 0.1s;
 }
 
-body:has(:is(:link, :visited, .clickable, #about span, .content li):hover) > #cursor {
+body:has(:is(:active, :link, :visited, .clickable, #about span, .content li):hover) > #cursor {
     height: 50px;
     width: 50px;
 }
