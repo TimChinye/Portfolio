@@ -9,7 +9,6 @@
     <title>Tim's Portfolio</title>
   </head>
   <body>
-    <div id="cursor"></div>
     <div id="site"></div>
     
     <script type="module" src="/src/main.ts"></script>
@@ -26,7 +25,7 @@
 
             elementToMove.style.translate = `${x}px ${y}px`;
             document.body.style.backgroundImage = `radial-gradient(at ${elementBox.left}px ${elementBox.top}px, color-mix(in srgb, var(--background-colour), black 25%), var(--background-colour))`;
-        }
+        } else document.body.insertAdjacentHTML('afterbegin', '<div id="cursor"></div>');
       };
     </script>
   </body>

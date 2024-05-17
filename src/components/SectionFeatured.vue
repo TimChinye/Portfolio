@@ -139,10 +139,8 @@
 		position: absolute;
 		transform: translateY(-50%);
 		top: 50%;
-		z-index: -1;
 		width: calc((100% / 7) * 4);
 		filter: brightness(0.5);
-		z-index: -1;
 		transition: 1.25s;
 	}
 
@@ -165,6 +163,8 @@
 	section > #featured .content {
 		width: calc((100% / 5) * 3);
 		float: right;
+		position: relative;
+		z-index: 1;
 	}
 
 	section > #featured .content h2 {
