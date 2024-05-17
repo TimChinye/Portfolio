@@ -37,6 +37,25 @@
 	user-select: none;
 }
 
+#cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background: aliceblue;
+    border-radius: 50%;
+    z-index: 999;
+    mix-blend-mode: difference;
+    pointer-events: none;
+    transition: 0.1s;
+}
+
+body:has(:is(:link, :visited, .clickable, #about span, .content li):hover) > #cursor {
+    height: 50px;
+    width: 50px;
+}
+
 p:not(#jobTitle) {
 	-webkit-touch-callout: text;
 	-webkit-user-select: text;
