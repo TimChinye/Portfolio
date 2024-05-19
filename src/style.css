@@ -38,7 +38,7 @@
 }
 
 body {
-	background-image: radial-gradient(at 0 0, color-mix(in srgb, var(--background-colour), black 25%), var(--background-colour));
+	background-image: radial-gradient(at 0 0, color-mix(in srgb, var(--background-colour), black 50%), var(--background-colour));
 	background-attachment: fixed;
 }
 
