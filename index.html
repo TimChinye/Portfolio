@@ -14,6 +14,7 @@
     <script type="module" src="/src/main.ts"></script>
 
     <script>
+      document.addEventListener('click', (e) => moveCursorBackground(e));
       window.addEventListener('mousemove', (e) => moveCursorBackground(e));
 
       function moveCursorBackground(e) {
@@ -23,8 +24,9 @@
 
             let elementBox = elementToMove.getBoundingClientRect();
 
+            console.log(e);
             elementToMove.style.translate = `calc(${x}px - 50%) calc(${y}px - 50%)`;
-            document.body.style.backgroundImage = `radial-gradient(at ${elementBox.left}px ${elementBox.top}px, color-mix(in srgb, var(--background-colour), black 50%), var(--background-colour))`;
+            document.body.style.backgroundImage = `radial-gradient(at ${elementBox.left}px ${elementBox.top}px, color-mix(in srgb, var(--background-colour), black var(--shadow-intensity)), var(--background-colour))`;
         } else document.body.insertAdjacentHTML('afterbegin', '<div id="cursor"></div>');
       };
     </script>
