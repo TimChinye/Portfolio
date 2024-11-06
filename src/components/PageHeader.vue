@@ -5,7 +5,7 @@
 	/* The length of the line under the contact info show the current time, purely for fun  */
 
 	setInterval((function timeBasedLengths() {
-		const currentTime: Date = new Date();
+		const currentTime: Date = new Date(new Date().toLocaleString("en-GB", { timeZone: "Europe/London" }));
 
 		const ss: StyleSheetList = document.styleSheets;
 		for (let i = 0; i < ss.length; i++) {
@@ -13,10 +13,15 @@
 			for (let j = 0; j < rules.length; j++) {
 				const r: CSSRule = rules[j] as CSSStyleRule;
 				if (!( r instanceof CSSStyleRule)) continue;
-				if (r.selectorText?.startsWith("#offsets") && r.selectorText?.endsWith(" > :first-child::after")) {
+				if (!r.selectorText?.startsWith("#offsets")) continue;
+				if (r.selectorText?.endsWith(" > :first-child::after")) {
 					(r as CSSStyleRule).style.cssText = "animation-delay: 0s, 1.5s; --length: " + (currentTime.getHours() + currentTime.getMinutes() / 60 + currentTime.getSeconds() / 3600) * 0.5 + "rem;";
-				} else if (r.selectorText?.startsWith("#offsets") && r.selectorText?.endsWith(" > :last-child::after")) {
+				} else if (r.selectorText?.endsWith(" > :last-child::after")) {
 					(r as CSSStyleRule).style.cssText = "animation-delay: 0s, 1.5s; --length: " + (currentTime.getMinutes() + currentTime.getSeconds() / 60) * 0.2 + "rem;";
+				} else if (r.selectorText?.endsWith(" > :first-child::before")) {
+					(r as CSSStyleRule).style.cssText = "content: \"" + (currentTime.getHours()) + "\";";
+				} else if (r.selectorText?.endsWith(" > :last-child::before")) {
+					(r as CSSStyleRule).style.cssText = "content: \"" + (currentTime.getMinutes()) + "\";";
 				}
 			}
 		}
@@ -168,6 +173,11 @@
 		margin: 0 2rem;
 		align-items: center;
 	}
+	
+	#offsets > *::before {
+		position: absolute;
+		bottom: 1rem;
+	}
 
 	#offsets > *::after {
 		position: relative;
@@ -175,7 +185,7 @@
 		width: 0;
 		height: 0;
 		margin-top: 0.5rem;
-		margin-bottom: 1rem;
+		margin-bottom: calc(1.5rem + 1lh);
 		border: var(--line-colour) solid calc(1rem / 16);
 		animation-name: scaleUp, scaling;
 		animation-duration: 1.5s, 2.5s;
@@ -185,20 +195,15 @@
 		animation-fill-mode: forwards;
 	}
 
-	#offsets > :first-child::after {
-		all: unset;
-		/* Set the time-based height of the line & delay for the initial animation */
-	}
-
-	#offsets > :last-child::after {
-		all: unset;
-		/* Set the time-based height of the line & delay for the initial animation */
-	}
+	/* Set the time-based height of the line & delay for the initial animation for the following: */
+	#offsets > :first-child::before { all: unset; }
+	#offsets > :first-child::after { all: unset; }
+	#offsets > :last-child::before { all: unset; }
+	#offsets > :last-child::after { all: unset; }
 
 	#offsets > :first-child {
 		left: 0;
 		flex-direction: column;
-		color: var(--line-colour);
 		transition: 0.5s;
 	}
 
@@ -226,6 +231,10 @@
 
 	#offsets > :last-child:hover {
 		color: var(--accent-colour);
+	}
+
+	#offsets > a:last-child::before {
+		writing-mode: initial;
 	}
 
 	@media (width <= 1484px) {
