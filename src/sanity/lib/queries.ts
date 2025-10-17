@@ -16,5 +16,4 @@ export async function getMetaData(): Promise<{ defaultSeoTitle: string; defaultS
   
   const { data: metadata } = await sanityFetch({ query });
   return metadata;
-;
 };

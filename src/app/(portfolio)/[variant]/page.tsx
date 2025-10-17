@@ -19,4 +19,4 @@ export default async function HomePage({
       <p className="text-xl inline-block font-light"> { content?.defaultSeoDescription } </p>
     </main>
   );
-}
+};

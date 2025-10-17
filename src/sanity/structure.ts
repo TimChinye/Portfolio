@@ -31,6 +31,7 @@ export const structure: StructureResolver = (S) => {
           S.document()
           .schemaType('pageHome')
           .documentId('pageHome')
+          .title('Home Page Editor')
         ),
         
         S.listItem()
@@ -40,6 +41,7 @@ export const structure: StructureResolver = (S) => {
           S.document()
           .schemaType('pageAbout')
           .documentId('pageAbout')
+          .title('About Page Editor')
         ),
         
         S.listItem()
@@ -49,6 +51,7 @@ export const structure: StructureResolver = (S) => {
           S.document()
           .schemaType('pageProjects')
           .documentId('pageProjects')
+          .title('Projects Page Editor')
         ),
       
         S.listItem()
@@ -58,6 +61,7 @@ export const structure: StructureResolver = (S) => {
           S.document()
             .schemaType('pageContact')
             .documentId('pageContact')
+          .title('Contact Page Editor')
         ),
     ]);
 };
