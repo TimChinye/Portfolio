@@ -12,23 +12,27 @@ import { presentationTool } from 'sanity/presentation'
 
 import { schema } from './src/sanity/schemaTypes'
 import { structure } from './src/sanity/structure'
-import { apiVersion, dataset, projectId, getStudioPath } from './src/sanity/env';
+import { getApiVersion, getProjectId, getStudioPath, getDataset } from './src/sanity/env';
+const defaultApiVersion = getApiVersion();
+const projectId = getProjectId();
+const basePath = getStudioPath();
+const dataset = getDataset();
 
 import { PortfolioLogo } from './src/components/PortfolioLogo';
 
 export default defineConfig({
-  basePath: getStudioPath(),
   title: 'Portfolio\'s Content Editor',
   icon: PortfolioLogo,
   
   projectId,
+  basePath,
   dataset,
   schema,
 
   plugins: [
     codeInput(),
     structureTool({ structure }),
-    visionTool({ defaultApiVersion: apiVersion }),
+    visionTool({ defaultApiVersion }),
     presentationTool({
       previewUrl: {
         origin: 'http://localhost:3000', // Replace with deployment URL in production

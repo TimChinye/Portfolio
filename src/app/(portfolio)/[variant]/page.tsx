@@ -1,4 +1,4 @@
-import { getGlobalContent } from '@/sanity/lib/queries';
+// import { getGlobalContent } from '@/sanity/lib/queries';
 
 import { Figtree, Newsreader } from "next/font/google";
 const figtree = Figtree({ subsets: ["latin"], });

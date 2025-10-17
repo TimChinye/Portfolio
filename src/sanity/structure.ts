@@ -1,7 +1,7 @@
 import type {StructureResolver} from 'sanity/structure';
 
 export const structure: StructureResolver = (S) => {
-  S.list()
+  return S.list()
     .title('Editor')
     .items([
       S.listItem()

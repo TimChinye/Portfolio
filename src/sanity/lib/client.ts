@@ -1,7 +1,10 @@
 import { createClient } from "next-sanity";
 
-import { apiVersion, dataset, projectId, getStudioPath } from '@/sanity/env';
+import { getApiVersion, getProjectId, getDataset, getStudioPath } from '@/sanity/env';
+const apiVersion = getApiVersion();
 const studioUrl = getStudioPath();
+const projectId = getProjectId();
+const dataset = getDataset();
 
 export const client = createClient({
   projectId,

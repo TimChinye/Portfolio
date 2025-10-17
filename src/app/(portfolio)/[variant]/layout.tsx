@@ -13,7 +13,7 @@ export default async function PortfolioLayout({
   // params: Promise<{ variant: 'tim' | 'tiger' }>;
 }>) {
   // const { variant } = await params; 
-  // const content = await getGlobalContent(variant);
+  // const content = await getMetaData(variant);
 
   return (
     <>
