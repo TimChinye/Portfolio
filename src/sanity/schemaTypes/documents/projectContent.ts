@@ -1,11 +1,9 @@
-﻿import {defineField, defineType} from 'sanity'
-import {CaseIcon} from '@sanity/icons'
+﻿import { defineField, defineType } from 'sanity';
 
-export const projectType = defineType({
-  name: 'project',
-  title: 'Projects',
+export const projectContent = defineType({
+  name: 'projectContent',
   type: 'document',
-  icon: CaseIcon,
+
   fields: [
     defineField({
       name: 'title',
@@ -146,4 +144,4 @@ export const projectType = defineType({
       }
     },
   },
-})
+});

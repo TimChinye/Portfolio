@@ -5,14 +5,14 @@ import type { Metadata } from 'next'
 import { groq } from "next-sanity";
 import { sanityFetch } from "@/sanity/lib/live";
 
-const settingsQuery = groq`*[_type == "siteSettings"][0]{ globalSeoTitle }`;
+const globalQuery = groq`*[_type == "globalContent"][0]{ defaultSeoTitle }`;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { data: content } = await sanityFetch({ query: settingsQuery });
+  const { data: content } = await sanityFetch({ query: globalQuery });
 
   return {
     title: content?.globalSeoTitle || "Portfolio",
-    description: content?.globalSeoDescription
+    description: content?.defaultSeoDescription
   };
 }
 

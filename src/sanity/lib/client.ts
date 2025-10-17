@@ -8,8 +8,8 @@ export const client = createClient({
   dataset,
   apiVersion,
   useCdn: true, // `true` for production, `false` for development/drafts
+  perspective: 'published',
   stega: {
-    // stega is enabled by default in Live Mode
     enabled: false,
     studioUrl,
   },

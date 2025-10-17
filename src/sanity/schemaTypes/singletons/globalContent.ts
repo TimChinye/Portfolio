@@ -1,34 +1,35 @@
-import {defineField, defineType} from 'sanity'
-import {CogIcon} from '@sanity/icons'
+import {defineField, defineType} from 'sanity';
+import { DocumentIcon } from '@sanity/icons';
 
-export const siteSettings = defineType({
-  name: 'siteSettings',
-  title: 'Site Settings',
+export const globalContent = defineType({
+  name: 'globalContent',
+  title: 'Global Content',
   type: 'document',
-  icon: CogIcon,
+  icon: DocumentIcon,
+  preview: { prepare: () => ({ title: 'Global Content' }) },
 
   // === Groups / Tabs ===
   groups: [
-    {name: 'global', title: 'Global Content', default: true},
+    {name: 'default', title: 'Default Content', default: true},
     {name: 'tim', title: 'Tim Chinye Content'},
     {name: 'tiger', title: 'Tiger Content'},
   ],
 
   fields: [
-    // === Group: Global ===
+    // === Group: Default ===
     defineField({
-      name: 'globalSeoTitle',
-      title: 'Global SEO Title',
+      name: 'defaultSeoTitle',
+      title: 'SEO Title',
       description: 'A fallback title for pages that do not have their own.',
       type: 'string',
-      group: 'global',
+      group: 'default',
     }),
     defineField({
-      name: 'globalSeoDescription',
-      title: 'Global SEO Description',
+      name: 'defaultSeoDescription',
+      title: 'SEO Description',
       description: 'A fallback description for search engines.',
       type: 'text',
-      group: 'global',
+      group: 'default',
     }),
 
     // === Group: Tim ===
@@ -115,4 +116,4 @@ export const siteSettings = defineType({
       validation: (Rule) => Rule.email().required(),
     }),
   ],
-})
+});
