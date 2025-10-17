@@ -8,9 +8,13 @@ export async function getGlobalContent() {
   return globalContent;
 };
 
-export async function getMetaData() {
-  const query = groq`*[_type == "globalContent"][0]`;
+export async function getMetaData(): Promise<{ defaultSeoTitle: string; defaultSeoDescription: string; }> {
+  const query = groq`*[_type == "globalContent"][0]{
+    defaultSeoTitle,
+    defaultSeoDescription
+  }`;
   
-  const { data: globalContent } = await sanityFetch({ query: query });
-  return globalContent;
+  const { data: metadata } = await sanityFetch({ query });
+  return metadata;
+;
 };
