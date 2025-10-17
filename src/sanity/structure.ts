@@ -34,6 +34,15 @@ export const structure: StructureResolver = (S) => {
         ),
         
         S.listItem()
+        .schemaType('pageAbout')
+        .title('About Page')
+        .child(
+          S.document()
+          .schemaType('pageAbout')
+          .documentId('pageAbout')
+        ),
+        
+        S.listItem()
         .schemaType('pageProjects')
         .title('Projects Page')
         .child(
