@@ -6,7 +6,7 @@ export const pageProjects = defineType({
   title: 'Projects Page',
   type: 'document',
   icon: DocumentIcon,
-  preview: { prepare: (_, ) => ({ title: 'Projects Page' }) },
+  preview: { prepare: () => ({ title: 'Projects Page' }) },
 
   // === Groups / Tabs ===
   groups: [

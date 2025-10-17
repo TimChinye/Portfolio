@@ -6,7 +6,7 @@ export const pageAbout = defineType({
   title: 'About Page',
   type: 'document',
   icon: DocumentIcon,
-  preview: { prepare: (_, ) => ({ title: 'About Page' }) },
+  preview: { prepare: () => ({ title: 'About Page' }) },
 
   // === Groups / Tabs ===
   groups: [

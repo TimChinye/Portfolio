@@ -6,7 +6,7 @@ export const pageContact = defineType({
   title: 'Contact Page',
   type: 'document',
   icon: DocumentIcon,
-  preview: { prepare: (_, ) => ({ title: 'Contact Page' }) },
+  preview: { prepare: () => ({ title: 'Contact Page' }) },
 
   // === Groups / Tabs ===
   groups: [

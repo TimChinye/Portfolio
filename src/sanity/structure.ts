@@ -1,9 +1,6 @@
-import { FolderIcon } from '@sanity/icons';
 import type {StructureResolver} from 'sanity/structure';
 
-const singletonTypes = [ 'globalContent', 'projectContent', 'pageAbout', 'pageContact', 'pageHome', 'pageProjects' ];
-
-export const structure: StructureResolver = (S) =>
+export const structure: StructureResolver = (S) => {
   S.list()
     .title('Editor')
     .items([
@@ -19,7 +16,6 @@ export const structure: StructureResolver = (S) =>
 
       S.listItem()
         .title('All Projects')
-        .icon(FolderIcon)
         .child(
           S.documentList()
             .title('Projects')
@@ -33,26 +29,17 @@ export const structure: StructureResolver = (S) =>
         .title('Home Page')
         .child(
           S.document()
-            .schemaType('pageHome')
-            .documentId('pageHome')
+          .schemaType('pageHome')
+          .documentId('pageHome')
         ),
         
         S.listItem()
         .schemaType('pageProjects')
-        .title('About Page')
-        .child(
-          S.document()
-            .schemaType('pageProjects')
-            .documentId('pageProjects')
-        ),
-        
-        S.listItem()
-        .schemaType('pageAbout')
         .title('Projects Page')
         .child(
           S.document()
-            .schemaType('pageAbout')
-            .documentId('pageAbout')
+          .schemaType('pageProjects')
+          .documentId('pageProjects')
         ),
       
         S.listItem()
@@ -63,7 +50,5 @@ export const structure: StructureResolver = (S) =>
             .schemaType('pageContact')
             .documentId('pageContact')
         ),
-      ...S.documentTypeListItems().filter(
-        (listItem) => !singletonTypes.includes(listItem.getId()!)
-      ),
     ]);
+};

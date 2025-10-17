@@ -1,5 +1,6 @@
+import Image from 'next/image';
 import logoPath from '@/../public/logos/white-portfolio-logo-transparent-bg.svg';
 
 export const PortfolioLogo = () => (
-  <img src={logoPath.src} alt='Portfolio Logo' />
+  <Image src={logoPath} alt='Portfolio Logo' />
 );
