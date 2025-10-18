@@ -49,8 +49,9 @@ export function WipeAnimationOverlay({
               left: 0,
               width: "100%",
               height: "4px",
-              backgroundColor: "#D9D24D",
               zIndex: 9999,
+              pointerEvents: "none",
+              backgroundColor: "#D9D24D",
               top: dividerTop,
               translate: dividerTranslate, // Updated: Apply the dynamic translate value
             }}
