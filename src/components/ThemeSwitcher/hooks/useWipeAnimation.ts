@@ -30,8 +30,8 @@ export function useWipeAnimation({
     if (wipeDirection === null) return;
 
     const isWipeCompleting =
-      (wipeDirection === "top-down" && animationTargetTheme === "light") ||
-      (wipeDirection === "bottom-up" && animationTargetTheme === "dark");
+      (wipeDirection === "top-down" && animationTargetTheme === "dark") ||
+      (wipeDirection === "bottom-up" && animationTargetTheme === "light");
 
     const animation = animate(wipeProgress, isWipeCompleting ? 100 : 0, {
       duration: 1.25,

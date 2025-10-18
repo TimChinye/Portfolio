@@ -33,7 +33,7 @@ export function useThemeWipe() {
     html2canvas(document.body, { useCORS: true })
       .then((canvas) => {
         const newTheme: Theme = resolvedTheme === "dark" ? "light" : "dark";
-        const direction: WipeDirection = resolvedTheme === "dark" ? "top-down" : "bottom-up";
+        const direction: WipeDirection = resolvedTheme === "dark" ? "bottom-up" : "top-down";
 
         setWipeDirection(direction);
         setAnimationTargetTheme(newTheme);
