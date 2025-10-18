@@ -18,6 +18,14 @@ export const globalContent = defineType({
   fields: [
     // === Group: Default ===
     defineField({
+      name: 'siteUrl',
+      title: 'Canonical Site URL',
+      description: 'The primary, canonical URL of the site.',
+      type: 'url',
+      group: 'default',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: 'defaultSeoTitle',
       title: 'SEO Title',
       description: 'A fallback title for pages that do not have their own.',

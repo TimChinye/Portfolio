@@ -1,3 +1,4 @@
+// src/app/(portfolio)/[variant]/page.tsx
 import { getMetaData } from '@/sanity/lib/queries';
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 
@@ -19,7 +20,7 @@ export default async function HomePage({
       
       <h1 className="text-4xl mb-8">Homepage for Variant:</h1>
       <div className={`text-8xl capitalize italic ${newsreader.className}`}>{variant}</div>
-      <p className="text-xl inline-block font-light"> { content?.defaultSeoDescription } </p>
+      <p className="text-xl inline-block font-light whitespace-pre-line"> { content?.defaultSeoDescription } </p>
       <div className="mt-8 p-8 border rounded-lg">
         <h2 className="text-2xl">Hello</h2>
         <p>This text will change color during the animation.</p>
