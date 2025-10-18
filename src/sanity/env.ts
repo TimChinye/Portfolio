@@ -1,3 +1,9 @@
+export function getURL(): string {
+  return assertValue(
+    process.env.NEXT_PUBLIC_URL,
+    'Missing environment variable: NEXT_PUBLIC_URL'
+  )
+}
 export function getDraftModeSecret(): string {
   return assertValue(
     process.env.SANITY_API_VIEWER_TOKEN,

@@ -1,9 +1,10 @@
 import "./globals.css";
 
-import type { Metadata } from 'next'
+import type { Metadata } from 'next';
 
 import { groq } from "next-sanity";
 import { sanityFetch } from "@/sanity/lib/live";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const globalQuery = groq`*[_type == "globalContent"][0]{ defaultSeoTitle }`;
 
@@ -24,7 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
       <body className="h-full" suppressHydrationWarning>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         {children}
+        </ThemeProvider>
         </body>
     </html>
   );

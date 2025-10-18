@@ -4,6 +4,7 @@
  * This configuration is used to for the Sanity Studio that’s mounted on the `\src\app\studio\[[...tool]]\page.tsx` route
  */
 
+import { muxInput } from 'sanity-plugin-mux-input';
 import { codeInput } from '@sanity/code-input';
 import { visionTool } from '@sanity/vision';
 import { defineConfig } from 'sanity';
@@ -13,11 +14,12 @@ import { presentationTool } from 'sanity/presentation';
 import { schema } from './src/sanity/schemaTypes';
 import { structure } from './src/sanity/structure';
 
-import { getApiVersion, getProjectId, getStudioPath, getDataset } from './src/sanity/env';
+import { getApiVersion, getProjectId, getStudioPath, getDataset, getURL } from './src/sanity/env';
 const defaultApiVersion = getApiVersion();
 const projectId = getProjectId();
 const basePath = getStudioPath();
 const dataset = getDataset();
+const origin = getURL();
 
 import { PortfolioLogo } from './src/components/PortfolioLogo';
 
@@ -31,13 +33,14 @@ export default defineConfig({
   schema,
 
   plugins: [
+    muxInput(),
     codeInput(),
     structureTool({ structure }),
     visionTool({ defaultApiVersion }),
     presentationTool({
       previewUrl: {
-        origin: 'http://localhost:3000', // Replace with deployment URL in production
-        preview: '/', // Default preview path
+        origin,
+        preview: '/',
         previewMode: {
           enable: '/api/draft-mode/enable'
         },
