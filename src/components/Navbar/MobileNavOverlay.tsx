@@ -17,7 +17,7 @@ const socialLinks = [
 
 const linkLabelMap = {
   about: 'ABOUT ME',
-  portfolio: 'MY WORK',
+  projects: 'MY WORK',
   contact: 'CONTACT',
 };
 

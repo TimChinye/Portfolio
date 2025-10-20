@@ -10,7 +10,7 @@ import type { NavLayout } from './index';
 
 type NavLinkItem = {
   href: string;
-  key: 'about' | 'portfolio' | 'contact';
+  key: 'about' | 'projects' | 'contact';
   label: string;
 };
 

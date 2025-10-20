@@ -64,11 +64,12 @@ export function HamburgerIcon({ isHovered, isScrambling, links, layout, isOpen, 
         })}
       </button>
 
-      {/* --- Desktop Version (Animated Links) --- */}
+      {/* --- Desktop Version (Animated Links) --- */ console.log('-----') }
       <div className="relative w-8 h-full hidden md:flex items-center justify-center">
         {links.map((link, index) => {
           const currentPage = pathname.split('/').pop() || '';
           const isLinkActive = currentPage === link.key;
+          console.log([currentPage, link.key, isLinkActive]);
           const isHomeActive = !pathname.includes('about') && !pathname.includes('projects') && !pathname.includes('contact');
           const defaultY = startY + index * compactSpacing;
           const absoluteLinkY = positions[index];

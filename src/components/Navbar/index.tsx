@@ -14,9 +14,9 @@ import { MobileNavOverlay } from "./MobileNavOverlay";
 import type { WipeDirection } from "@/components/ThemeSwitcher/types";
 
 const navLinks = [
-  { href: "/about", key: "about", label: "About Me" },
-  { href: "/projects", key: "portfolio", label: "Portfolio" },
-  { href: "/contact", key: "contact", label: "Say Hello" },
+  { href: "/about", key: "about", label: "About" },
+  { href: "/projects", key: "projects", label: "Projects" },
+  { href: "/contact", key: "contact", label: "Contact" },
 ] as const;
 
 export type NavLayout = {
