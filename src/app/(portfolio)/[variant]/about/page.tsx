@@ -18,7 +18,7 @@ export default async function AboutPage({ params }: Props) {
   // TODO: Fetch 'pageAbout' content from Sanity here.
 
   return (
-    <main>
+    <main className="h-full content-center text-center">
       <h1>About Page</h1>
       <p>This page is only visible for the &apos;tim&apos; variant.</p>
       {/* Rest of the page content will go here */}

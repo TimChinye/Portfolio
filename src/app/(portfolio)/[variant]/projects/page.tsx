@@ -11,7 +11,7 @@ export default async function ProjectsPage({ params }: Props) {
   // const projects = await getAllProjects(variant);
 
   return (
-    <main>
+    <main className="h-full content-center text-center">
       <h1>All Projects ({variant})</h1>
       {/* Map over the fetched projects and render them here */}
     </main>

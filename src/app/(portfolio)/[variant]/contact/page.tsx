@@ -10,7 +10,7 @@ export default async function ContactPage({ params }: Props) {
   // TODO: Fetch 'pageContact' content from Sanity.
 
   return (
-    <main>
+    <main className="h-full content-center text-center">
       <h1>Contact Page ({variant})</h1>
       {/* The puzzle-style contact form component will go here */}
     </main>

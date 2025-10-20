@@ -18,8 +18,8 @@ export default async function ProjectPage({ params }: Props) {
   // }
 
   return (
-    <main>
-      <h1>Project: {/* project.title */} ({variant})</h1>
+    <main className="h-full content-center text-center">
+      <h1>Project: project.title ({variant})</h1>
       <p>Slug: {slug}</p>
       {/* The full case study content (Portable Text) will be rendered here */}
     </main>

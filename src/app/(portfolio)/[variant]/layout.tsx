@@ -6,6 +6,7 @@ import { VisualEditing } from "next-sanity/visual-editing";
 import { SanityLive } from "@/sanity/lib/live";
 import { getPageSeo } from '@/sanity/lib/queries';
 import { DisableDraftMode } from "@/components/DisableDraftMode";
+import { PageTransition } from '@/components/PageTransition';
 
 export default async function PageLayout({
   children,
@@ -14,9 +15,9 @@ export default async function PageLayout({
 }>) {
   return (
     <>
-      <div className="h-full">
+      <PageTransition>
         {children}
-      </div>
+      </PageTransition>
 
       <SanityLive />
       
