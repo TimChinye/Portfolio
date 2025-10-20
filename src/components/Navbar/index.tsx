@@ -30,7 +30,6 @@ export function Navbar() {
   const variant = (params.variant as "tim" | "tiger") || "tim";
 
   const [isHovered, setIsHovered] = useState(false);
-  // --- STATE LIFTED UP FROM NavLinks ---
   const [isScrambling, setIsScrambling] = useState(false);
   const [linkLayout, setLinkLayout] = useState<NavLayout>({
     positions: [],
@@ -49,7 +48,7 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="fixed flex items-center p-4 z-10000 gap-4 w-full justify-between md:justify-start">
+      <nav className="fixed flex items-center p-4 z-100000 gap-4 w-full justify-between md:justify-start">
         <Link
           href="/"
           aria-label="Return to homepage"

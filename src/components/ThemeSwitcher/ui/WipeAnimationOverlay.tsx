@@ -29,33 +29,19 @@ export function WipeAnimationOverlay({
           <motion.div
             key="theme-switcher-overlay"
             data-html2canvas-ignore="true"
+            className="fixed top-0 left-0 z-10000 h-screen w-screen pointer-events-none bg-cover bg-center"
             style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              width: "100vw",
-              height: "100vh",
-              zIndex: 9998,
-              pointerEvents: "none",
               backgroundImage: `url(${screenshot})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
               clipPath,
             }}
           />
           <motion.div
             key="theme-switcher-divider"
             data-html2canvas-ignore="true"
+            className="fixed top-0 left-0 z-10000 h-1 w-full pointer-events-none bg-[#D9D24D]"
             style={{
-              position: "fixed",
-              left: 0,
-              width: "100%",
-              height: "4px",
-              zIndex: 9999,
-              pointerEvents: "none",
-              backgroundColor: "#D9D24D",
               top: dividerTop,
-              translate: dividerTranslate, // Updated: Apply the dynamic translate value
+              translate: dividerTranslate,
             }}
           />
         </>

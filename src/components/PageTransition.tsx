@@ -85,7 +85,7 @@ export function PageTransition({ children, isNotFound = false }: PageTransitionP
       {/* --- OVERLAY --- */}
       <motion.div
         key={`${pathname}-transition-overlay`}
-        className="fixed top-0 left-0 w-full h-screen bg-[#D9D24D] z-[99999]"
+        className="fixed top-0 left-0 w-full h-screen bg-[#D9D24D] z-1000"
         {...overlayAnimation}
       />
 

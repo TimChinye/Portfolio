@@ -26,7 +26,7 @@ export function DisableDraftMode() {
 
     return (
         <div
-            className="fixed bg-[black] text-[white] z-[1000] rounded shadow-[0_2px_10px_rgba(0;0;0;0.2)] flex items-center gap-2 px-4 py-2 right-4 bottom-4"
+            className="fixed bg-[black] text-[white] z-100000 rounded shadow-[0_2px_10px_rgba(0;0;0;0.2)] flex items-center gap-2 px-4 py-2 right-4 bottom-4"
         >
             {pending ? (
                 <span>Disabling...</span>

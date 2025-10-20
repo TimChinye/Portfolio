@@ -29,7 +29,7 @@ type MobileNavOverlayProps = {
 export function MobileNavOverlay({ links, onClose }: MobileNavOverlayProps) {
   return (
     <motion.div
-      className="fixed inset-0 bg-[#F0EFEA] text-[#7A7400] z-9999" // z-index is lower than the navbar
+      className="fixed inset-0 bg-[#F0EFEA] text-[#7A7400] z-9999"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
