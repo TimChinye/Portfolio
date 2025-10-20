@@ -26,8 +26,6 @@ export function useThemeWipe({
   );
 
   const handleAnimationComplete = useCallback(() => {
-    console.log("test 1");
-    
     setScreenshot(null);
     setAnimationTargetTheme(null);
     setWipeDirection(null);
@@ -50,8 +48,6 @@ export function useThemeWipe({
       .then((canvas) => {
         const newTheme: Theme = resolvedTheme === "dark" ? "light" : "dark";
         const direction: WipeDirection = resolvedTheme === "dark" ? "bottom-up" : "top-down";
-          
-        console.log("test 2");
 
         setWipeDirection(direction);
         setAnimationTargetTheme(newTheme);
@@ -60,8 +56,6 @@ export function useThemeWipe({
       })
       .catch((error) => {
         console.error("html2canvas failed:", error);
-        
-        console.log("test 3");
 
         setTheme(resolvedTheme === "dark" ? "light" : "dark");
         setScreenshot(null);

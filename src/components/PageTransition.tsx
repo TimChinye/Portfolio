@@ -4,21 +4,9 @@
 import { useRef, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion } from 'motion/react';
+import { getPageIndex, type NavigationDirection } from './Navbar/config';
 
 const transition = { duration: 0.8, ease: [0.76, 0, 0.24, 1] } as const;
-
-const navRoutes = [
-  { path: '/contact', index: 4 },
-  { path: '/projects', index: 2 },
-  { path: '/project', index: 3 },
-  { path: '/about', index: 1 },
-  { path: '/', index: 0 },
-];
-
-const getPageIndex = (path: string): number => {
-  const matchedRoute = navRoutes.find(route => path.startsWith(route.path));
-  return matchedRoute ? matchedRoute.index : -1;
-};
 
 type PageTransitionProps = {
   children: React.ReactNode;
@@ -98,7 +86,7 @@ export function PageTransition({ children, isNotFound = false }: PageTransitionP
       <motion.div
         key={`${pathname}-transition-overlay`}
         className="fixed top-0 left-0 w-full h-screen bg-[#D9D24D] z-[99999]"
-        {...overlayAnimation} // Spread the chosen animation props
+        {...overlayAnimation}
       />
 
       {/* --- PAGE CONTENT --- */}

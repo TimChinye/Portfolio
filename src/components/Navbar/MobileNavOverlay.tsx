@@ -1,7 +1,7 @@
 // src/components/Navbar/MobileNavOverlay.tsx
 "use client";
 
-import Link from 'next/link';
+import { CustomLink as Link } from "@/components/ProgressBar/CustomLink";
 import { motion } from 'motion/react';
 import { Figtree } from "next/font/google";
 

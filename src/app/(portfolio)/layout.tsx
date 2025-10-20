@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import { groq } from "next-sanity";
 import { sanityFetch } from "@/sanity/lib/live";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { ProgressBar } from '@/components/ProgressBar';
 import { Navbar } from '@/components/Navbar';
 
 import Script from 'next/script';
@@ -48,6 +49,7 @@ export default function RootLayout({
       </head>
       <body className={`h-full ${figtree.variable} ${newsreader.variable}`} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ProgressBar />
         <Navbar />
         {children}
         </ThemeProvider>

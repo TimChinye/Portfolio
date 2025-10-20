@@ -1,22 +1,23 @@
 // src/components/Navbar/index.tsx
 "use client";
 
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { AnimatePresence, useMotionValue } from "motion/react";
 
+import { NavLinks } from "./NavLinks";
 import { NavbarLogo } from "./NavbarLogo";
 import { HamburgerIcon } from "./HamburgerIcon";
-import { NavLinks } from "./NavLinks";
-import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { MobileNavOverlay } from "./MobileNavOverlay";
+
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import type { WipeDirection } from "@/components/ThemeSwitcher/types";
+import { CustomLink as Link } from "@/components/ProgressBar/CustomLink";
 
 const navLinks = [
-  { href: "/about", key: "about", label: "About" },
-  { href: "/projects", key: "projects", label: "Projects" },
-  { href: "/contact", key: "contact", label: "Contact" },
+  { href: '/about', key: 'about', label: 'About' },
+  { href: '/projects', key: 'projects', label: 'Projects' },
+  { href: '/contact', key: 'contact', label: 'Contact' },
 ] as const;
 
 export type NavLayout = {

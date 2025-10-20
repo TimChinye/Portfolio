@@ -1,12 +1,14 @@
 // src/components/Navbar/NavLinks.tsx
 "use client";
 
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useLayoutEffect, useRef, createRef } from 'react';
-import { ScramblingText } from './ScramblingText';
+
 import { navLinkTexts } from './NavLinkTexts';
+import { ScramblingText } from './ScramblingText';
 import type { NavLayout } from './index';
+
+import { CustomLink as Link } from "@/components/ProgressBar/CustomLink";
 
 type NavLinkItem = {
   href: string;

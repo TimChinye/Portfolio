@@ -1,7 +1,7 @@
 // src/app/NotFoundClient.tsx
 "use client";
 
-import Link from 'next/link';
+import { CustomLink as Link } from "@/components/ProgressBar/CustomLink";
 
 import { PageTransition } from '@/components/PageTransition';
 import { Navbar } from '@/components/Navbar';
