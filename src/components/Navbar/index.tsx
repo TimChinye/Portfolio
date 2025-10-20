@@ -29,6 +29,8 @@ export function Navbar() {
   const variant = (params.variant as "tim" | "tiger") || "tim";
 
   const [isHovered, setIsHovered] = useState(false);
+  // --- STATE LIFTED UP FROM NavLinks ---
+  const [isScrambling, setIsScrambling] = useState(false);
   const [linkLayout, setLinkLayout] = useState<NavLayout>({
     positions: [],
     navCenterY: 0,
@@ -67,6 +69,7 @@ export function Navbar() {
           >
             <HamburgerIcon
               isHovered={isHovered}
+              isScrambling={isScrambling} // --- Pass state down ---
               links={filteredNavLinks}
               layout={linkLayout}
               isOpen={isMobileMenuOpen}
@@ -75,6 +78,7 @@ export function Navbar() {
             <NavLinks
               links={filteredNavLinks}
               onLayoutChange={setLinkLayout}
+              onScrambleChange={setIsScrambling} // --- Pass setter down ---
             />
           </div>
           <ThemeSwitcher

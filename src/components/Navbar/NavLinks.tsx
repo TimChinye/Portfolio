@@ -17,9 +17,11 @@ type NavLinkItem = {
 type NavLinksProps = {
   links: readonly NavLinkItem[];
   onLayoutChange: (layout: NavLayout) => void;
+  onScrambleChange: (isActive: boolean) => void; // --- Update prop type ---
 };
 
-export function NavLinks({ links, onLayoutChange }: NavLinksProps) {
+export function NavLinks({ links, onLayoutChange, onScrambleChange }: NavLinksProps) {
+  // --- State is removed from here ---
   const pathname = usePathname();
   const navRef = useRef<HTMLElement>(null);
   const linkRefs = useRef(links.map(() => createRef<HTMLAnchorElement>()));
@@ -53,7 +55,6 @@ export function NavLinks({ links, onLayoutChange }: NavLinksProps) {
   }, [links, onLayoutChange]);
 
   return (
-    // Apply className to the nav element
     <nav ref={navRef} className={`peer/nav h-full flex-col justify-between hidden md:flex`}>
       {links.map((link, index) => {
         const isActive = pathname.endsWith(link.href);
@@ -66,7 +67,8 @@ export function NavLinks({ links, onLayoutChange }: NavLinksProps) {
             href={link.href}
             className={`flex items-center text-sm hover:text-[#948D00] hover:dark:text-[#D9D24D] ${isActive ? 'font-bold' : ''}`}
           >
-            <ScramblingText textOptions={textOptions} />
+            {/* --- Pass the onScrambleChange prop through --- */}
+            <ScramblingText textOptions={textOptions} onScrambleChange={onScrambleChange} />
           </Link>
         );
       })}

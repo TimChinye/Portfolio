@@ -20,15 +20,16 @@ export function ThemeToggleButtonIcon({ onClick, progress, initialTheme }: Props
   const sunCircleScale = useTransform(progress, [0, 100], isGoingToDark ? [1, 0.55] : [0.55, 1]);
   const sunCircleRotate = useTransform(progress, [0, 100], isGoingToDark ? [0, 90] : [90, 0]);
 
-  // FIX: Call useTransform at the top level of the component for each ray
-  const sunRayScales = [...Array(6)].map((_, i) =>
-    useTransform(
-      progress,
-      isGoingToDark ? [50 + i * 5, 70 + i * 5] : [30 - i * 5, 50 - i * 5],
-      isGoingToDark ? [0, 1] : [1, 0],
-      { clamp: false } // Added clamp: false to match original logic if values go outside 0-1
-    )
-  );
+  // FIX: Call `useTransform` at the top level for each sun ray.
+  // This satisfies the Rules of Hooks by ensuring a consistent number of hook calls on every render.
+  const sunRayScales = [
+    useTransform(progress, isGoingToDark ? [50, 70] : [30, 50], isGoingToDark ? [0, 1] : [1, 0]),
+    useTransform(progress, isGoingToDark ? [55, 75] : [25, 45], isGoingToDark ? [0, 1] : [1, 0]),
+    useTransform(progress, isGoingToDark ? [60, 80] : [20, 40], isGoingToDark ? [0, 1] : [1, 0]),
+    useTransform(progress, isGoingToDark ? [65, 85] : [15, 35], isGoingToDark ? [0, 1] : [1, 0]),
+    useTransform(progress, isGoingToDark ? [70, 90] : [10, 30], isGoingToDark ? [0, 1] : [1, 0]),
+    useTransform(progress, isGoingToDark ? [75, 95] : [5, 25], isGoingToDark ? [0, 1] : [1, 0]),
+  ];
 
   return (
     <button

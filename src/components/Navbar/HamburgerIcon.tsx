@@ -9,13 +9,14 @@ import type { NavLinkItem } from './config';
 
 type HamburgerIconProps = {
   isHovered: boolean;
+  isScrambling: boolean;
   links: readonly NavLinkItem[];
   layout: NavLayout;
   isOpen: boolean;
   onClick: () => void;
 };
 
-export function HamburgerIcon({ isHovered, links, layout, isOpen, onClick }: HamburgerIconProps) {
+export function HamburgerIcon({ isHovered, isScrambling, links, layout, isOpen, onClick }: HamburgerIconProps) {
   const pathname = usePathname();
   const { positions, navCenterY } = layout;
 
@@ -80,7 +81,7 @@ export function HamburgerIcon({ isHovered, links, layout, isOpen, onClick }: Ham
               key={link.key}
               className="absolute w-full"
               initial={false}
-              animate={{ y: isHovered ? hoverY : defaultY }}
+              animate={{ y: (isScrambling || isHovered) ? hoverY : defaultY }}
               transition={transition}
             >
               <Link
