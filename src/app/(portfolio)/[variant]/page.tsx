@@ -15,8 +15,8 @@ export default async function HomePage({
   const content = await getMetaData();
 
   return (
-    <main className={`mx-auto my-0 w-2xl h-full content-center text-center ${figtree.className}`}>
-      <ThemeSwitcher />
+    <main className={`mx-auto my-0 max-w-2xl h-full content-center text-center ${figtree.className}`}>
+      {/* <ThemeSwitcher /> */}
       
       <h1 className="text-4xl mb-8">Homepage for Variant:</h1>
       <div className={`text-8xl capitalize italic ${newsreader.className}`}>{variant}</div>

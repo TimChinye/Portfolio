@@ -5,10 +5,10 @@ import Link from 'next/link';
 // Next.js automatically passes the correct variant in the URL for the links.
 export default function NotFound() {
   return (
-    <div style={{ textAlign: 'center', padding: '4rem' }}>
+    <div className="text-center p-4" >
       <h1>404 - Page Not Found</h1>
       <p>It seems you've taken a path that doesn't exist... yet.</p>
-      <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+      <div className="flex gap-4 justify-center mt-8">
         <Link href="/">Return to the Homepage</Link>
         <Link href="/projects">View All Projects</Link>
         <Link href="/contact">Contact Me</Link>

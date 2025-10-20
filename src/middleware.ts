@@ -5,7 +5,8 @@ export function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || '';
   
   // Determine the variant
-  const variant = hostname.includes('tigeryt.com') ? 'tiger' : 'tim';
+  let variant = hostname.includes('timchinye.com') ? 'tim' : 'tiger';
+  if (hostname.includes('localhost')) variant = 'tim';
 
   // Rewrite the URL to include the variant, e.g., /projects -> /tim/projects
   const newUrl = new URL(`/${variant}${request.nextUrl.pathname}`, request.url);

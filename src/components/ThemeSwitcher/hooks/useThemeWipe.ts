@@ -1,3 +1,4 @@
+// src/components/ThemeSwitcher/hooks/useThemeWipe.ts
 "use client";
 
 import { useState, useCallback } from "react";
@@ -18,12 +19,14 @@ export function useThemeWipe() {
     setWipeDirection(null);
   }, []);
 
-  const animationStyles = useWipeAnimation({
+  // "Catch" the newly exposed wipeProgress value here
+  const { wipeProgress, ...animationStyles } = useWipeAnimation({
     animationTargetTheme,
     wipeDirection,
     onAnimationComplete: handleAnimationComplete,
   });
 
+  // THIS IS YOUR ORIGINAL, UNTOUCHED LOGIC
   const toggleTheme = useCallback(() => {
     if (screenshot) {
       setAnimationTargetTheme((prev) => (prev === "dark" ? "light" : "dark"));
@@ -47,9 +50,12 @@ export function useThemeWipe() {
       });
   }, [screenshot, resolvedTheme, setTheme]);
 
+  // Pass the new values through
   return {
     toggleTheme,
     screenshot,
     animationStyles,
+    wipeProgress,
+    wipeDirection,
   };
 }

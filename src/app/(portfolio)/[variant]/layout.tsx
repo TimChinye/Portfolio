@@ -19,8 +19,9 @@ export default async function PortfolioLayout({
 
   return (
     <>
-      {children}
-      {/* <footer>{ content?.defaultSeoDescription }</footer> */}
+      <div className="pt-28 md:pt-32">
+        {children}
+      </div>
 
       <SanityLive />
       
@@ -41,8 +42,6 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { variant } = await params;
   const seoData = await getPageSeo('home');
-
-  console.log(seoData?.global);
 
   // --- Primary Logic: Use CMS data if available ---
   if (seoData?.global) {

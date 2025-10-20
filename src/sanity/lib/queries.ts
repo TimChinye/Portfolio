@@ -65,3 +65,20 @@ export async function getPageSeo(page: 'home' | 'about' | 'projects' | 'contact'
 //   const { data } = await sanityFetch({ query });
 //   return data;
 // }
+
+export interface NavbarData {
+  timPfp: {
+    asset: {
+      _ref: string;
+      _type: 'reference';
+    }
+  };
+}
+
+export async function getNavbarData(): Promise<NavbarData | null> {
+  const query = groq`*[_type == "globalContent"][0]{
+    "timPfp": timPfp
+  }`;
+  const data = await client.fetch<NavbarData | null>(query);
+  return data;
+}

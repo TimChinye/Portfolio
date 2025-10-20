@@ -1,6 +1,22 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Add this 'images' configuration block
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.sanity.io',
+        port: '',
+      },
+      // You can also add the placeholder hostname here if you need it for testing
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+        port: '',
+      },
+    ],
+  },
   async redirects() {
     return [
       {

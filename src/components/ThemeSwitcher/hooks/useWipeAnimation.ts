@@ -1,3 +1,4 @@
+// src/components/ThemeSwitcher/hooks/useWipeAnimation.ts
 "use client";
 
 import { useEffect } from "react";
@@ -60,8 +61,8 @@ export function useWipeAnimation({
     wipeDirection === "top-down" ? ["0vh", "100vh"] : ["100vh", "0vh"]
   );
 
-  // NEW LOGIC: Determine the translate value based on the wipe direction.
   const dividerTranslate = wipeDirection === "top-down" ? "0 -100%" : "0 0";
 
-  return { clipPath, dividerTop, dividerTranslate };
+  // THE ONLY CHANGE: Expose the raw progress value for the icon to use.
+  return { clipPath, dividerTop, dividerTranslate, wipeProgress };
 }

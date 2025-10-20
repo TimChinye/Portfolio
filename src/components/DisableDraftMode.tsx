@@ -26,20 +26,7 @@ export function DisableDraftMode() {
 
     return (
         <div
-            style={{
-                position: 'fixed',
-                bottom: '1rem',
-                right: '1rem',
-                padding: '0.5rem 1rem',
-                background: 'black',
-                color: 'white',
-                zIndex: 1000,
-                borderRadius: '4px',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-            }}
+            className="fixed bg-[black] text-[white] z-[1000] rounded shadow-[0_2px_10px_rgba(0;0;0;0.2)] flex items-center gap-2 px-4 py-2 right-4 bottom-4"
         >
             {pending ? (
                 <span>Disabling...</span>
@@ -47,7 +34,8 @@ export function DisableDraftMode() {
                 <button
                     type="button"
                     onClick={handleClick}
-                    style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}
+                    className="text-[white] cursor-pointer border-[none]"
+                    style={{ background: 'none' }}
                 >
                     Disable Draft Mode
                 </button>

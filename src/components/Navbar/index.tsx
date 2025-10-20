@@ -1,0 +1,82 @@
+// src/components/Navbar/index.tsx
+"use client";
+
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useState } from "react";
+import { AnimatePresence } from "motion/react";
+
+import { NavbarLogo } from "./NavbarLogo";
+import { HamburgerIcon } from "./HamburgerIcon";
+import { NavLinks } from "./NavLinks";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
+import { MobileNavOverlay } from "./MobileNavOverlay";
+
+const navLinks = [
+  { href: '/about', key: 'about', label: 'About Me' },
+  { href: '/projects', key: 'portfolio', label: 'Portfolio' },
+  { href: '/contact', key: 'contact', label: 'Say Hello' },
+] as const;
+
+export type NavLayout = {
+  positions: number[];
+  navCenterY: number;
+};
+
+export function Navbar() {
+  const params = useParams();
+  const variant = (params.variant as "tim" | "tiger") || "tim";
+
+  const [isHovered, setIsHovered] = useState(false);
+  const [linkLayout, setLinkLayout] = useState<NavLayout>({ positions: [], navCenterY: 0 });
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const filteredNavLinks =
+    variant === 'tiger'
+      ? navLinks.filter((link) => link.key !== 'about')
+      : navLinks;
+
+  return (
+    <>
+      <nav className="fixed flex items-center p-4 z-10000 gap-4 w-full justify-between md:justify-start">
+        <Link
+          href="/"
+          aria-label="Return to homepage"
+          onClick={() => isMobileMenuOpen && setIsMobileMenuOpen(false)}
+        >
+          <NavbarLogo variant={variant} />
+        </Link>
+        <div className="group flex h-fit items-center gap-4 rounded-full bg-white/80 py-4 px-6 shadow-lg backdrop-blur-sm dark:bg-black/80 flex-row-reverse md:flex-row">
+          <div
+            className="gap-[inherit] items-center"
+            style={{ display: 'inherit' }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            <HamburgerIcon
+              isHovered={isHovered}
+              links={filteredNavLinks}
+              layout={linkLayout}
+              isOpen={isMobileMenuOpen}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            />
+            <NavLinks
+              links={filteredNavLinks}
+              onLayoutChange={setLinkLayout}
+            />
+          </div>
+          <ThemeSwitcher />
+        </div>
+      </nav>
+
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <MobileNavOverlay
+            links={filteredNavLinks}
+            onClose={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+    </>
+  );
+}

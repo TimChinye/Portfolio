@@ -50,6 +50,17 @@ export const globalContent = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'timPfp',
+      title: 'Profile Picture (for Navbar Logo)',
+      description: "The image that appears when hovering over the logo on the 'tim' variant.",
+      type: 'image',
+      group: 'tim',
+      options: {
+        hotspot: true, // Allows for better cropping
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: 'timHeroBio',
       title: 'Homepage Hero Bio (Tim)',
       description: `The short text underneath the name.`,

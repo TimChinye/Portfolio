@@ -1,3 +1,5 @@
+// src/components/ThemeSwitcher/ui/WipeAnimationOverlay.tsx
+// src/components/ThemeSwitcher/ui/WipeAnimationOverlay.tsx
 "use client";
 
 import { motion, AnimatePresence, MotionValue } from "motion/react";
