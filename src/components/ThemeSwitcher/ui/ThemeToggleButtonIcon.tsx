@@ -10,25 +10,38 @@ type Props = {
   initialTheme: Theme;
 };
 
+// Helper function to generate the animation parameters for a single sun ray.
+// This function does NOT call any hooks itself.
+const getRayTransformParams = (isGoingToDark: boolean, index: number): [number[], number[]] => {
+  // Stagger the start of each ray's animation
+  const darkRange: [number, number] = [50 + index * 5, 70 + index * 5];
+  const lightRange: [number, number] = [30 - index * 5, 50 - index * 5];
+
+  const inputRange = isGoingToDark ? darkRange : lightRange;
+  const outputRange: [number, number] = isGoingToDark ? [0, 1] : [1, 0];
+  
+  return [inputRange, outputRange];
+};
+
 export function ThemeToggleButtonIcon({ onClick, progress, initialTheme }: Props) {
-  // Determine animation direction based on the theme when the transition started
   const isGoingToDark = initialTheme === 'light';
 
-  // Create motion values that transform the 0-100 progress into CSS properties
+  // --- Main hooks ---
   const svgRotate = useTransform(progress, [0, 100], isGoingToDark ? [40, 80] : [80, 40]);
   const moonMaskX = useTransform(progress, [0, 100], isGoingToDark ? [0, 15] : [15, 0]);
   const sunCircleScale = useTransform(progress, [0, 100], isGoingToDark ? [1, 0.55] : [0.55, 1]);
   const sunCircleRotate = useTransform(progress, [0, 100], isGoingToDark ? [0, 90] : [90, 0]);
 
-  // FIX: Call `useTransform` at the top level for each sun ray.
-  // This satisfies the Rules of Hooks by ensuring a consistent number of hook calls on every render.
+  // --- Sun Ray Hooks ---
+  // The six hook calls are still at the top level, satisfying the rules.
+  // But the logic is now centralized in the helper function, satisfying DRY.
   const sunRayScales = [
-    useTransform(progress, isGoingToDark ? [50, 70] : [30, 50], isGoingToDark ? [0, 1] : [1, 0]),
-    useTransform(progress, isGoingToDark ? [55, 75] : [25, 45], isGoingToDark ? [0, 1] : [1, 0]),
-    useTransform(progress, isGoingToDark ? [60, 80] : [20, 40], isGoingToDark ? [0, 1] : [1, 0]),
-    useTransform(progress, isGoingToDark ? [65, 85] : [15, 35], isGoingToDark ? [0, 1] : [1, 0]),
-    useTransform(progress, isGoingToDark ? [70, 90] : [10, 30], isGoingToDark ? [0, 1] : [1, 0]),
-    useTransform(progress, isGoingToDark ? [75, 95] : [5, 25], isGoingToDark ? [0, 1] : [1, 0]),
+    useTransform(progress, ...getRayTransformParams(isGoingToDark, 0)),
+    useTransform(progress, ...getRayTransformParams(isGoingToDark, 1)),
+    useTransform(progress, ...getRayTransformParams(isGoingToDark, 2)),
+    useTransform(progress, ...getRayTransformParams(isGoingToDark, 3)),
+    useTransform(progress, ...getRayTransformParams(isGoingToDark, 4)),
+    useTransform(progress, ...getRayTransformParams(isGoingToDark, 5)),
   ];
 
   return (
@@ -40,7 +53,6 @@ export function ThemeToggleButtonIcon({ onClick, progress, initialTheme }: Props
       <motion.svg
         viewBox="0 0 18 18"
         className="h-full w-full overflow-visible  hover:text-[#948D00] hover:dark:text-[#D9D24D]"
-        // Apply the transformed motion value directly to the style
         style={{ rotate: svgRotate }}
       >
         <mask id="moon-mask">
