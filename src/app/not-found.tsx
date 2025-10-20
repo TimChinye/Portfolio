@@ -35,7 +35,7 @@ export default async function NotFound() {
   const buttonText = content?.buttonText || 'Go home';
   
   return (
-    <html lang="en" className="h-full bg-[#F5F5EF]" suppressHydrationWarning>
+    <html lang="en" className="h-full bg-[#F5F5EF] dark:bg-[#2F2F2B]" suppressHydrationWarning>
       <body className={`h-full ${figtree.className}`} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Navbar />
