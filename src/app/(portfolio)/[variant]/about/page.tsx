@@ -1,4 +1,5 @@
 // src/app/(portfolio)/[variant]/about/page.tsx
+// src/app/(portfolio)/[variant]/about/page.tsx
 import { notFound } from 'next/navigation';
 
 type Props = {
@@ -19,7 +20,7 @@ export default async function AboutPage({ params }: Props) {
   return (
     <main>
       <h1>About Page</h1>
-      <p>This page is only visible for the 'tim' variant.</p>
+      <p>This page is only visible for the &apos;tim&apos; variant.</p>
       {/* Rest of the page content will go here */}
     </main>
   );

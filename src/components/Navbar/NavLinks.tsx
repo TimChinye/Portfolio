@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useLayoutEffect, useState, useRef, createRef } from 'react';
+import { useLayoutEffect, useRef, createRef } from 'react';
 import { ScramblingText } from './ScramblingText';
 import { navLinkTexts } from './NavLinkTexts';
 import type { NavLayout } from './index';
@@ -20,8 +20,6 @@ type NavLinksProps = {
 };
 
 export function NavLinks({ links, onLayoutChange }: NavLinksProps) {
-  const [isScramblingActive, setIsScramblingActive] = useState(false);
-  
   const pathname = usePathname();
   const navRef = useRef<HTMLElement>(null);
   const linkRefs = useRef(links.map(() => createRef<HTMLAnchorElement>()));
@@ -68,7 +66,7 @@ export function NavLinks({ links, onLayoutChange }: NavLinksProps) {
             href={link.href}
             className={`flex items-center text-sm hover:text-[#948D00] hover:dark:text-[#D9D24D] ${isActive ? 'font-bold' : ''}`}
           >
-            <ScramblingText textOptions={textOptions} onScrambleChange={setIsScramblingActive} />
+            <ScramblingText textOptions={textOptions} />
           </Link>
         );
       })}

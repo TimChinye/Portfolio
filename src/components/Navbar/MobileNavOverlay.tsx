@@ -3,12 +3,11 @@
 
 import Link from 'next/link';
 import { motion } from 'motion/react';
-import { Figtree, Newsreader } from "next/font/google";
+import { Figtree } from "next/font/google";
 
 import type { NavLinkItem } from './config';
 
 const figtree = Figtree({ subsets: ["latin"] });
-const newsreader = Newsreader({ subsets: ["latin"], style: ['normal'], weight: ['400'] });
 
 const socialLinks = [
   { label: 'CODEPEN', href: 'https://codepen.io' },

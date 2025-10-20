@@ -1,6 +1,4 @@
 // src/app/(portfolio)/[variant]/project/[slug]/page.tsx
-import { notFound } from 'next/navigation';
-
 type Props = {
   params: {
     variant: 'tim' | 'tiger';

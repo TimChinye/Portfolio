@@ -20,12 +20,13 @@ export function ThemeToggleButtonIcon({ onClick, progress, initialTheme }: Props
   const sunCircleScale = useTransform(progress, [0, 100], isGoingToDark ? [1, 0.55] : [0.55, 1]);
   const sunCircleRotate = useTransform(progress, [0, 100], isGoingToDark ? [0, 90] : [90, 0]);
 
-  // Sun rays appear/disappear based on progress and direction
+  // FIX: Call useTransform at the top level of the component for each ray
   const sunRayScales = [...Array(6)].map((_, i) =>
     useTransform(
       progress,
       isGoingToDark ? [50 + i * 5, 70 + i * 5] : [30 - i * 5, 50 - i * 5],
-      isGoingToDark ? [0, 1] : [1, 0]
+      isGoingToDark ? [0, 1] : [1, 0],
+      { clamp: false } // Added clamp: false to match original logic if values go outside 0-1
     )
   );
 

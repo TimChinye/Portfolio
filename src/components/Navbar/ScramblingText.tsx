@@ -7,14 +7,14 @@ const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
 type ScramblingTextProps = {
   textOptions: string[];
-  onScrambleChange: (isActive: boolean) => void;
 };
 
-export function ScramblingText({ textOptions, onScrambleChange }: ScramblingTextProps) {
+export function ScramblingText({ textOptions }: ScramblingTextProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayText, setDisplayText] = useState(textOptions[0]);
   const [isAnimating, setIsAnimating] = useState(false);
   const [targetWidth, setTargetWidth] = useState<number | 'auto'>('auto');
+  const [isScramblingActive, setIsScramblingActive] = useState(false);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -30,7 +30,7 @@ export function ScramblingText({ textOptions, onScrambleChange }: ScramblingText
     if (isAnimating) return;
     
     setIsAnimating(true);
-    onScrambleChange(true);
+    setIsScramblingActive(true);
 
     const nextIndex = (currentIndex + 1) % textOptions.length;
     const targetText = textOptions[nextIndex] || textOptions[0];
@@ -54,7 +54,7 @@ export function ScramblingText({ textOptions, onScrambleChange }: ScramblingText
       if (currentIteration >= targetText.length) {
         if (intervalRef.current) clearInterval(intervalRef.current);
 
-        onScrambleChange(false); 
+        setIsScramblingActive(false); 
         setIsAnimating(false);
       }
       currentIteration += 1 / 3;
@@ -65,10 +65,10 @@ export function ScramblingText({ textOptions, onScrambleChange }: ScramblingText
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
-        onScrambleChange(false);
+        setIsScramblingActive(false);
       }
     };
-  }, [onScrambleChange]);
+  }, [setIsScramblingActive]);
 
   return (
     <motion.div

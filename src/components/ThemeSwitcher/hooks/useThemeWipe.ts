@@ -29,7 +29,7 @@ export function useThemeWipe({
     setScreenshot(null);
     setAnimationTargetTheme(null);
     setWipeDirection(null);
-  }, []);
+  }, [setWipeDirection]);
 
   const { ...animationStyles } = useWipeAnimation({
     animationTargetTheme,
@@ -60,7 +60,7 @@ export function useThemeWipe({
         setTheme(resolvedTheme === "dark" ? "light" : "dark");
         setScreenshot(null);
       });
-  }, [screenshot]);
+  }, [screenshot, resolvedTheme, setTheme, setWipeDirection]);
 
   return {
     toggleTheme,

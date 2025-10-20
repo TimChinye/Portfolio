@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         if (metadata.openGraph) {
           metadata.openGraph.url = global.siteUrl;
         }
-      } catch (error) {
+      } catch {
         console.error("Invalid 'siteUrl' from Sanity, cannot generate canonical link:", global.siteUrl);
       }
     }
