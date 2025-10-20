@@ -66,7 +66,7 @@ export function NavLinks({ links, onLayoutChange }: NavLinksProps) {
             ref={linkRefs.current[index]}
             key={link.key}
             href={link.href}
-            className={`flex items-center text-sm transition-colors hover:text-[#948D00] ${isActive ? 'font-bold' : ''}`}
+            className={`flex items-center text-sm hover:text-[#948D00] hover:dark:text-[#D9D24D] ${isActive ? 'font-bold' : ''}`}
           >
             <ScramblingText textOptions={textOptions} onScrambleChange={setIsScramblingActive} />
           </Link>

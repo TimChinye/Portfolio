@@ -63,5 +63,15 @@ export const structure: StructureResolver = (S) => {
             .documentId('pageContact')
           .title('Contact Page Editor')
         ),
+
+        S.listItem()
+        .schemaType('pageNotFound')
+        .title('404 Page')
+        .child(
+          S.document()
+            .schemaType('pageNotFound')
+            .documentId('pageNotFound')
+            .title('404 Page Editor')
+        ),
     ]);
 };

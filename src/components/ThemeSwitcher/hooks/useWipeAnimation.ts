@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import {
   animate,
   MotionValue,
-  useMotionValue,
   useTransform,
 } from "motion/react";
 import { Theme, WipeDirection } from "../types";
@@ -14,6 +13,7 @@ interface UseWipeAnimationProps {
   animationTargetTheme: Theme | null;
   wipeDirection: WipeDirection | null;
   onAnimationComplete: () => void;
+  wipeProgress: MotionValue<number>;
 }
 
 /**
@@ -24,9 +24,8 @@ export function useWipeAnimation({
   animationTargetTheme,
   wipeDirection,
   onAnimationComplete,
+  wipeProgress,
 }: UseWipeAnimationProps) {
-  const wipeProgress = useMotionValue(0);
-
   useEffect(() => {
     if (wipeDirection === null) return;
 
@@ -63,6 +62,5 @@ export function useWipeAnimation({
 
   const dividerTranslate = wipeDirection === "top-down" ? "0 -100%" : "0 0";
 
-  // THE ONLY CHANGE: Expose the raw progress value for the icon to use.
   return { clipPath, dividerTop, dividerTranslate, wipeProgress };
 }

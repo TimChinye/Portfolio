@@ -86,7 +86,7 @@ export function HamburgerIcon({ isHovered, links, layout, isOpen, onClick }: Ham
               <Link
                 href={link.href}
                 aria-label={link.label}
-                className="block w-full h-full py-1.5 hover:text-[#948D00]"
+                className="block w-full h-full py-1.5 hover:text-[#948D00] hover:dark:text-[#D9D24D]"
               >
                 <motion.span
                   className="block h-0.5 bg-current"

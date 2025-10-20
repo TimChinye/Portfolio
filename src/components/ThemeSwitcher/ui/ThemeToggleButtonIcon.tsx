@@ -15,7 +15,7 @@ export function ThemeToggleButtonIcon({ onClick, progress, initialTheme }: Props
   const isGoingToDark = initialTheme === 'light';
 
   // Create motion values that transform the 0-100 progress into CSS properties
-  const svgRotate = useTransform(progress, [0, 100], isGoingToDark ? [0, 40] : [40, 0]);
+  const svgRotate = useTransform(progress, [0, 100], isGoingToDark ? [40, 80] : [80, 40]);
   const moonMaskX = useTransform(progress, [0, 100], isGoingToDark ? [0, 15] : [15, 0]);
   const sunCircleScale = useTransform(progress, [0, 100], isGoingToDark ? [1, 0.55] : [0.55, 1]);
   const sunCircleRotate = useTransform(progress, [0, 100], isGoingToDark ? [0, 90] : [90, 0]);
@@ -37,7 +37,7 @@ export function ThemeToggleButtonIcon({ onClick, progress, initialTheme }: Props
     >
       <motion.svg
         viewBox="0 0 18 18"
-        className="h-full w-full overflow-visible"
+        className="h-full w-full overflow-visible  hover:text-[#948D00] hover:dark:text-[#D9D24D]"
         // Apply the transformed motion value directly to the style
         style={{ rotate: svgRotate }}
       >

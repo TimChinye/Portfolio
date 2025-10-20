@@ -1,24 +1,33 @@
 // src/components/ThemeSwitcher/index.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { createPortal } from "react-dom";
 import { useTheme } from "next-themes";
 import { useThemeWipe } from "./hooks/useThemeWipe";
 import { ThemeToggleButtonIcon } from "./ui/ThemeToggleButtonIcon";
 import { WipeAnimationOverlay } from "./ui/WipeAnimationOverlay";
-import { Theme } from "./types";
+import { Theme, WipeDirection } from "./types";
+import type { MotionValue } from "motion/react";
 
-export function ThemeSwitcher() {
+type ThemeSwitcherProps = {
+  wipeProgress: MotionValue<number>;
+  wipeDirection: WipeDirection | null;
+  setWipeDirection: Dispatch<SetStateAction<WipeDirection | null>>;
+};
+
+export function ThemeSwitcher({
+  wipeProgress,
+  wipeDirection,
+  setWipeDirection,
+}: ThemeSwitcherProps) {
   const [mounted, setMounted] = useState(false);
   const { resolvedTheme } = useTheme();
-  const {
-    toggleTheme,
-    screenshot,
-    animationStyles,
+  const { toggleTheme, screenshot, animationStyles } = useThemeWipe({
     wipeProgress,
     wipeDirection,
-  } = useThemeWipe();
+    setWipeDirection,
+  });
 
   useEffect(() => {
     setMounted(true);
@@ -28,11 +37,11 @@ export function ThemeSwitcher() {
     return <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700" />;
   }
 
-  // Determine the theme at the start of the animation, or the current theme if idle.
-  // This is crucial for the icon to know its starting point.
   const initialThemeForIcon = wipeDirection
-    ? wipeDirection === 'top-down' ? 'light' : 'dark'
-    : resolvedTheme as Theme;
+    ? wipeDirection === "top-down"
+      ? "light"
+      : "dark"
+    : (resolvedTheme as Theme);
 
   return (
     <>
@@ -41,7 +50,7 @@ export function ThemeSwitcher() {
         progress={wipeProgress}
         initialTheme={initialThemeForIcon}
       />
-      
+
       {createPortal(
         <WipeAnimationOverlay
           screenshot={screenshot}

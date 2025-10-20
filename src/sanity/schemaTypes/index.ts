@@ -8,7 +8,8 @@ import { pageHome } from './singletons/pageHome';
 import { pageAbout } from './singletons/pageAbout';
 import { pageProjects } from './singletons/pageProjects';
 import { pageContact } from './singletons/pageContact';
+import { pageNotFound } from './singletons/pageNotFound';
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [ blockContentType, globalContent, projectContent, pageAbout, pageContact, pageHome, pageProjects ],
+  types: [ blockContentType, globalContent, projectContent, pageAbout, pageContact, pageHome, pageProjects, pageNotFound ],
 }

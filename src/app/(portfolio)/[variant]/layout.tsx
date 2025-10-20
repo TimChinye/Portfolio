@@ -7,19 +7,14 @@ import { SanityLive } from "@/sanity/lib/live";
 import { getPageSeo } from '@/sanity/lib/queries';
 import { DisableDraftMode } from "@/components/DisableDraftMode";
 
-export default async function PortfolioLayout({
+export default async function PageLayout({
   children,
-  // params
 }: Readonly<{
   children: React.ReactNode;
-  // params: Promise<{ variant: 'tim' | 'tiger' }>;
 }>) {
-  // const { variant } = await params; 
-  // const content = await getMetaData(variant);
-
   return (
     <>
-      <div className="pt-28 md:pt-32">
+      <div className="h-full">
         {children}
       </div>
 

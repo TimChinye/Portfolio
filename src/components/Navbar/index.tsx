@@ -4,18 +4,19 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, useMotionValue } from "motion/react";
 
 import { NavbarLogo } from "./NavbarLogo";
 import { HamburgerIcon } from "./HamburgerIcon";
 import { NavLinks } from "./NavLinks";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { MobileNavOverlay } from "./MobileNavOverlay";
+import type { WipeDirection } from "@/components/ThemeSwitcher/types";
 
 const navLinks = [
-  { href: '/about', key: 'about', label: 'About Me' },
-  { href: '/projects', key: 'portfolio', label: 'Portfolio' },
-  { href: '/contact', key: 'contact', label: 'Say Hello' },
+  { href: "/about", key: "about", label: "About Me" },
+  { href: "/projects", key: "portfolio", label: "Portfolio" },
+  { href: "/contact", key: "contact", label: "Say Hello" },
 ] as const;
 
 export type NavLayout = {
@@ -28,12 +29,19 @@ export function Navbar() {
   const variant = (params.variant as "tim" | "tiger") || "tim";
 
   const [isHovered, setIsHovered] = useState(false);
-  const [linkLayout, setLinkLayout] = useState<NavLayout>({ positions: [], navCenterY: 0 });
+  const [linkLayout, setLinkLayout] = useState<NavLayout>({
+    positions: [],
+    navCenterY: 0,
+  });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const wipeProgress = useMotionValue(0);
+  const [wipeDirection, setWipeDirection] = useState<WipeDirection | null>(
+    null
+  );
 
   const filteredNavLinks =
-    variant === 'tiger'
-      ? navLinks.filter((link) => link.key !== 'about')
+    variant === "tiger"
+      ? navLinks.filter((link) => link.key !== "about")
       : navLinks;
 
   return (
@@ -44,12 +52,16 @@ export function Navbar() {
           aria-label="Return to homepage"
           onClick={() => isMobileMenuOpen && setIsMobileMenuOpen(false)}
         >
-          <NavbarLogo variant={variant} />
+          <NavbarLogo
+            variant={variant}
+            wipeProgress={wipeProgress}
+            wipeDirection={wipeDirection}
+          />
         </Link>
         <div className="group flex h-fit items-center gap-4 rounded-full bg-white/80 py-4 px-6 shadow-lg backdrop-blur-sm dark:bg-black/80 flex-row-reverse md:flex-row">
           <div
             className="gap-[inherit] items-center"
-            style={{ display: 'inherit' }}
+            style={{ display: "inherit" }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
@@ -65,7 +77,11 @@ export function Navbar() {
               onLayoutChange={setLinkLayout}
             />
           </div>
-          <ThemeSwitcher />
+          <ThemeSwitcher
+            wipeProgress={wipeProgress}
+            wipeDirection={wipeDirection}
+            setWipeDirection={setWipeDirection}
+          />
         </div>
       </nav>
 

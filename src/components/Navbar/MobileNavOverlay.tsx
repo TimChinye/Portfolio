@@ -36,7 +36,7 @@ export function MobileNavOverlay({ links, onClose }: MobileNavOverlayProps) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
     >
-      <div className="flex flex-col h-full pt-28"> {/* Add padding to push content below the fixed navbar */}
+      <div className="flex flex-col h-full"> {/* Add padding to push content below the fixed navbar */}
         <nav className="flex-grow flex flex-col items-center justify-center">
           <ul className="flex flex-col items-center gap-8">
             {links.map((link) => (
@@ -44,7 +44,7 @@ export function MobileNavOverlay({ links, onClose }: MobileNavOverlayProps) {
                 <Link
                   href={link.href}
                   onClick={onClose}
-                  className={`text-4xl uppercase ${newsreader.className}`}
+                  className={`text-4xl uppercase font-newsreader`}
                 >
                   {linkLabelMap[link.key]}
                 </Link>
