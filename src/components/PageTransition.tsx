@@ -4,7 +4,7 @@
 import { useRef, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion } from 'motion/react';
-import { getPageIndex, type NavigationDirection } from './Navbar/config';
+import { getPageIndex } from './Navbar/config';
 
 const transition = { duration: 0.8, ease: [0.76, 0, 0.24, 1] } as const;
 

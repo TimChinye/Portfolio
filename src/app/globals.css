@@ -4,6 +4,7 @@
 
 @theme {
   --font-newsreader: [var(--font-newsreader)];
+  --font-figtree: [var(--font-figtree)];
   
   @keyframes animloader {
     0% {
@@ -15,9 +16,4 @@
       opacity: 0;
     }
   }
-}
-
-body {
-  font-family: var(--font-figtree);
-  /* transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out; */
 }

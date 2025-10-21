@@ -11,8 +11,8 @@ import { HamburgerIcon } from "./HamburgerIcon";
 import { MobileNavOverlay } from "./MobileNavOverlay";
 
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
+import { CustomLink as Link } from "@/components/CustomLink";
 import type { WipeDirection } from "@/components/ThemeSwitcher/types";
-import { CustomLink as Link } from "@/components/ProgressBar/CustomLink";
 
 const navLinks = [
   { href: '/about', key: 'about', label: 'About' },
@@ -60,9 +60,9 @@ export function Navbar() {
             wipeDirection={wipeDirection}
           />
         </Link>
-        <div className="group flex h-fit items-center gap-4 rounded-full bg-white/80 py-4 px-6 shadow-lg backdrop-blur-sm dark:bg-black/80 flex-row-reverse md:flex-row">
+        <div className="group flex h-fit items-center gap-4 rounded-full bg-white/75 py-4 px-6 shadow-lg backdrop-blur-sm dark:bg-black/75 flex-row">
           <div
-            className="gap-[inherit] items-center"
+            className="gap-[inherit] items-center order-1 md:order-none"
             style={{ display: "inherit" }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}

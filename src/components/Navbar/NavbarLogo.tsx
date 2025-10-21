@@ -3,7 +3,7 @@
 
 import Image from "next/image";
 import { motion, AnimatePresence, useTransform, type MotionValue } from "motion/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import type { WipeDirection } from "@/components/ThemeSwitcher/types";
 
@@ -71,6 +71,11 @@ export function NavbarLogo({
 }: NavbarLogoProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { resolvedTheme } = useTheme();
+  
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const animatedFilter = useTransform(
     wipeProgress,
@@ -82,7 +87,7 @@ export function NavbarLogo({
       : ["invert(1)", "invert(0)"]
   );
 
-  const idleFilter = resolvedTheme === "dark" ? "invert(1)" : "invert(0)";
+  const idleFilter = mounted && resolvedTheme === "dark" ? "invert(1)" : "invert(0)";
 
   return (
     <div

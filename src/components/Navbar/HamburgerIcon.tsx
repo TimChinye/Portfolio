@@ -1,7 +1,7 @@
 // src/components/Navbar/HamburgerIcon.tsx
 "use client";
 
-import { CustomLink as Link } from "@/components/ProgressBar/CustomLink";
+import { CustomLink as Link } from "@/components/CustomLink";
 import { motion } from "motion/react";
 import { usePathname } from 'next/navigation';
 import type { NavLayout } from "./index";
@@ -32,7 +32,7 @@ export function HamburgerIcon({ isHovered, isScrambling, links, layout, isOpen, 
     <>
       {/* --- Mobile Version (Button) --- */}
       <button
-        className="relative w-8 h-8 flex items-center justify-center md:hidden"
+        className="relative w-8 h-8 flex items-center justify-center cursor-pointer hover:text-[#948D00] hover:dark:text-[#D9D24D] md:hidden"
         onClick={onClick}
         aria-label="Toggle menu"
         aria-expanded={isOpen}

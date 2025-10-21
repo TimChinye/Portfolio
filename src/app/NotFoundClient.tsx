@@ -1,11 +1,9 @@
 // src/app/NotFoundClient.tsx
 "use client";
 
-import { CustomLink as Link } from "@/components/ProgressBar/CustomLink";
+import { CustomLink as Link } from "@/components/CustomLink";
 
 import { PageTransition } from '@/components/PageTransition';
-import { Navbar } from '@/components/Navbar';
-import { ThemeProvider } from "@/components/ThemeProvider";
 
 // The type for the fetched Sanity content.
 interface NotFoundPageData {
@@ -19,7 +17,6 @@ type Props = {
   content: NotFoundPageData | null;
 };
 
-// A standalone version of the logo, moved from the original not-found.tsx.
 const BlackLogo = ({ className }: { className?: string }) => (
   <svg width="100%" height="100%" viewBox="0 0 64 67" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className={className}>
     <g transform="matrix(1,0,0,1,0.550186,1.00012)">
@@ -30,33 +27,29 @@ const BlackLogo = ({ className }: { className?: string }) => (
 );
 
 export default function NotFoundClient({ content }: Props) {
-  // Use CMS content with hardcoded fallbacks for reliability.
   const errorCode = content?.errorCode || '404.';
   const errorMessage = content?.errorMessage || 'Woops.';
   const subheading = content?.subheading || "The page you are looking for doesn't exist";
   const buttonText = content?.buttonText || 'Go home';
   
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <Navbar />
-      <PageTransition isNotFound>
-        <main className="h-full flex flex-col justify-center items-center gap-8">
-          <BlackLogo className="size-24" />
-          <h1 className="text-6xl font-bold">
-            <span className="text-black dark:text-white">{errorCode}</span>{' '}
-            <span className="font-light text-black-500 dark:text-black-400">{errorMessage}</span>
-          </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
-            {subheading}
-          </p>
-          <Link 
-            href="/" 
-            className="px-8 py-4 rounded-full border-2 border-black text-black font-bold transition hover:-translate-y-1 dark:border-white dark:text-white"
-          >
-            {buttonText}
-          </Link>
-        </main>
-      </PageTransition>
-    </ThemeProvider>
+    <PageTransition isNotFound>
+      <main className="h-full flex flex-col justify-center items-center gap-8">
+        <BlackLogo className="size-24" />
+        <h1 className="text-6xl font-bold">
+          <span className="text-black dark:text-white">{errorCode}</span>{' '}
+          <span className="font-light text-black-500 dark:text-black-400">{errorMessage}</span>
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-300">
+          {subheading}
+        </p>
+        <Link 
+          href="/" 
+          className="px-8 py-4 rounded-full border-2 border-black text-black font-bold transition hover:-translate-y-1 dark:border-white dark:text-white"
+        >
+          {buttonText}
+        </Link>
+      </main>
+    </PageTransition>
   );
 }

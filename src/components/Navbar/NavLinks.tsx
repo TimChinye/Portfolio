@@ -8,7 +8,7 @@ import { navLinkTexts } from './NavLinkTexts';
 import { ScramblingText } from './ScramblingText';
 import type { NavLayout } from './index';
 
-import { CustomLink as Link } from "@/components/ProgressBar/CustomLink";
+import { CustomLink as Link } from "@/components/CustomLink";
 
 type NavLinkItem = {
   href: string;

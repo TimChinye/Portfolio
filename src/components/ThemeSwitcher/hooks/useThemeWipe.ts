@@ -24,39 +24,61 @@ export function useThemeWipe({
   const [animationTargetTheme, setAnimationTargetTheme] = useState<Theme | null>(
     null
   );
+  // --- ADDED: State to track the theme before the animation started ---
+  const [originalTheme, setOriginalTheme] = useState<Theme | null>(null);
 
   const handleAnimationComplete = useCallback(() => {
+    // This callback handles a successful theme change completion.
     setScreenshot(null);
     setAnimationTargetTheme(null);
     setWipeDirection(null);
+    setOriginalTheme(null); // Clean up state
   }, [setWipeDirection]);
+
+  const handleAnimationReturn = useCallback(() => {
+    // --- MODIFIED: This callback now correctly handles a "cancelled" theme change ---
+    if (originalTheme) {
+      setTheme(originalTheme); // Revert to the theme before the animation started.
+    }
+    setScreenshot(null);
+    setAnimationTargetTheme(null);
+    setWipeDirection(null);
+    setOriginalTheme(null); // Clean up state
+  }, [originalTheme, setTheme, setWipeDirection]);
 
   const { ...animationStyles } = useWipeAnimation({
     animationTargetTheme,
     wipeDirection,
     onAnimationComplete: handleAnimationComplete,
+    onAnimationReturn: handleAnimationReturn,
     wipeProgress,
   });
 
   const toggleTheme = useCallback(() => {
+    // If an animation is already in progress, this click is to "change mind" and reverse it.
     if (screenshot) {
       setAnimationTargetTheme((prev) => (prev === "dark" ? "light" : "dark"));
       return;
     }
 
+    // This is the first click, starting the theme change process.
     html2canvas(document.documentElement, { useCORS: true })
       .then((canvas) => {
-        const newTheme: Theme = resolvedTheme === "dark" ? "light" : "dark";
-        const direction: WipeDirection = resolvedTheme === "dark" ? "bottom-up" : "top-down";
+        const currentTheme = resolvedTheme as Theme;
+        const newTheme: Theme = currentTheme === "dark" ? "light" : "dark";
+        const direction: WipeDirection =
+          currentTheme === "dark" ? "bottom-up" : "top-down";
 
+        // --- MODIFIED: Store the original theme to enable reverting ---
+        setOriginalTheme(currentTheme);
         setWipeDirection(direction);
         setAnimationTargetTheme(newTheme);
         setScreenshot(canvas.toDataURL());
-        setTheme(newTheme);
+        setTheme(newTheme); // Optimistically set the new theme.
       })
       .catch((error) => {
         console.error("html2canvas failed:", error);
-
+        // Fallback: just switch the theme without the animation.
         setTheme(resolvedTheme === "dark" ? "light" : "dark");
         setScreenshot(null);
       });

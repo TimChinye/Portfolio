@@ -13,6 +13,7 @@ interface UseWipeAnimationProps {
   animationTargetTheme: Theme | null;
   wipeDirection: WipeDirection | null;
   onAnimationComplete: () => void;
+  onAnimationReturn: () => void;
   wipeProgress: MotionValue<number>;
 }
 
@@ -24,6 +25,7 @@ export function useWipeAnimation({
   animationTargetTheme,
   wipeDirection,
   onAnimationComplete,
+  onAnimationReturn,
   wipeProgress,
 }: UseWipeAnimationProps) {
   useEffect(() => {
@@ -40,12 +42,15 @@ export function useWipeAnimation({
         if (isWipeCompleting) {
           onAnimationComplete();
           wipeProgress.set(0);
+        } else {
+          onAnimationReturn();
+          // wipeProgress.set(0);
         }
       },
     });
 
     return () => animation.stop();
-  }, [animationTargetTheme, wipeDirection, wipeProgress, onAnimationComplete]);
+  }, [animationTargetTheme, wipeDirection, wipeProgress, onAnimationComplete, onAnimationReturn]);
 
   // Transform the progress value into CSS properties.
   const clipPath = useTransform(wipeProgress, (p) =>
