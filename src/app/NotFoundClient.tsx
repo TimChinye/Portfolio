@@ -1,6 +1,7 @@
 // src/app/NotFoundClient.tsx
 "use client";
 
+import { CursorTrail } from "@/components/CursorTrail";
 import { CustomLink as Link } from "@/components/CustomLink";
 
 import { PageTransition } from '@/components/PageTransition';
@@ -34,6 +35,7 @@ export default function NotFoundClient({ content }: Props) {
   
   return (
     <PageTransition isNotFound>
+      <CursorTrail />
       <main className="h-full flex flex-col justify-center items-center gap-8">
         <BlackLogo className="size-24" />
         <h1 className="text-6xl font-bold">
@@ -45,7 +47,7 @@ export default function NotFoundClient({ content }: Props) {
         </p>
         <Link 
           href="/" 
-          className="px-8 py-4 rounded-full border-2 border-black text-black font-bold transition hover:-translate-y-1 dark:border-white dark:text-white"
+          className="inline-block px-8 py-4 rounded-full border-2 border-black text-black font-bold transition hover:-translate-y-1 dark:border-white dark:text-white relative before:absolute before:content-[''] before:-inset-4"
         >
           {buttonText}
         </Link>
