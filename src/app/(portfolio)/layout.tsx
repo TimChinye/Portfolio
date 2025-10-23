@@ -1,7 +1,24 @@
-export default function PortfolioLayout({
-  children,
-}: {
+"use client";
+
+import { useParams } from 'next/navigation';
+
+import { ContactSection } from '@/components/ContactSection';
+import { Footer } from '@/components/Footer';
+
+export default async function PortfolioLayout({
+  children
+}: Readonly<{
   children: React.ReactNode;
-}) {
-  return <>{children}</>;
+}>) {
+  const { variant } = useParams() as { variant: 'tim' | 'tiger' };
+  console.log(variant);
+
+  return (
+    <>
+      {children}
+
+      <ContactSection variant={variant} />
+      <Footer variant={variant} />
+    </>
+  );
 }

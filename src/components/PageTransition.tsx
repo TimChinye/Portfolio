@@ -81,7 +81,7 @@ export function PageTransition({ children, isNotFound = false }: PageTransitionP
   else overlayAnimation = initialLoadAnimation;
   
   return (
-    <div className="h-full">
+    <div className="min-h-full">
       {/* --- OVERLAY --- */}
       <motion.div
         key={`${pathname}-transition-overlay`}
@@ -93,7 +93,7 @@ export function PageTransition({ children, isNotFound = false }: PageTransitionP
       <AnimatePresence mode="wait">
         <motion.div
           key={pathname}
-          className="h-full"
+          className="min-h-screen"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, transition: { delay: 0.4, duration: 0 } }}
           exit={{ opacity: 0, transition: { duration: 0 } }}

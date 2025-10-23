@@ -40,9 +40,9 @@ export function NavLinks({ links, onLayoutChange, onScrambleChange }: NavLinksPr
         const rect = ref.current.getBoundingClientRect();
         return (rect.top - navTop) + (rect.height / 2);
       });
-
+      
       const navCenterY = navRect.height / 2;
-
+      
       onLayoutChange({ positions, navCenterY });
     };
 

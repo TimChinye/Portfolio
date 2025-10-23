@@ -2,7 +2,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { AnimatePresence, useMotionValue } from "motion/react";
 
 import { NavLinks } from "./NavLinks";
@@ -27,7 +27,7 @@ export type NavLayout = {
 
 export function Navbar() {
   const params = useParams();
-  const variant = (params.variant as "tim" | "tiger") || "tim";
+  const variant = params.variant as 'tim' | 'tiger';
 
   const [isHovered, setIsHovered] = useState(false);
   const [isScrambling, setIsScrambling] = useState(false);
@@ -41,10 +41,11 @@ export function Navbar() {
     null
   );
 
-  const filteredNavLinks =
-    variant === "tiger"
+  const filteredNavLinks = useMemo(() => {
+    return variant === "tiger"
       ? navLinks.filter((link) => link.key !== "about")
       : navLinks;
+  }, [variant]);
 
   return (
     <>

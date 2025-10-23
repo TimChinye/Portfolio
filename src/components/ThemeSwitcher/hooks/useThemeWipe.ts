@@ -62,7 +62,13 @@ export function useThemeWipe({
     }
 
     // This is the first click, starting the theme change process.
-    html2canvas(document.documentElement, { useCORS: true })
+    html2canvas(document.documentElement, {
+      useCORS: true,
+      y: window.scrollY,
+      width: window.innerWidth,
+      height: window.innerHeight,
+      scale: Math.max(window.devicePixelRatio, 2)
+    })
       .then((canvas) => {
         const currentTheme = resolvedTheme as Theme;
         const newTheme: Theme = currentTheme === "dark" ? "light" : "dark";

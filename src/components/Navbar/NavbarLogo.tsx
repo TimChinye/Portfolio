@@ -59,7 +59,7 @@ const TigerHoverEffect = () => (
 );
 
 type NavbarLogoProps = {
-  variant: "tim" | "tiger";
+  variant: 'tim' | 'tiger';
   wipeProgress: MotionValue<number>;
   wipeDirection: WipeDirection | null;
 };
@@ -97,7 +97,7 @@ export function NavbarLogo({
     >
       <AnimatePresence>
         {isHovered &&
-          (variant === "tim" ? <TimHoverEffect /> : <TigerHoverEffect />)}
+          (variant === 'tim' ? <TimHoverEffect /> : <TigerHoverEffect />)}
       </AnimatePresence>
 
       <motion.div

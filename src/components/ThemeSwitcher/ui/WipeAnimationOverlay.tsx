@@ -29,7 +29,7 @@ export function WipeAnimationOverlay({
           <motion.div
             key="theme-switcher-overlay"
             data-html2canvas-ignore="true"
-            className="fixed top-0 left-0 z-10000 h-screen w-screen pointer-events-none bg-cover bg-center"
+            className="fixed top-0 left-0 z-10000 h-screen w-full pointer-events-none bg-cover"
             style={{
               backgroundImage: `url(${screenshot})`,
               clipPath,

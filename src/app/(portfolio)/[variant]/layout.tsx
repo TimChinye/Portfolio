@@ -9,7 +9,7 @@ import { DisableDraftMode } from "@/components/DisableDraftMode";
 import { PageTransition } from '@/components/PageTransition';
 
 export default async function PageLayout({
-  children,
+  children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
