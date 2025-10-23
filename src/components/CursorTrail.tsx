@@ -126,12 +126,15 @@ export function CursorTrail() {
   const baseClasses = "fixed rounded-full pointer-events-none";
   const zIndexClass = "z-1";
 
+  const circleSolid = true;
+  const circleType = [['border-2 border-black', 'bg-black dark:bg-white'], ['bg-[#2f2f2b]', 'border-2 border-[#2f2f2b] dark:border-white']]
+
   return (
     <div id="cursorWrapper">
       {/* Main Circle */}
       <motion.div
         id="mainCursor"
-        className={`w-9 h-9 ${baseClasses} -translate-x-1/2 -translate-y-1/2 ${zIndexClass} bg-black [#cursorWrapper:has(+_main_>_a:hover)_&]:mix-blend-difference [#cursorWrapper:has(+_main_>_a:hover)_&]:invert dark:invert`}
+        className={`w-9 h-9 ${baseClasses} -translate-x-1/2 -translate-y-1/2 ${zIndexClass} ${circleType[+circleSolid][0]} [#cursorWrapper:has(+_main_>_a:hover)_&]:mix-blend-difference [#cursorWrapper:has(+_main_>_a:hover)_&]:invert dark:invert`}
         style={{
           left: smoothMouseX,
           top: smoothMouseY,
@@ -145,7 +148,7 @@ export function CursorTrail() {
       {trail.map((circle) => (
         <motion.div
           key={circle.id}
-          className={`${baseClasses} ${zIndexClass} border-2 border-black dark:border-white`}
+          className={`${baseClasses} ${zIndexClass} ${circleType[+circleSolid][1]}`}
           style={{
             width: circle.size,
             height: circle.size,

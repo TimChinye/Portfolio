@@ -47,7 +47,7 @@ export default function NotFoundClient({ content }: Props) {
         </p>
         <Link 
           href="/" 
-          className="inline-block px-8 py-4 rounded-full border-2 border-black text-black font-bold transition hover:-translate-y-1 dark:border-white dark:text-white relative before:absolute before:content-[''] before:-inset-4"
+          className="inline-block px-8 py-4 rounded-full border-2 border-black text-black font-bold transition hover:-translate-y-1 dark:border-white dark:text-white relative before:absolute before:content-[''] before:-inset-4 hover:before:-bottom-5"
         >
           {buttonText}
         </Link>
