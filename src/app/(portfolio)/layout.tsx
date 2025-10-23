@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { ContactSection } from '@/components/ContactSection';
 import { Footer } from '@/components/Footer';
 
-export default async function PortfolioLayout({
+export default function PortfolioLayout({
   children
 }: Readonly<{
   children: React.ReactNode;

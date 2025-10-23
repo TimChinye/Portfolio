@@ -97,7 +97,7 @@ export function CursorTrail() {
       
       setTrail(prev => [...prev, newCircle]);
     }
-  }, [mouseX, mouseY, trail.length, removeCircle]);
+  }, [mouseX, mouseY]);
 
   useEffect(() => {
     setMounted(true);
