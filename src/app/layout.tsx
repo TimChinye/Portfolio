@@ -30,7 +30,7 @@ export default function RootLayout({
     <html lang="en" className={`h-full bg-[#F5F5EF] dark:bg-[#2F2F2B] text-[#2F2F2B] dark:text-[#F5F5EF] ${figtree.variable} ${newsreader.variable} font-figtree`} suppressHydrationWarning>
       <head>
         <Script src="https://unpkg.com/@tailwindcss/browser" strategy="beforeInteractive" />
-        <style type="text/tailwindcss">{` @import "tailwindcss" ; @custom-variant dark (&:where(.dark, .dark *)) `}</style>
+        <style type="text/tailwindcss">{` @custom-variant dark (&:where(.dark, .dark *)) `}</style>
       </head>
       <body className="h-full" suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

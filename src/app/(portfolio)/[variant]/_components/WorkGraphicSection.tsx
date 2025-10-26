@@ -1,11 +1,11 @@
-// src/app/(portfolio)/[variant]/_components/WorkGraphicSection.tsx
-// NEW FILE
+import { Section, type SectionProps } from '@/components/Section';
 
-export const WorkGraphicSection = () => {
+type WorkGraphicSectionProps = SectionProps<'section'>;
+
+export const WorkGraphicSection = (props: WorkGraphicSectionProps) => {
   return (
-    <section className="h-screen bg-green-200 dark:bg-green-900 flex items-center justify-center">
-      <h2 className="text-4xl text-white">&quot;Let us work&quot; Full-screen Graphic</h2>
-      {/* TODO: Implement the animated graphic component here */}
-    </section>
+    <Section {...props}>
+      <h2 className="text-4xl">&quot;Let us work&quot; Full-screen Graphic</h2>
+    </Section>
   );
 };

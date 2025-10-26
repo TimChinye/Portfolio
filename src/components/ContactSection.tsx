@@ -1,27 +1,27 @@
-// src/components/shared/ContactSection.tsx
+// src/components/ContactSection.tsx
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { Section, type SectionProps } from '@/components/Section';
 
-export const ContactSection = ({
-  variant
-}: {
+type ContactSectionProps = {
   variant: 'tim' | 'tiger';
-}) => {
+} & SectionProps<'section'>;
+
+export const ContactSection = ({ variant, ...props }: ContactSectionProps) => {
   const pathname = usePathname();
   const isOnContactPage = pathname.includes('/contact');
 
   return (
-    // pt-32 -top-32
-    <section className="py-32 -top-32 relative bg-[#ececaa] dark:bg-[#4d4121] text-[#00000080] dark:text-[#FFFFFF80] rounded-t-[6rem] md:rounded-t-[8rem]">
-      <div className="p-4 w-full">
+    <Section {...props}>
+      <div className="w-full">
         <h1 className="text-center text-[12.925rem] leading-[100%] font-newsreader">
           Let&apos;s build something
           <br />
           <b><i>great</i></b>, together
           <span className="relative inline-block">
             !
-            <span className="absolute bottom-[0.25em] left-1/2 -translate-x-1/2 size-[0.15em] rounded-full bg-[#D9D24D]"></span>
+            <span className="absolute bottom-[0.1em] left-1/2 -translate-x-1/2 size-[0.2em] rounded-full bg-[#D9D24D]"></span>
           </span>
         </h1>
       </div>
@@ -37,6 +37,6 @@ export const ContactSection = ({
         <h3 className="text-2xl font-semibold">Get in Touch</h3>
         <p>Contact info for: <span className="capitalize font-bold">{variant}</span></p>
       </div>
-    </section>
+    </Section>
   );
 };

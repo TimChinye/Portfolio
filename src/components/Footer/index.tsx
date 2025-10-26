@@ -1,7 +1,8 @@
+// src/components/Footer/index.tsx
 import { getFooterData } from '@/sanity/lib/queries';
-import { Section } from '@/components/Section';
 import { navLinks } from '../Navbar/config';
 import { InteractiveLinkList } from '../InteractiveLinkList';
+import { Section, type SectionProps } from '@/components/Section';
 
 const specialCharMap: Record<string, (key: string | number) => React.ReactNode> = {
   '→': (key) => <span key={key} className="align-text-bottom">&nbsp;→&nbsp;</span>,
@@ -31,30 +32,26 @@ const fallbackSocialLinks = [
   { label: 'LINKEDIN', href: '#' },
 ];
 
-export const Footer = async ({
-  variant
-}: {
+type FooterProps = {
   variant: 'tim' | 'tiger';
-}) => {
+} & SectionProps<'footer'>;
+
+export const Footer = async ({ variant, ...props }: FooterProps) => {
   const data = await getFooterData(variant);
   const copyrightText = data?.copyrightText || 'ALL RIGHTS RESERVED → COPYRIGHT 2025 © ₮';
   const socialLinks = data?.socialLinks?.length ? data.socialLinks : fallbackSocialLinks;
-
   const links = variant === "tiger"
   ? navLinks.filter((link) => link.key !== "about")
   : navLinks;
-  
   const filteredNavLinks = links.map(link => ({
     ...link,
     label: navLinkLabelMap[link.key],
   }));
-
+  
   return (
-    // pt-32 -top-32
-    <footer className="pt-32 -top-64 relative h-screen bg-[#E9E8B1] dark:bg-[#2F2F2B] text-[#7A751A] dark:text-[#F5F5EF] font-medium rounded-t-[6rem] md:rounded-t-[8rem] content-center text-center">
+    <Section {...props}>
       <div className="w-fit inline-flex flex-col gap-8">
           <h2 className="text-[#2F2F2B] dark:text-[#D9D24D] font-newsreader text-5xl md:text-8xl">
-            {/* Don't be a stranger */}
             Don&apos;t&nbsp;
             <b>be</b>&nbsp;
             <i>a</i>&nbsp;
@@ -75,6 +72,6 @@ export const Footer = async ({
           {renderTextWithSpecialFormatting(copyrightText)}
         </p>
       </div>
-    </footer>
+    </Section>
   );
 };

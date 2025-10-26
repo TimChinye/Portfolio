@@ -1,108 +1,107 @@
 // src/components/Section.tsx
 "use client";
 
-import { useRef } from 'react';
-import { motion, useScroll, useTransform, MotionStyle } from 'motion/react';
-import type { ReactNode } from 'react';
+import { ElementType, ReactNode, useRef, useMemo } from 'react';
+import { motion, useScroll, useTransform, cubicBezier, type UseScrollOptions } from 'motion/react';
+import clsx from 'clsx';
 
-type AppearanceMode =
-  | 'default' // Simple fade-in
-  | 'parallax'
-  | 'zoom-up'
-  | 'zoom-down'
-  | 'reverse-parallax'
-  | 'radius-increase'
-  | 'radius-decrease';
+// Type for cubic-bezier easing values: [x1, y1, x2, y2]
+type Easing = [number, number, number, number];
 
-type SectionProps = {
-  children: ReactNode;
+export type SectionProps<T extends ElementType = 'section'> = {
+  as?: T;
+  children?: ReactNode;
   className?: string;
-  bgColor: string;
-  darkBgColor: string;
-  textColor: string;
-  darkTextColor: string;
-  appearanceMode?: AppearanceMode;
-  isFirst?: boolean;
-  index: number;
-};
+  bgColor?: string;
+  darkBgColor?: string;
+  textColor?: string;
+  darkTextColor?: string;
+  // --- NEW PROPS ---
+  wrapperBgColor?: string;
+  darkWrapperBgColor?: string;
+  // ---
+  animationRange?: UseScrollOptions['offset'];
+  yRange?: [string, string];
+  scaleRange?: [number, number];
+  radiusRange?: [string, string];
+  ease?: Easing;
 
-export const Section = ({
+} & Omit<React.ComponentPropsWithoutRef<T>, 'children'>;
+
+export function Section<T extends ElementType = 'section'>({
+  as,
   children,
-  className = '',
-  bgColor,
-  darkBgColor,
-  textColor,
-  darkTextColor,
-  appearanceMode = 'default',
-  isFirst = false,
-  index,
-}: SectionProps) => {
+  className,
+  bgColor = 'bg-white',
+  darkBgColor = 'bg-black',
+  textColor = 'text-black',
+  darkTextColor = 'text-white',
+  // --- DESTRUCTURE NEW PROPS ---
+  wrapperBgColor,
+  darkWrapperBgColor,
+  // ---
+  animationRange = ["start end", "start 0.5"],
+  yRange,
+  scaleRange,
+  radiusRange,
+  ease,
+  ...props
+}: SectionProps<T>) {
+  const Component = as || 'section';
+  const MotionComponent = motion.create(Component);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Animate based on the section's visibility in the viewport.
-  // "start end" means the animation starts when the top of the section hits the bottom of the viewport.
-  // "end start" means the animation ends when the bottom of the section leaves the top of the viewport.
-  // This gives us a full scroll-through animation duration.
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start end", "end start"],
+    offset: animationRange,
   });
 
-  // --- Animation Transforms for the ENTIRE SECTION ---
-  const yParallax = useTransform(scrollYProgress, [0, 1], ['-20%', '0%']);
-  const yReverseParallax = useTransform(scrollYProgress, [0, 1], ['20%', '0%']);
-  const scaleZoomUp = useTransform(scrollYProgress, [0, 1], [0.85, 1]);
-  const scaleZoomDown = useTransform(scrollYProgress, [0, 1], [1.15, 1]);
-  const opacity = useTransform(scrollYProgress, [0, 0.25], [0, 1]); // Fade in effect for all
-  const radiusIncrease = useTransform(scrollYProgress, [0, 0.5], ['32rem', '6rem']); // Animate radius faster
-  const radiusDecrease = useTransform(scrollYProgress, [0, 0.5], ['6rem', '32rem']);
+  const easingFunction = useMemo(() => (ease ? cubicBezier(...ease) : undefined), [ease]);
+
+  const motionStyle: any = {};
   
-  // --- Style Logic ---
-  const motionStyle: MotionStyle = { opacity };
-
-  switch (appearanceMode) {
-    case 'parallax':
-      motionStyle.y = yParallax;
-      break;
-    case 'reverse-parallax':
-      motionStyle.y = yReverseParallax;
-      break;
-    case 'zoom-up':
-      motionStyle.scale = scaleZoomUp;
-      break;
-    case 'zoom-down':
-      motionStyle.scale = scaleZoomDown;
-      break;
-    case 'radius-increase':
-      motionStyle.borderTopLeftRadius = radiusIncrease;
-      motionStyle.borderTopRightRadius = radiusIncrease;
-      // Note: Framer Motion doesn't support responsive styles directly in the `style` prop.
-      // The initial responsive radius is set by Tailwind, and this animation will override it during scroll.
-      break;
-    case 'radius-decrease':
-      motionStyle.borderTopLeftRadius = radiusDecrease;
-      motionStyle.borderTopRightRadius = radiusDecrease;
-      break;
+  if (yRange) motionStyle.y = useTransform(scrollYProgress, [0, 1], yRange, { ease: easingFunction });
+  if (scaleRange) motionStyle.scale = useTransform(scrollYProgress, [0, 1], scaleRange, { ease: easingFunction });
+  if (radiusRange) {
+    const borderRadius = useTransform(scrollYProgress, [0, 1], radiusRange, { ease: easingFunction });
+    motionStyle.borderTopLeftRadius = borderRadius;
+    motionStyle.borderTopRightRadius = borderRadius;
   }
+  
+  const hasAnimation = yRange || scaleRange || radiusRange;
 
-  const sectionClasses = `
-    w-full min-h-screen relative flex flex-col items-center justify-center p-8 md:p-16
-    ${bgColor} ${darkBgColor}
-    ${textColor} ${darkTextColor}
-    ${isFirst ? '' : '-mt-32 rounded-t-[6rem] md:rounded-t-[8rem]'}
-    ${className}
-  `;
+  const wrapperClassName = clsx('relative', {
+      'overflow-x-clip': scaleRange && scaleRange[0] > 1
+  });
+  
+  const computedClassName = clsx(
+    'py-32 py-32 sticky top-0 h-screen w-full',
+    bgColor,
+    darkBgColor && `dark:${darkBgColor}`,
+    textColor,
+    darkTextColor && `dark:${darkTextColor}`,
+    !radiusRange && 'rounded-t-[8rem]',
+    className
+  );
 
   return (
-    <motion.section
+    <div
       ref={ref}
-      className={sectionClasses}
-      style={{ ...motionStyle, zIndex: index }}
+      // --- CORRECT IMPLEMENTATION: Use the new props for the wrapper ---
+      className={clsx(
+        wrapperClassName,
+        'mt-[-8rem]',
+        wrapperBgColor, // Use the passed-in wrapper color
+        darkWrapperBgColor && `dark:${darkWrapperBgColor}`
+      )}
     >
-      {/* The inner div no longer needs animation styles. It's just a content container now. */}
-      <div className="w-full h-full flex flex-col items-center justify-center">
+      <MotionComponent
+        style={hasAnimation ? motionStyle : undefined}
+        className={computedClassName}
+        {...props}
+      >
         {children}
-      </div>
-    </motion.section>
+      </MotionComponent>
+    </div>
   );
-};
+}
