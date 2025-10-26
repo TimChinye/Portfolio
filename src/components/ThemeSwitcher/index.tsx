@@ -42,9 +42,7 @@ export function ThemeSwitcher({
   }
 
   const initialThemeForIcon = wipeDirection
-    ? wipeDirection === "top-down"
-      ? "light"
-      : "dark"
+    ? wipeDirection === "top-down" ? "light" : "dark"
     : (resolvedTheme as Theme);
 
   return (
@@ -59,6 +57,7 @@ export function ThemeSwitcher({
         <WipeAnimationOverlay
           screenshot={screenshot}
           animationStyles={animationStyles}
+          wipeDirection={wipeDirection}
         />,
         document.body
       )}

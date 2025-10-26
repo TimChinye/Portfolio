@@ -21,10 +21,7 @@ export function useThemeWipe({
 }: UseThemeWipeProps) {
   const { setTheme, resolvedTheme } = useTheme();
   const [screenshot, setScreenshot] = useState<string | null>(null);
-  const [animationTargetTheme, setAnimationTargetTheme] = useState<Theme | null>(
-    null
-  );
-  // --- ADDED: State to track the theme before the animation started ---
+  const [animationTargetTheme, setAnimationTargetTheme] = useState<Theme | null>(null);
   const [originalTheme, setOriginalTheme] = useState<Theme | null>(null);
 
   const handleAnimationComplete = useCallback(() => {
@@ -36,7 +33,6 @@ export function useThemeWipe({
   }, [setWipeDirection]);
 
   const handleAnimationReturn = useCallback(() => {
-    // --- MODIFIED: This callback now correctly handles a "cancelled" theme change ---
     if (originalTheme) {
       setTheme(originalTheme); // Revert to the theme before the animation started.
     }

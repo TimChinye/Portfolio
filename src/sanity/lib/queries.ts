@@ -2,6 +2,21 @@ import { groq } from 'next-sanity';
 import { client } from './client';
 import { sanityFetch } from "@/sanity/lib/live";
 
+interface MetaData {
+  defaultSeoTitle: string;
+  defaultSeoDescription: string;
+}
+
+export async function getMetaData(): Promise<MetaData | null> {
+  const query = groq`*[_type == "globalContent"][0]{
+    defaultSeoTitle,
+    defaultSeoDescription
+  }`;
+  
+  const { data: metadata } = await sanityFetch({ query });
+  return metadata;
+};
+
 interface GlobalSeoData {
   siteName: string;
   siteUrl: string;
@@ -16,23 +31,6 @@ interface CombinedSeoData {
   global: GlobalSeoData;
   page: PageSeoData;
 }
-
-interface NotFoundPageData {
-  errorCode: string;
-  errorMessage: string;
-  subheading: string;
-  buttonText: string;
-}
-
-export async function getMetaData(): Promise<{ defaultSeoTitle: string; defaultSeoDescription: string; }> {
-  const query = groq`*[_type == "globalContent"][0]{
-    defaultSeoTitle,
-    defaultSeoDescription
-  }`;
-  
-  const { data: metadata } = await sanityFetch({ query });
-  return metadata;
-};
 
 /**
  * Fetches SEO data for a specific page using the reliable base client.
@@ -53,6 +51,13 @@ export async function getPageSeo(page: 'home' | 'about' | 'projects' | 'contact'
   
   const data = await client.fetch<CombinedSeoData | null>(query);
   return data;
+}
+
+interface NotFoundPageData {
+  errorCode: string;
+  errorMessage: string;
+  subheading: string;
+  buttonText: string;
 }
 
 export async function getNotFoundPage(): Promise<NotFoundPageData | null> {
@@ -80,6 +85,22 @@ export async function getNavbarData(): Promise<NavbarData | null> {
   const query = groq`*[_type == "globalContent"][0]{
     "timPfp": timPfp
   }`;
+  const { data } = await sanityFetch({ query });
+  return data;
+}
+
+interface FooterData {
+  copyrightText: string;
+  socialLinks: { label: string; href: string }[];
+}
+
+export async function getFooterData(variant: 'tim' | 'tiger'): Promise<FooterData | null> {
+  const socialLinksField = variant === 'tim' ? 'timFooterLinks' : 'tigerFooterLinks';
+  const query = groq`*[_type == "globalContent"][0]{
+    copyrightText,
+    "socialLinks": ${socialLinksField}[]{'label': label, 'href': url}
+  }`;
+
   const { data } = await sanityFetch({ query });
   return data;
 }

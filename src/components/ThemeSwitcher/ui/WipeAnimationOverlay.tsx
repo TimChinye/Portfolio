@@ -1,27 +1,25 @@
-// src/components/ThemeSwitcher/ui/WipeAnimationOverlay.tsx
-// src/components/ThemeSwitcher/ui/WipeAnimationOverlay.tsx
 "use client";
 
 import { motion, AnimatePresence, MotionValue } from "motion/react";
+import type { WipeDirection } from "../types";
 
 interface WipeAnimationOverlayProps {
   screenshot: string | null;
+  wipeDirection: WipeDirection | null;
   animationStyles: {
     clipPath: MotionValue<string>;
     dividerTop: MotionValue<string>;
-    dividerTranslate: string; // Updated: Added prop for translation
+    dividerTranslate: string;
   };
 }
 
-/**
- * Renders the animated overlay and divider.
- * NOTE: All styles are kept inline in the `style` prop to ensure
- * the `motion` library can animate them without interference.
- */
 export function WipeAnimationOverlay({
   screenshot,
-  animationStyles: { clipPath, dividerTop, dividerTranslate }, // Updated: Destructure new prop
+  wipeDirection,
+  animationStyles: { clipPath, dividerTop, dividerTranslate },
 }: WipeAnimationOverlayProps) {
+  const bgPosition = wipeDirection === "top-down" ? "bg-top" : "bg-bottom";
+
   return (
     <AnimatePresence>
       {screenshot && (
@@ -29,7 +27,7 @@ export function WipeAnimationOverlay({
           <motion.div
             key="theme-switcher-overlay"
             data-html2canvas-ignore="true"
-            className="fixed top-0 left-0 z-10000 h-screen w-full pointer-events-none bg-cover"
+            className={`fixed top-0 left-0 z-10000 h-screen w-full pointer-events-none bg-size-[100%_100%]`}
             style={{
               backgroundImage: `url(${screenshot})`,
               clipPath,

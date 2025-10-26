@@ -39,6 +39,15 @@ export const globalContent = defineType({
       type: 'text',
       group: 'default',
     }),
+    defineField({
+      name: 'copyrightText',
+      title: 'Copyright Text',
+      description: 'The text for the footer copyright notice. The logo is added automatically.',
+      type: 'string',
+      group: 'default',
+      initialValue: 'ALL RIGHTS RESERVED → COPYRIGHT 2025 ©',
+      validation: (Rule) => Rule.required(),
+    }),
 
     // === Group: Tim ===
     defineField({
@@ -84,13 +93,19 @@ export const globalContent = defineType({
     }),
     defineField({
       name: 'timFooterLinks',
-      title: 'Footer Links (Tim)',
+      title: 'Footer Social Links (Tim)',
       type: 'array',
       group: 'tim',
       of: [{type: 'object', fields: [
         defineField({name: 'label', type: 'string', title: 'Label', validation: (Rule) => Rule.required()}),
         defineField({name: 'url', type: 'string', title: 'URL', validation: (Rule) => Rule.required()}),
-      ]}],
+      ],
+      preview: {
+        select: {
+          title: 'label',
+          subtitle: 'url',
+        },
+      }}],
     }),
     defineField({
       name: 'timContactEmail',
@@ -119,13 +134,19 @@ export const globalContent = defineType({
     }),
     defineField({
       name: 'tigerFooterLinks',
-      title: 'Footer Links (Tiger)',
+      title: 'Footer Social Links (Tiger)',
       type: 'array',
       group: 'tiger',
       of: [{type: 'object', fields: [
         defineField({name: 'label', type: 'string', title: 'Label', validation: (Rule) => Rule.required()}),
         defineField({name: 'url', type: 'string', title: 'URL', validation: (Rule) => Rule.required()}),
-      ]}],
+      ],
+      preview: {
+        select: {
+          title: 'label',
+          subtitle: 'url',
+        },
+      }}],
     }),
     defineField({
       name: 'tigerContactEmail',

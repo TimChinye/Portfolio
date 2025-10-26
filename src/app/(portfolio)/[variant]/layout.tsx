@@ -8,15 +8,25 @@ import { getPageSeo } from '@/sanity/lib/queries';
 import { DisableDraftMode } from "@/components/DisableDraftMode";
 import { PageTransition } from '@/components/PageTransition';
 
+import { ContactSection } from '@/components/ContactSection';
+import { Footer } from '@/components/Footer';
+
 export default async function PageLayout({
-  children
+  children,
+  params
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ variant: 'tim' | 'tiger' }>;
 }>) {
+  const { variant } = await params;
+  
   return (
     <>
       <PageTransition>
         {children}
+
+        <ContactSection variant={variant} />
+        <Footer variant={variant} />
       </PageTransition>
 
       <SanityLive />
