@@ -1,9 +1,10 @@
+// src/app/(portfolio)/[variant]/_components/HeroSection/index.tsx
 import { getMetaData } from '@/sanity/lib/queries';
 import { BubbleCursor } from './BubbleCursor';
 import { Section, type SectionProps } from '@/components/Section';
 
 type HeroSectionProps = {
-  variant: 'tim' | 'tiger';
+  variant?: 'tim' | 'tiger';
 } & SectionProps<'section'>;
 
 export async function HeroSection({ variant, ...props }: HeroSectionProps) {

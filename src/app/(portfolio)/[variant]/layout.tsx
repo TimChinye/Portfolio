@@ -1,4 +1,3 @@
-// src/app/(portfolio)/[variant]/layout.tsx
 import React, { Children, isValidElement, ReactElement, ReactNode } from 'react';
 import { Metadata } from 'next';
 import { draftMode } from "next/headers";
@@ -51,17 +50,16 @@ const getLastSectionProps = (children: ReactNode): SectionStyleProps => {
   return {};
 };
 
-
 export default async function PageLayout({
   children,
   params
 }: Readonly<{
   children: React.ReactNode;
-  params: Promise<{ variant: 'tim' | 'tiger' }>;
+  params: Promise<{ variant: string }>;
 }>) {
-  const { variant } = await params;
+  const resolvedParams = await params;
+  const variant = resolvedParams.variant as 'tim' | 'tiger';
   
-  // Dynamically determine the background colors from the last child of the page
   const lastPageSectionProps = getLastSectionProps(children);
 
   return (
@@ -76,9 +74,8 @@ export default async function PageLayout({
             darkBgColor="dark:bg-[#4D4121]"
             textColor="text-[#00000080]"
             darkTextColor="text-[#FFFFFF80]"
-            // Wrapper gets background from the last page section
-            wrapperBgColor={lastPageSectionProps.bgColor || "bg-gray-300"} // Fallback color
-            darkWrapperBgColor={lastPageSectionProps.darkBgColor || "dark:bg-gray-700"} // Fallback color
+            wrapperBgColor={lastPageSectionProps.bgColor || "bg-[#F5F5EF]"} // Fallback color
+            darkWrapperBgColor={lastPageSectionProps.darkBgColor || "dark:bg-[#2F2F2B]"} // Fallback color
             yRange={['16rem', '0rem']}
             variant={variant}
           />
@@ -89,7 +86,6 @@ export default async function PageLayout({
             darkBgColor="dark:bg-[#2F2F2B]"
             textColor="text-[#7A751A]"
             darkTextColor="text-[#F5F5EF]"
-            // Wrapper gets background from the ContactSection
             wrapperBgColor="bg-[#ECECAA]"
             darkWrapperBgColor="dark:bg-[#4D4121]"
             scaleRange={[1.25, 1]}
@@ -114,11 +110,11 @@ export default async function PageLayout({
 
 
 type Props = {
-  params: { variant: 'tim' | 'tiger' };
+  params: { variant: string };
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { variant } = await params;
+  const variant = params.variant as 'tim' | 'tiger';
   const seoData = await getPageSeo('home');
 
   // --- Primary Logic: Use CMS data if available ---
@@ -165,7 +161,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return metadata;
   }
 
-  // --- HARDCODED FALLBACK LOGIC ---
   // This block runs ONLY if the CMS data (`seoData.global`) could not be fetched.
   console.warn("CMS data not found. Using hardcoded metadata fallback.");
 

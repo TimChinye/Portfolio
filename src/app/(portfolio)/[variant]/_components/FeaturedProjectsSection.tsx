@@ -1,7 +1,8 @@
+// src/app/(portfolio)/[variant]/_components/FeaturedProjectsSection.tsx
 import { Section, type SectionProps } from '@/components/Section';
 
 type FeaturedProjectsSectionProps = {
-  variant: 'tim' | 'tiger';
+  variant?: 'tim' | 'tiger';
 } & SectionProps<'section'>;
 
 export const FeaturedProjectsSection = async ({ variant, ...props }: FeaturedProjectsSectionProps) => {

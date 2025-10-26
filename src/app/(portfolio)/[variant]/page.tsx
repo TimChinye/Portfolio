@@ -1,17 +1,8 @@
-// src/app/(portfolio)/[variant]/page.tsx
 import { HeroSection } from './_components/HeroSection';
 import { AboutSection } from './_components/AboutSection';
 import { StretchyGraphicSection } from './_components/StretchyGraphicSection';
 import { FeaturedProjectsSection } from './_components/FeaturedProjectsSection';
 import { WorkGraphicSection } from './_components/WorkGraphicSection';
-import { SectionProps } from '@/components/Section';
-import { ComponentType } from 'react';
-
-type SectionConfig = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Component: ComponentType<any>;
-  props: Omit<SectionProps, 'wrapperBgColor' | 'darkWrapperBgColor'> & { variant?: 'tim' | 'tiger', key: string };
-};
 
 export default async function HomePage({
   params
@@ -20,7 +11,7 @@ export default async function HomePage({
 }>) {
   const { variant } = await params;
 
-  const sections: SectionConfig[] = [
+  const sections = [
     {
       Component: HeroSection,
       props: {
@@ -78,7 +69,7 @@ export default async function HomePage({
         className: "flex items-center justify-center text-black dark:text-white",
       }
     }
-  ];
+  ] as const;
 
   return (
     <>
@@ -90,7 +81,9 @@ export default async function HomePage({
           darkWrapperBgColor: previousSection ? previousSection.props.darkBgColor : "dark:bg-[#2F2F2B]",
         };
         
-        return <Component {...props} {...wrapperProps} />;
+        const { key, ...restOfProps } = props;
+        
+        return <Component key={key} {...restOfProps} {...wrapperProps} />;
       })}
     </>
   );

@@ -2,11 +2,10 @@
 "use client";
 
 import { ElementType, ReactNode, useRef, useMemo } from 'react';
-import { motion, useScroll, useTransform, cubicBezier, type UseScrollOptions } from 'motion/react';
+import { motion, useScroll, useTransform, cubicBezier, type UseScrollOptions, type MotionStyle } from 'motion/react';
 import clsx from 'clsx';
 
-// Type for cubic-bezier easing values: [x1, y1, x2, y2]
-type Easing = [number, number, number, number];
+type Easing = readonly [number, number, number, number];
 
 export type SectionProps<T extends ElementType = 'section'> = {
   as?: T;
@@ -16,14 +15,12 @@ export type SectionProps<T extends ElementType = 'section'> = {
   darkBgColor?: string;
   textColor?: string;
   darkTextColor?: string;
-  // --- NEW PROPS ---
   wrapperBgColor?: string;
   darkWrapperBgColor?: string;
-  // ---
   animationRange?: UseScrollOptions['offset'];
-  yRange?: [string, string];
-  scaleRange?: [number, number];
-  radiusRange?: [string, string];
+  yRange?: readonly [string, string];
+  scaleRange?: readonly [number, number];
+  radiusRange?: readonly [string, string];
   ease?: Easing;
 
 } & Omit<React.ComponentPropsWithoutRef<T>, 'children'>;
@@ -36,10 +33,8 @@ export function Section<T extends ElementType = 'section'>({
   darkBgColor = 'bg-black',
   textColor = 'text-black',
   darkTextColor = 'text-white',
-  // --- DESTRUCTURE NEW PROPS ---
   wrapperBgColor,
   darkWrapperBgColor,
-  // ---
   animationRange = ["start end", "start 0.5"],
   yRange,
   scaleRange,
@@ -58,12 +53,15 @@ export function Section<T extends ElementType = 'section'>({
 
   const easingFunction = useMemo(() => (ease ? cubicBezier(...ease) : undefined), [ease]);
 
-  const motionStyle: any = {};
-  
-  if (yRange) motionStyle.y = useTransform(scrollYProgress, [0, 1], yRange, { ease: easingFunction });
-  if (scaleRange) motionStyle.scale = useTransform(scrollYProgress, [0, 1], scaleRange, { ease: easingFunction });
+  const y = useTransform(scrollYProgress, [0, 1], yRange ? [...yRange] : ['0rem', '0rem'], { ease: easingFunction });
+  const scale = useTransform(scrollYProgress, [0, 1], scaleRange ? [...scaleRange] : [1, 1], { ease: easingFunction });
+  const borderRadius = useTransform(scrollYProgress, [0, 1], radiusRange ? [...radiusRange] : ['8rem', '8rem'], { ease: easingFunction });
+
+  const motionStyle: MotionStyle = {};
+
+  if (yRange) motionStyle.y = y;
+  if (scaleRange) motionStyle.scale = scale;
   if (radiusRange) {
-    const borderRadius = useTransform(scrollYProgress, [0, 1], radiusRange, { ease: easingFunction });
     motionStyle.borderTopLeftRadius = borderRadius;
     motionStyle.borderTopRightRadius = borderRadius;
   }
@@ -87,11 +85,10 @@ export function Section<T extends ElementType = 'section'>({
   return (
     <div
       ref={ref}
-      // --- CORRECT IMPLEMENTATION: Use the new props for the wrapper ---
       className={clsx(
         wrapperClassName,
         'mt-[-8rem]',
-        wrapperBgColor, // Use the passed-in wrapper color
+        wrapperBgColor,
         darkWrapperBgColor && `dark:${darkWrapperBgColor}`
       )}
     >

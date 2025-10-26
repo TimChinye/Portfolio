@@ -1,7 +1,8 @@
+// src/app/(portfolio)/[variant]/_components/AboutSection.tsx
 import { Section, type SectionProps } from '@/components/Section';
 
 type AboutSectionProps = {
-  variant: 'tim' | 'tiger';
+  variant?: 'tim' | 'tiger';
 } & SectionProps<'section'>;
 
 export const AboutSection = async ({ variant, ...props }: AboutSectionProps) => {

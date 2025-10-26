@@ -15,11 +15,8 @@ interface WipeAnimationOverlayProps {
 
 export function WipeAnimationOverlay({
   screenshot,
-  wipeDirection,
   animationStyles: { clipPath, dividerTop, dividerTranslate },
 }: WipeAnimationOverlayProps) {
-  const bgPosition = wipeDirection === "top-down" ? "bg-top" : "bg-bottom";
-
   return (
     <AnimatePresence>
       {screenshot && (
