@@ -19,30 +19,35 @@ const settings = {
   '--rotate' : '0deg',
 };
 
+// Function to check for support
+const supportsSvgBackdropFilter = () => {
+    if (window.CSS.supports('-webkit-app-region', 'drag')) return true;
+
+    const ua = navigator.userAgent.toLowerCase();
+    const isSafari = ua.includes('safari') && !ua.includes('chrome');
+    const isFirefox = ua.includes('firefox');
+
+    if (isSafari || isFirefox) return false;
+
+    return true;
+}
+
 export function BubbleCursor() {
   const [isMounted, setIsMounted] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
   const [viewportHeight, setViewportHeight] = useState(0);
   const isTracking = useRef(false);
 
-  // Function to check for support
-  const supportsSvgBackdropFilter = () => {
-      if (window.CSS.supports('-webkit-app-region', 'drag')) return true;
-
-      const ua = navigator.userAgent.toLowerCase();
-      const isSafari = ua.includes('safari') && !ua.includes('chrome');
-      const isFirefox = ua.includes('firefox');
-
-      if (isSafari || isFirefox) return false;
-
-      return true;
-  }
+  const mouseX = useMotionValue(typeof window !== 'undefined' ? window.innerWidth / 2 : 0);
+  const mouseY = useMotionValue(typeof window !== 'undefined' ? window.innerHeight / 8 : 0);
 
   // Effect to run on the client-side only
   useEffect(() => {
     setIsMounted(true);
 
     setIsSupported(supportsSvgBackdropFilter());
+    mouseX.set(window.innerWidth / 2);
+    mouseY.set(window.innerHeight / 8);
 
     // Get the viewport height and set up a listener for window resize
     setViewportHeight(window.innerHeight);
@@ -51,9 +56,6 @@ export function BubbleCursor() {
     
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  const mouseX = useMotionValue(-200);
-  const mouseY = useMotionValue(-200);
 
   const springConfig = { damping: 25, stiffness: 200, mass: 0.5 };
   const smoothMouseX = useSpring(mouseX, springConfig);

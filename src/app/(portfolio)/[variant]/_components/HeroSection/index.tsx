@@ -1,7 +1,7 @@
 // src/app/(portfolio)/[variant]/_components/HeroSection/index.tsx
 import { getMetaData } from '@/sanity/lib/queries';
 import { BubbleCursor } from './BubbleCursor';
-import { Section, type SectionProps } from '@/components/Section';
+import { Section, type SectionProps } from '@/components/ui/Section';
 
 type HeroSectionProps = {
   variant?: 'tim' | 'tiger';
@@ -12,9 +12,9 @@ export async function HeroSection({ variant, ...props }: HeroSectionProps) {
 
   return (
     <Section {...props}>
-      <main className='h-full w-full flex items-center justify-center text-center'>
+      <main className='text-center'>
         <BubbleCursor />
-        <div className={`inline-block max-w-2xl px-4`}>
+        <div className={`inline-block max-w-2xl mx-4 px-4`}>
           <h1 className="text-4xl mb-8">Homepage for Variant:</h1>
           <div className={`text-8xl capitalize italic font-newsreader`}>{variant}</div>
           <p className="text-xl inline-block font-light whitespace-pre-line"> { content?.defaultSeoDescription } </p>

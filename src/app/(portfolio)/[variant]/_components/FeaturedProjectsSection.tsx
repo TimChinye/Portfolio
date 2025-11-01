@@ -1,5 +1,5 @@
 // src/app/(portfolio)/[variant]/_components/FeaturedProjectsSection.tsx
-import { Section, type SectionProps } from '@/components/Section';
+import { Section, type SectionProps } from '@/components/ui/Section';
 
 type FeaturedProjectsSectionProps = {
   variant?: 'tim' | 'tiger';

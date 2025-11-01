@@ -1,5 +1,5 @@
 import { HeroSection } from './_components/HeroSection';
-import { AboutSection } from './_components/AboutSection';
+import { AboutSection } from './_components/AboutSection/AboutSection';
 import { StretchyGraphicSection } from './_components/StretchyGraphicSection';
 import { FeaturedProjectsSection } from './_components/FeaturedProjectsSection';
 import { WorkGraphicSection } from './_components/WorkGraphicSection';
@@ -16,9 +16,9 @@ export default async function HomePage({
       Component: HeroSection,
       props: {
         key: 'hero',
-        bgColor: "bg-slate-100",
-        darkBgColor: "dark:bg-slate-900",
-        className: "py-0",
+        bgColor: "bg-[#F5F5EF]",
+        darkBgColor: "bg-[#1A1A17]",
+        className: "content-center",
         variant: variant,
       }
     },
@@ -27,10 +27,12 @@ export default async function HomePage({
       props: {
         key: 'about',
         as: "section",
-        bgColor: "bg-zinc-200",
-        darkBgColor: "dark:bg-zinc-800",
+        textColor: "text-[#F5F5EF]",
+        darkTextColor: "text-[#2F2F2B]",
+        bgColor: "bg-[#2F2F2B]",
+        darkBgColor: "bg-[#b2b250]",
         scaleRange: [0.75, 1],
-        yRange: ['16rem', '0rem'],
+        yRange: ['8rem', '0rem'],
         className: "flex items-center justify-center",
         variant: variant,
       }
@@ -40,10 +42,10 @@ export default async function HomePage({
       props: {
         key: 'stretchy',
         as: "section",
-        bgColor: "bg-neutral-300",
-        darkBgColor: "dark:bg-neutral-700",
-        radiusRange: ['32rem', '8rem'],
-        className: "flex items-center justify-center text-black dark:text-white",
+        bgColor: "bg-[#E4E191]",
+        darkBgColor: "bg-[#2F2F2B]",
+        className: "flex items-center justify-center max-md:z-1 max-md:rounded-[8rem] text-black dark:text-white",
+        variant: variant,
       }
     },
     {
@@ -51,10 +53,9 @@ export default async function HomePage({
       props: {
         key: 'featured',
         as: "section",
-        bgColor: "bg-stone-200",
-        darkBgColor: "dark:bg-stone-800",
-        yRange: ['-8rem', '0rem'],
-        className: "flex items-center justify-center",
+        bgColor: "bg-[#EFEFD0]",
+        darkBgColor: "bg-[#1A1A17]",
+        className: "flex items-center justify-center max-md:rounded-none",
         variant: variant,
       }
     },
@@ -63,27 +64,20 @@ export default async function HomePage({
       props: {
         key: 'work',
         as: "section",
-        bgColor: "bg-gray-300",
-        darkBgColor: "dark:bg-gray-700",
-        yRange: ['16rem', '0rem'],
+        bgColor: "bg-[#DEDA71]",
+        darkBgColor: "bg-[#2F2F2B]",
         className: "flex items-center justify-center text-black dark:text-white",
+        variant: variant,
       }
     }
   ] as const;
 
   return (
     <>
-      {sections.map(({ Component, props }, index) => {
-        const previousSection = index > 0 ? sections[index - 1] : null;
-
-        const wrapperProps = {
-          wrapperBgColor: previousSection ? previousSection.props.bgColor : "bg-[#F5F5EF]",
-          darkWrapperBgColor: previousSection ? previousSection.props.darkBgColor : "dark:bg-[#2F2F2B]",
-        };
-        
+      {sections.map(({ Component, props }) => {
         const { key, ...restOfProps } = props;
         
-        return <Component key={key} {...restOfProps} {...wrapperProps} />;
+        return <Component key={key} {...restOfProps} />;
       })}
     </>
   );

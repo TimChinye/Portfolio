@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@layer base, components, utilities;
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -11,9 +13,60 @@
       transform: scale(0);
       opacity: 1;
     }
+    
     100% {
       transform: scale(1);
       opacity: 0;
     }
   }
+
+  /* --- CORRECT V4.0 ANIMATION DEFINITION --- */
+  @keyframes marquee {
+    from { transform: translateX(0%); }
+    to { transform: translateX(-100%); }
+  }
+}
+
+/* --- CORRECT V4.0 UTILITY DEFINITION --- */
+@layer utilities {
+  .container-size {
+    container-type: size;
+  }
+  
+  .animate-marquee {
+    animation: marquee var(--marquee-duration, 25s) linear infinite;
+    /* Smoothly transition the animation-duration property itself */
+    transition: animation-duration 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  
+  /* On hover of the parent .group, change the CSS variable the animation uses */
+  .group:hover .animate-marquee {
+    animation-duration: var(--marquee-slowed-duration, 90s);
+  }
+}
+
+.wavy-text-container {
+  display: inline-flex;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.wavy-letter {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 2px;
+
+  font-variation-settings: 'wght' 300;
+  
+  transition: 
+    font-variation-settings 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    background-size 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.3s ease-in-out;
+  transition-delay: calc(var(--index) * 0.04s);
+}
+
+.wavy-text-container:hover .wavy-letter {
+  font-variation-settings: 'wght' 900;
+  background-size: 100% 2px;
 }

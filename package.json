@@ -20,13 +20,13 @@
     "clsx": "^2.1.1",
     "html2canvas-pro": "^1.5.12",
     "motion": "^12.23.24",
-    "next": "15.5.5",
+    "next": "16.0.1",
     "next-mdx-remote": "^5.0.0",
     "next-sanity": "^11.4.2",
     "next-themes": "^0.4.6",
     "postcss": "^8.5.6",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
     "sanity": "^4.10.3",
     "sanity-plugin-mux-input": "^2.9.1",
     "tailwindcss": "^4.1.14"
@@ -34,11 +34,15 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
     "dotenv-cli": "^10.0.0",
     "eslint": "^9",
-    "eslint-config-next": "15.5.5",
+    "eslint-config-next": "16.0.1",
     "typescript": "^5"
+  },
+  "overrides": {
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2"
   }
 }

@@ -1,4 +1,4 @@
-import { Section, type SectionProps } from '@/components/Section';
+import { Section, type SectionProps } from '@/components/ui/Section';
 
 type WorkGraphicSectionProps = SectionProps<'section'>;
 

@@ -21,11 +21,11 @@ const basePath = getStudioPath();
 const dataset = getDataset();
 const origin = getURL();
 
-import { PortfolioLogo } from './src/components/PortfolioLogo';
+import { SanityStudioIcon } from '@/components/ui/SanityStudioIcon';
 
 export default defineConfig({
   title: 'Portfolio\'s Content Editor',
-  icon: PortfolioLogo,
+  icon: SanityStudioIcon,
   
   projectId,
   basePath,
