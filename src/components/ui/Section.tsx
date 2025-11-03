@@ -5,18 +5,28 @@ import { motion, useScroll, useTransform, cubicBezier, type UseScrollOptions, ty
 import { useTheme } from "next-themes";
 import clsx from 'clsx';
 
+// Helper function to parse color values from Tailwind class strings
+const parseColorClasses = (classes: string) => {
+  // Regex to find the color inside bg-[...] and dark:bg-[...]
+  const lightMatch = classes.match(/bg-\[([^\]]+)\]/);
+  const darkMatch = classes.match(/dark:bg-\[([^\]]+)\]/);
+
+  // Use the found color, or fallback to the light color if no dark variant is specified
+  const lightColor = lightMatch ? lightMatch[1] : '';
+  const darkColor = darkMatch ? darkMatch[1] : lightColor;
+  
+  return { light: lightColor, dark: darkColor };
+};
+
+
 type Easing = readonly [number, number, number, number];
 
 export type SectionProps<T extends ElementType = 'section'> = {
   as?: T;
   children?: ReactNode | ((progress: MotionValue<number>) => ReactNode);
   className?: string;
-  bgColor?: string;
-  darkBgColor?: string;
-  textColor?: string;
-  darkTextColor?: string;
-  wrapperBgColor?: string;
-  darkWrapperBgColor?: string;
+  bgClasses?: string;
+  textClasses?: string;
   animationRange?: UseScrollOptions['offset'];
   scopeAnimationToContent?: boolean;
   fillScreen?: boolean;
@@ -30,12 +40,8 @@ export function Section<T extends ElementType = 'section'>({
   as,
   children,
   className,
-  bgColor = 'bg-[#F5F5EF]',
-  darkBgColor = 'bg-[#2F2F2B]',
-  wrapperBgColor,
-  darkWrapperBgColor,
-  textColor = 'text-[#2F2F2B]',
-  darkTextColor = 'text-[#F5F5EF]',
+  bgClasses = 'bg-[#F5F5EF] dark:bg-[#2F2F2B]',
+  textClasses = 'text-[#2F2F2B] dark:text-[#F5F5EF]',
   animationRange = ["start end", "start 0.5"],
   scopeAnimationToContent = false,
   fillScreen = true,
@@ -52,13 +58,12 @@ export function Section<T extends ElementType = 'section'>({
 
   const [offsets, setOffsets] = useState([0, 1]);
   
-  const { resolvedTheme } = useTheme();
-  
   const [isFirstElement, setFirstElement] = useState<boolean>(false);
   const [isLastElement, setLastElement] = useState<boolean>(false);
+  
+  const { resolvedTheme } = useTheme();
 
-  const [lightWrapperBg, setLightWrapperBg] = useState(wrapperBgColor);
-  const [darkWrapperBg, setDarkWrapperBg] = useState(darkWrapperBgColor);
+  const bgColors = useMemo(() => parseColorClasses(bgClasses), [bgClasses]);
 
   useEffect(() => {
     if (wrapperRef.current?.parentElement) {
@@ -74,17 +79,15 @@ export function Section<T extends ElementType = 'section'>({
 
       if (!isFirst) {
         const prevSibling = children[currentIndex - 1];
-        const prevInnerElement = prevSibling?.children[0];
+        const prevInnerElement = prevSibling?.children[0] as HTMLElement;
 
         if (prevInnerElement) {
-          const prevBgColor = window.getComputedStyle(prevInnerElement).backgroundColor;
-          const tailwindBgClass = `bg-[${prevBgColor}]`;
-
-          if (resolvedTheme === 'dark') {
-            setDarkWrapperBg(tailwindBgClass);
-          } else {
-            setLightWrapperBg(tailwindBgClass);
-          }
+          const colorToSet = resolvedTheme === 'dark'
+            ? prevInnerElement.dataset.bgDark
+            : prevInnerElement.dataset.bgLight;
+          
+          if (wrapperRef.current && colorToSet)
+            wrapperRef.current.style.backgroundColor = colorToSet;
         }
       }
     }
@@ -141,13 +144,13 @@ export function Section<T extends ElementType = 'section'>({
       className={clsx(
         'relative',
         scaleRange && scaleRange[0] > 1 && 'overflow-x-clip',
-        lightWrapperBg,
-        darkWrapperBg && `dark:${darkWrapperBg}`,
         isFirstElement ? 'mt-0' : '-mt-32'
       )}
     >
       <MotionComponent
         ref={contentRef}
+        data-bg-light={bgColors.light}
+        data-bg-dark={bgColors.dark}
         style={hasAnimation ? motionStyle : undefined}
         className={clsx(
           'sticky top-0 h-fit box-content',
@@ -155,10 +158,8 @@ export function Section<T extends ElementType = 'section'>({
           isLastElement ? 'pt-24 md:pt-32' :
           isFirstElement ? 'pb-24 md:pb-32' :
           'py-24 md:py-32',
-          bgColor,
-          darkBgColor && `dark:${darkBgColor}`,
-          textColor,
-          darkTextColor && `dark:${darkTextColor}`,
+          bgClasses,
+          textClasses,
           !isFirstElement && !radiusRange && 'rounded-t-[8rem]',
           isFirstElement && 'rounded-none',
           className

@@ -13,8 +13,8 @@ export async function getMetaData(): Promise<MetaData | null> {
     defaultSeoDescription
   }`;
   
-  const { data: metadata } = await sanityFetch({ query });
-  return metadata;
+  const { data } = await sanityFetch({ query });
+  return data;
 };
 
 interface GlobalSeoData {
@@ -101,6 +101,25 @@ export async function getFooterData(variant: 'tim' | 'tiger'): Promise<FooterDat
     "socialLinks": ${socialLinksField}[]{'label': label, 'href': url}
   }`;
 
+  const { data } = await sanityFetch({ query });
+  return data;
+}
+
+export interface AboutPageData {
+  topParagraph: string;
+  bottomParagraph: string;
+  journeyButtonText: string;
+  playbackId: string;
+}
+
+export async function getAboutPageData(): Promise<AboutPageData | null> {
+  const query = groq`*[_type == "pageAbout"][0]{
+    topParagraph,
+    bottomParagraph,
+    journeyButtonText,
+    "playbackId": backgroundVideo.asset.playbackId
+  }`;
+    
   const { data } = await sanityFetch({ query });
   return data;
 }

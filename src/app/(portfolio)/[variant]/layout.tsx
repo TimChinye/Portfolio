@@ -28,19 +28,15 @@ export default async function PageLayout({
 
           <ContactSection
             as="section"
-            bgColor="bg-[#F5F5EF]"
-            darkBgColor="bg-[#707067]" 
-            textColor="text-[#2F2F2B]"
-            darkTextColor="text-[#F5F5EF]"
+            bgClasses="bg-[#F5F5EF] dark:bg-[#707067]" 
+            textClasses="text-[#2F2F2B] dark:text-[#F5F5EF]"
             variant={variant}
           />
 
           <Footer
             as="footer"
-            bgColor="bg-[#E9E8B1]"
-            darkBgColor="bg-[#2F2F2B]"
-            textColor="text-[#7A751A]"
-            darkTextColor="text-[#F5F5EF]"
+            bgClasses="bg-[#E9E8B1] dark:bg-[#2F2F2B]"
+            textClasses="text-[#7A751A] dark:text-[#F5F5EF]"
             className="font-medium content-center text-center"
             variant={variant}
           />

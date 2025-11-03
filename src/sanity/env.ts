@@ -39,6 +39,27 @@ export function getApiVersion(): string {
   );
 };
 
+export function getMuxTokenId(): string {
+  return assertValue(
+    process.env.SANITY_STUDIO_MUX_TOKEN_ID,
+    'Missing environment variable: SANITY_STUDIO_MUX_TOKEN_ID'
+  );
+}
+
+export function getMuxTokenSecret(): string {
+  return assertValue(
+    process.env.SANITY_STUDIO_MUX_TOKEN_SECRET,
+    'Missing environment variable: SANITY_STUDIO_MUX_TOKEN_SECRET'
+  );
+}
+
+export function getMuxDataEnvKey(): string {
+  return assertValue(
+    process.env.NEXT_PUBLIC_MUX_DATA_ENV_KEY,
+    'Missing environment variable: NEXT_PUBLIC_MUX_DATA_ENV_KEY'
+  );
+}
+
 function assertValue<T>(v: T | undefined, errorMessage: string): T {
   if (v === undefined) {
     throw new Error(errorMessage)

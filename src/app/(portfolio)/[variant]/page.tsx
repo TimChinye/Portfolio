@@ -1,5 +1,5 @@
 import { HeroSection } from './_components/HeroSection';
-import { AboutSection } from './_components/AboutSection/AboutSection';
+import { AboutSection } from './_components/AboutSection';
 import { StretchyGraphicSection } from './_components/StretchyGraphicSection';
 import { FeaturedProjectsSection } from './_components/FeaturedProjectsSection';
 import { WorkGraphicSection } from './_components/WorkGraphicSection';
@@ -16,8 +16,7 @@ export default async function HomePage({
       Component: HeroSection,
       props: {
         key: 'hero',
-        bgColor: "bg-[#F5F5EF]",
-        darkBgColor: "bg-[#1A1A17]",
+        bgClasses: "bg-[#F5F5EF] dark:bg-[#1A1A17]",
         className: "content-center",
         variant: variant,
       }
@@ -27,10 +26,8 @@ export default async function HomePage({
       props: {
         key: 'about',
         as: "section",
-        textColor: "text-[#F5F5EF]",
-        darkTextColor: "text-[#2F2F2B]",
-        bgColor: "bg-[#2F2F2B]",
-        darkBgColor: "bg-[#b2b250]",
+        textClasses: "text-[#F5F5EF] dark:text-[#2F2F2B]",
+        bgClasses: "bg-[#2F2F2B] dark:bg-[#b2b250]",
         scaleRange: [0.75, 1],
         yRange: ['8rem', '0rem'],
         className: "flex items-center justify-center",
@@ -42,10 +39,9 @@ export default async function HomePage({
       props: {
         key: 'stretchy',
         as: "section",
-        bgColor: "bg-[#E4E191]",
-        darkBgColor: "bg-[#2F2F2B]",
+        bgClasses: "bg-[#E4E191] dark:bg-[#2F2F2B]",
         className: "flex items-center justify-center max-md:z-1 max-md:rounded-[8rem] text-black dark:text-white",
-        variant: variant,
+        variant: variant
       }
     },
     {
@@ -53,8 +49,8 @@ export default async function HomePage({
       props: {
         key: 'featured',
         as: "section",
-        bgColor: "bg-[#EFEFD0]",
-        darkBgColor: "bg-[#1A1A17]",
+        bgClasses: "bg-[#EFEFD0] dark:bg-[#1A1A17]",
+        textClasses: "text-black dark:text-white",
         className: "flex items-center justify-center max-md:rounded-none",
         variant: variant,
       }
@@ -64,9 +60,9 @@ export default async function HomePage({
       props: {
         key: 'work',
         as: "section",
-        bgColor: "bg-[#DEDA71]",
-        darkBgColor: "bg-[#2F2F2B]",
-        className: "flex items-center justify-center text-black dark:text-white",
+        bgClasses: "bg-[#DEDA71] dark:bg-[#2F2F2B]",
+        textClasses: "text-black dark:text-white",
+        className: "flex items-center justify-center",
         variant: variant,
       }
     }
