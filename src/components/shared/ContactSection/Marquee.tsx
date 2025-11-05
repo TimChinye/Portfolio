@@ -19,6 +19,7 @@ const DefaultSeparator = React.memo(() => (
     aria-hidden="true"
   />
 ));
+
 DefaultSeparator.displayName = 'DefaultSeparator';
 
 interface MarqueeProps {

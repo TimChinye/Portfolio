@@ -1,76 +1,133 @@
-"use client";
+"use client"
 
-import { CSSProperties, useRef } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { CSSProperties, useRef, useState, useLayoutEffect, ForwardedRef, forwardRef } from 'react';
+import { motion, useTransform } from 'framer-motion';
 
-import { CustomLink as Link } from '@/components/ui/CustomLink';
+import { useSectionScrollProgress } from '@/components/ui/Section';
+// Assuming CustomLink uses forwardRef. This is standard for good component libraries.
+import { CustomLink } from '@/components/ui/CustomLink';
 import type { AboutPageData } from '@/sanity/lib/queries';
 
 import MuxPlayer from '@mux/mux-player-react';
 
+// A helper to ensure we can pass a ref to a potentially non-forwardRef component.
+// This makes our Client component more robust.
+const Link = forwardRef<HTMLAnchorElement, React.ComponentProps<typeof CustomLink>>(
+	(props, ref) => <CustomLink {...props} ref={ref} />
+);
+Link.displayName = 'ForwardedCustomLink';
+
 type ClientProps = {
-  data: AboutPageData;
+	data: AboutPageData;
 };
 
+// Define constants for styling to keep logic clean.
+
 export function Client({ data }: ClientProps) {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+	const stickyProgress = useSectionScrollProgress();
 
-  // Set up the scroll listener on the 200vh container
-  const { scrollYProgress } = useScroll({
-    target: scrollContainerRef,
-    offset: ["start start", "end end"], // Animate from the moment it's at the top to the moment it leaves
-  });
+	// Refs for all elements we need to measure.
+	const containerRef = useRef<HTMLDivElement>(null);
+	const topParaRef = useRef<HTMLParagraphElement>(null);
+	const bottomParaRef = useRef<HTMLParagraphElement>(null);
+	const buttonRef = useRef<HTMLAnchorElement>(null);
 
-  // Animate the clip-path property based on scroll progress.
-  // This is the key change to replicate your CSS effect.
-  // It animates from a 6rem tall vertical slice in the center to fully revealed.
-  const animatedClipPath = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [
-      'inset(calc(50% - 3rem) 0% calc(50% - 3rem) 0% round 9999px)',
-      'inset(0% 0% 0% 0% round 8rem)'
-    ]
-  );
+	// State to hold the final, calculated animation ranges in pixels.
+	// Initialized to [0, 0] before measurement.
+	const [heightRange, setHeightRange] = useState([0, 0]);
+	const [radiusRange, setRadiusRange] = useState([0, 0]);
 
-  return (
-    <div ref={scrollContainerRef} className="relative h-[200vh] w-full">
-        <div className="sticky top-0 flex h-screen w-full flex-col items-center justify-center overflow-hidden">
-            <div className="flex h-full w-full max-w-4xl flex-col items-center justify-center gap-8 px-4 text-center">
-            
-                <p className="text-xl font-light">
-                    {data.topParagraph}
-                </p>
+	// State to manage visibility, preventing flicker before measurements are ready.
+	const [isReady, setIsReady] = useState(false);
 
-                <motion.div
-                    style={{ clipPath: animatedClipPath }}
-                    className="relative overflow-hidden"
-                >
-                    <MuxPlayer
-                        playbackId={data.playbackId}
-                        streamType="on-demand"
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="absolute inset-0 size-full object-cover grayscale"
-                    style={{
-                    '--controls': 'none'
-                    } as CSSProperties}
-                    />
-                    <Link
-                    href="/about"
-                    className="absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-white/50 bg-black/20 px-6 py-3 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20"
-                    >
-                    {data.journeyButtonText}
-                    </Link>
-                </motion.div>
+	useLayoutEffect(() => {
+		const calculateRanges = () => {
+			if (!(containerRef.current && topParaRef.current && bottomParaRef.current && buttonRef.current && buttonRef.current.parentElement)) return;
 
-                <p className="text-xl font-light">
-                    {data.bottomParagraph}
-                </p>
-            </div>
-        </div>
-    </div>
-  );
+			const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+			// --- 1. Calculate START Height (Simulating "fit-content") ---
+			const buttonHeight = buttonRef.current.parentElement.offsetHeight;
+			const buttonMargin = 2 * rootFontSize;
+			const startHeightPx = buttonHeight + buttonMargin;
+
+			// --- 2. Calculate END Height (Filling available space) ---
+			const containerHeight = containerRef.current.offsetHeight;
+			const topParaHeight = topParaRef.current.offsetHeight;
+			const bottomParaHeight = bottomParaRef.current.offsetHeight;
+			const gap = 2 * rootFontSize; // from `gap-8`
+			const endHeightPx = containerHeight - topParaHeight - bottomParaHeight - (gap * 2);
+
+			// Only update state if the calculated values are valid.
+			if (startHeightPx > 0 && endHeightPx > 0) {
+				setHeightRange([startHeightPx, endHeightPx]);
+
+				// --- 3. Calculate Border Radius Range ---
+				const startRadiusPx = startHeightPx / 2;
+				const endRadiusPx = rootFontSize / 2;
+				setRadiusRange([startRadiusPx, endRadiusPx]);
+
+				// Now that we have all measurements, mark the component as ready to be displayed.
+				setIsReady(true);
+			}
+		};
+
+		calculateRanges();
+
+		const observer = new ResizeObserver(calculateRanges);
+		if (containerRef.current) observer.observe(containerRef.current);
+
+		return () => observer.disconnect();
+	}, []); // Empty dependency array is correct here.
+
+	// Hooks are now called unconditionally on every render.
+	const animatedHeight = useTransform(stickyProgress, [0, 0.75], heightRange);
+	const animatedBorderRadius = useTransform(stickyProgress, [0, 0.75], radiusRange);
+
+	return (
+		<div className="px-[0.5em] py-[0.25em] md:px-[0.75em] md:py-[0.375em] leading-none text-[clamp(4rem,15vw,12rem)] flex h-screen w-full flex-col items-center justify-center overflow-hidden">
+			<div ref={containerRef} className="flex h-full w-full flex-col items-center justify-center gap-8 px-4 text-[0.25em] text-center">
+				<p ref={topParaRef}>
+					{data.topParagraph}
+				</p>
+
+				<motion.div
+					style={{
+						height: animatedHeight,
+						borderRadius: animatedBorderRadius,
+						opacity: isReady ? 1 : 0,
+						transition: 'opacity 0.5s',
+					}}
+					className="relative w-full overflow-hidden dark:hue-rotate-[21.36deg]"
+				>
+					<MuxPlayer
+						playbackId={data.playbackId}
+						streamType="on-demand"
+						autoPlay
+						loop
+						muted
+						className="h-full grayscale dark:sepia"
+						style={{
+							'--controls': 'none',
+							'--media-object-fit': 'cover'
+						} as CSSProperties}
+					/>
+
+					<div className="absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-full text-[calc(1em/3)] border-[0.2em] border-white flex p-[round(down,0.2em,1px)]">
+						<Link
+							ref={buttonRef}
+							href="/about"
+							className="rounded-[inherit] whitespace-nowrap px-6 py-2 text-white backdrop-blur-sm transition-colors bg-black/20 hover:bg-white/20"
+						>
+							{data.journeyButtonText}
+						</Link>
+					</div>
+				</motion.div>
+
+				<p ref={bottomParaRef}>
+					{data.bottomParagraph}
+				</p>
+			</div>
+		</div>
+	);
 }

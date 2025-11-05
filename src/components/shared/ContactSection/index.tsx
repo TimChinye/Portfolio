@@ -1,13 +1,13 @@
-// index.tsx
-
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useTransform } from 'motion/react';
+import { useMotionValue, useTransform } from 'motion/react';
+import { useEffect } from 'react';
 import { useTheme } from 'next-themes';
 
 import { useElementBounds } from '@/hooks/useElementBounts';
 import { useMousePosition } from '@/hooks/useMousePosition';
+import { useWindowScrollY } from '@/hooks/useWindowScrollY';
 
 import { Section, type SectionProps } from '@/components/ui/Section';
 import { CustomLink as Link } from '@/components/ui/CustomLink';
@@ -26,30 +26,37 @@ export const ContactSection = ({ variant, ...props }: ContactSectionProps) => {
   // `resolvedTheme` is 'light' or 'dark', even if `theme` is 'system'.
   const { resolvedTheme } = useTheme();
 
-  // 1. These hooks now work correctly, providing stable, document-relative values.
-  const mouseY = useMousePosition();
+  const { clientY } = useMousePosition();
+  const scrollY = useWindowScrollY();
   const [marqueeRef, marqueeBounds] = useElementBounds<HTMLAnchorElement>();
 
-  // 2. This logic is now fed with the correct data and won't change on scroll.
   const transitionDistance = 300;
   let inputRange: number[];
   let outputRange: string[];
   
   const hasMarqueeBounds = marqueeBounds && marqueeBounds.top > 0;
-  // Set the color based on the resolved theme from next-themes
   const blackOrWhite = resolvedTheme === 'dark' ? '#FFFFFF' : '#000000';
 
   if (hasMarqueeBounds) {
-    const { top, bottom } = marqueeBounds;
-    inputRange = [ top - transitionDistance, top, bottom, bottom + transitionDistance ];
+    const marqueeTopInDocument = marqueeBounds.top;
+    const marqueeBottomInDocument = marqueeBounds.bottom;
+
+    inputRange = [
+      marqueeTopInDocument - transitionDistance,
+      marqueeTopInDocument,
+      marqueeBottomInDocument,
+      marqueeBottomInDocument + transitionDistance
+    ];
+    
     outputRange = ['#D9D24D', blackOrWhite, blackOrWhite, '#D9D24D'];
   } else {
     // A sensible fallback if bounds aren't measured yet.
     inputRange = [0, 500, 1000]; 
     outputRange = ['#D9D24D', blackOrWhite, '#D9D24D'];
   }
-  
-  const arrowColor = useTransform(mouseY, inputRange, outputRange);
+
+  const viewportMouseY = useTransform(() => scrollY.get() + clientY.get());
+  let arrowColor = useTransform(viewportMouseY, inputRange, outputRange);
 
   return (
     <Section {...props}>
@@ -74,8 +81,9 @@ export const ContactSection = ({ variant, ...props }: ContactSectionProps) => {
           </BackgroundText>
 
           <PointingArrow 
-            className='absolute top-16 right-16' 
+            className='absolute top-16 right-16'
             color={arrowColor}
+            initRotation={180}
           />
 
           <Link
@@ -89,8 +97,9 @@ export const ContactSection = ({ variant, ...props }: ContactSectionProps) => {
           </Link>
           
           <PointingArrow 
-            className='absolute bottom-16 left-16' 
+            className='absolute bottom-16 left-16'
             color={arrowColor}
+            initRotation={0}
           />
 
           <BackgroundText rotation="right" className="-bottom-1/8 right-1/20 italic text-[min(5vw,6rem)]">

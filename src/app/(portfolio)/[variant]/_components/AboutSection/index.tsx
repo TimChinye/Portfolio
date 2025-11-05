@@ -7,19 +7,21 @@ type AboutSectionProps = {
   variant?: 'tim' | 'tiger';
 } & SectionProps<'section'>;
 
-export const AboutSection = async({ variant, ...props }: AboutSectionProps) => {
+export const AboutSection = async ({ variant, ...props }: AboutSectionProps) => {
   if (variant !== 'tim') return null;
   
   const data = await getAboutPageData();
   if (!data) return null;
 
   return (
-    // The Section component provides the entry animation and sticky context
     <Section
       {...props}
-      className="flex items-center justify-center"
+      yRange={{
+        desktop: ['0rem', '-8rem'],
+        mobile: ['0rem', '-6rem'],
+      }}
+      scrollTrackHeight="300vh"
     >
-      {/* This taller div acts as the "track" for the scroll animation */}
       <Client data={data} />
     </Section>
   );

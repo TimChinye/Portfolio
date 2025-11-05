@@ -216,10 +216,10 @@ export const blockContentType = defineType({
         select: {
           title: 'title',
           caption: 'caption',
-          playbackId: 'video.asset.playbackId',
+          backgroundVideo: 'video.asset.backgroundVideo',
         },
-        prepare({ title, caption, playbackId }) {
-          const subtitle = playbackId ? 'Video Uploaded' : 'No video uploaded';
+        prepare({ title, caption, backgroundVideo }) {
+          const subtitle = backgroundVideo ? 'Video Uploaded' : 'No video uploaded';
           return {
             title: title || caption || 'Mux Video',
             subtitle: subtitle,

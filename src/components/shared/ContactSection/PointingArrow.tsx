@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useMemo, useState, useCallback, RefObject } from 'react';
+import { useRef, useEffect, useMemo, useState, useCallback } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, type MotionValue } from 'motion/react';
 
 import { useInView } from '@/hooks/useInView';
@@ -14,6 +14,7 @@ const clamp = (value: number, min: number, max: number) => Math.max(min, Math.mi
 type PointingArrowProps = {
   className?: string;
   color: MotionValue<string>;
+  initRotation?: number;
   baseScreenWidth?: number;
   headSize?: number;
   minHeadSize?: number;
@@ -30,6 +31,7 @@ type PointingArrowProps = {
 export const PointingArrow = ({
   className,
   color,
+  initRotation = 0,
   baseScreenWidth = 1920,
   headSize = 30,
   minHeadSize = 15,
@@ -50,11 +52,13 @@ export const PointingArrow = ({
     setHasMounted(true);
   }, []);
 
-  const lastRawAngle = useRef(0);
-  const unwrappedAngle = useRef(0);
+  const lastRawAngle = useRef(initRotation);
+  const unwrappedAngle = useRef(initRotation);
   const isFirstMoveAfterFocus = useRef(true);
+  
+  const cursorPositionRef = useRef({ x: 0, y: 0 });
 
-  const rotation = useMotionValue(0);
+  const rotation = useMotionValue(initRotation);
   const shaftLength = useMotionValue(0);
 
   const springConfig = { stiffness: 300, damping: 30, mass: 0.5 };
@@ -74,41 +78,64 @@ export const PointingArrow = ({
     return { dynamicStrokeWidth: finalStrokeWidth, dynamicHeadSize: finalHeadSize, dynamicLengthScale: finalLengthScale };
   }, [hasMounted, windowWidth, baseScreenWidth, strokeWidth, minStrokeWidth, maxStrokeWidth, headSize, minHeadSize, maxHeadSize, lengthScale, minLengthScale, maxLengthScale]);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
+  const updateArrowTransform = useCallback((cursorX: number, cursorY: number) => {
     if (!anchorRef.current) return;
     const rect = anchorRef.current.getBoundingClientRect();
     const originX = rect.left + rect.width / 2;
     const originY = rect.top + rect.height / 2;
-    const dx = e.clientX - originX;
-    const dy = e.clientY - originY;
+    const dx = cursorX - originX;
+    const dy = cursorY - originY;
 
     const rawAngle = Math.atan2(dy, dx) * (180 / Math.PI);
     const distanceToCursor = Math.sqrt(dx * dx + dy * dy);
     const newShaftLength = distanceToCursor * lengthRatio;
 
     if (isFirstMoveAfterFocus.current) {
-      unwrappedAngle.current = rawAngle;
-      rotation.set(rawAngle);
-      shaftLength.set(Math.max(0, newShaftLength));
+      const currentAngle = unwrappedAngle.current;
       
-      // --- THIS IS THE FIX ---
-      // Call .set() with one argument to teleport the spring to its new value,
-      // preventing the initial animation from 0.
-      smoothRotation.set(rawAngle);
+      // Find the difference and normalize it to the shortest path (-180 to 180)
+      let diff = rawAngle - currentAngle;
+
+      if (diff > 180) diff -= 360;
+      else if (diff < -180) diff += 360;
+      
+      const targetAngle = currentAngle + diff;
+
+      unwrappedAngle.current = targetAngle;
+      rotation.set(targetAngle);
+      shaftLength.set(Math.max(0, newShaftLength));
       smoothShaftLength.set(Math.max(0, newShaftLength));
       
       isFirstMoveAfterFocus.current = false;
     } else {
       const diff = rawAngle - lastRawAngle.current;
+      let newUnwrappedAngle = unwrappedAngle.current;
+
       if (Math.abs(diff) > 180) {
-        unwrappedAngle.current += diff > 0 ? -360 : 360;
+        newUnwrappedAngle += diff > 0 ? -360 : 360;
       }
-      unwrappedAngle.current += rawAngle - lastRawAngle.current;
-      rotation.set(unwrappedAngle.current);
+      newUnwrappedAngle += rawAngle - lastRawAngle.current;
+
+      unwrappedAngle.current = newUnwrappedAngle;
+      rotation.set(newUnwrappedAngle);
       shaftLength.set(Math.min(Math.max(0, newShaftLength), 250));
     }
     lastRawAngle.current = rawAngle;
-  }, [rotation, shaftLength, lengthRatio, smoothRotation, smoothShaftLength]);
+  }, [rotation, shaftLength, lengthRatio, smoothShaftLength]);
+
+    const handleMouseMove = useCallback((e: MouseEvent) => {
+    cursorPositionRef.current = { x: e.clientX, y: e.clientY };
+    updateArrowTransform(e.clientX, e.clientY);
+  }, [updateArrowTransform]);
+
+  // NEW: A handler for the scroll event
+  const handleScroll = useCallback(() => {
+    // Don't do anything if we haven't moved the mouse yet
+    if (cursorPositionRef.current.x === 0 && cursorPositionRef.current.y === 0) {
+      return;
+    }
+    updateArrowTransform(cursorPositionRef.current.x, cursorPositionRef.current.y);
+  }, [updateArrowTransform]);
 
   useEffect(() => {
     const handleFocus = () => { isFirstMoveAfterFocus.current = true; };
@@ -116,12 +143,15 @@ export const PointingArrow = ({
     if (isInView) {
     window.addEventListener('focus', handleFocus);
     window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
     return () => {
       window.removeEventListener('focus', handleFocus);
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll);
     };
     }
-  }, [isInView, handleMouseMove]);
+  }, [isInView, handleMouseMove, handleScroll]);
 
   const svgSize = dynamicLengthScale + dynamicHeadSize + dynamicStrokeWidth;
   const svgCenter = svgSize / 2;

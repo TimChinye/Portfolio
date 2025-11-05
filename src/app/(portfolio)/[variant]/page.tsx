@@ -26,11 +26,15 @@ export default async function HomePage({
       props: {
         key: 'about',
         as: "section",
-        textClasses: "text-[#F5F5EF] dark:text-[#2F2F2B]",
+        noWrapperBg: true,
         bgClasses: "bg-[#2F2F2B] dark:bg-[#b2b250]",
+        textClasses: "text-[#F5F5EF] dark:text-[#2F2F2B]",
         scaleRange: [0.75, 1],
-        yRange: ['8rem', '0rem'],
-        className: "flex items-center justify-center",
+        ease: {
+          scale: [0.5, 0.5, 0, 1],
+          y: [0, 0, 0, 1]
+        },
+        className: "-mb-1",
         variant: variant,
       }
     },

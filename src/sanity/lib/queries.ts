@@ -117,7 +117,7 @@ export async function getAboutPageData(): Promise<AboutPageData | null> {
     topParagraph,
     bottomParagraph,
     journeyButtonText,
-    "playbackId": backgroundVideo.asset.playbackId
+    "playbackId": (backgroundVideo.asset->).playbackId
   }`;
     
   const { data } = await sanityFetch({ query });
