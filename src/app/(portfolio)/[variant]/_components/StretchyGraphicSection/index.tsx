@@ -70,7 +70,7 @@ export const StretchyGraphicSection = ({ variant, ...props }: StretchyGraphicSec
   });
 
   return (
-    <Section
+    <Section 
       {...props}
       ref={containerRef}
       fillScreen={false}

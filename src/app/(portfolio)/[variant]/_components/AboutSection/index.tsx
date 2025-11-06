@@ -14,13 +14,8 @@ export const AboutSection = async ({ variant, ...props }: AboutSectionProps) => 
   if (!data) return null;
 
   return (
-    <Section
+    <Section 
       {...props}
-      yRange={{
-        desktop: ['0rem', '-8rem'],
-        mobile: ['0rem', '-6rem'],
-      }}
-      scrollTrackHeight="300vh"
     >
       <Client data={data} />
     </Section>

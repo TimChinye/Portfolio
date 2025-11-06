@@ -55,7 +55,7 @@ export type SectionProps<T extends ElementType = 'section'> = {
   animationRange?: UseScrollOptions['offset'];
   scopeAnimationToContent?: boolean;
   fillScreen?: boolean;
-  scrollTrackHeight?: string;
+  stickyDuration?: string;
   yRange?: ResponsiveRange<readonly [string, string]>;
   scaleRange?: ResponsiveRange<readonly [number, number]>;
   radiusRange?: ResponsiveRange<readonly [string, string]>;
@@ -73,7 +73,7 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
   animationRange = ["start end", "start 0.5"],
   scopeAnimationToContent = false,
   fillScreen = true,
-  scrollTrackHeight,
+  stickyDuration,
   yRange,
   scaleRange,
   radiusRange,
@@ -177,7 +177,7 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
     ? useTransform(entryProgress, offsets, [0, 1], { clamp: true })
     : entryProgress;
 
-  const progressForChildren = scrollTrackHeight ? stickyProgress : contentProgress;
+  const progressForChildren = stickyDuration ? stickyProgress : contentProgress;
 
   // Create separate easing functions for each property
   const getEasingFunction = (property: keyof EasingObject) => {
@@ -209,7 +209,7 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
   return (
     <div
       ref={wrapperRef}
-      style={scrollTrackHeight ? { height: scrollTrackHeight } : {}}
+      style={stickyDuration ? { height: stickyDuration } : {}}
       className={clsx(
         'relative',
         resolvedScaleRange && resolvedScaleRange[0] > 1 && 'overflow-x-clip',

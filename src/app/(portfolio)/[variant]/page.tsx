@@ -34,6 +34,11 @@ export default async function HomePage({
           scale: [0.5, 0.5, 0, 1],
           y: [0, 0, 0, 1]
         },
+        yRange: {
+          desktop: ['0rem', '-8rem'],
+          mobile: ['0rem', '-6rem'],
+        },
+        scrollTrackHeight: "300vh",
         className: "-mb-1",
         variant: variant,
       }
