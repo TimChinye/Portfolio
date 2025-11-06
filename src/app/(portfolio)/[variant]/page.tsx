@@ -38,7 +38,7 @@ export default async function HomePage({
           desktop: ['0rem', '-8rem'],
           mobile: ['0rem', '-6rem'],
         },
-        scrollTrackHeight: "300vh",
+        stickyDuration: "300vh",
         className: "-mb-1",
         variant: variant,
       }
