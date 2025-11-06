@@ -42,7 +42,7 @@ export function Navbar() {
   );
 
   const filteredNavLinks = useMemo(() => {
-    return variant === "tiger"
+    return variant === 'tiger'
       ? navLinks.filter((link) => link.key !== "about")
       : navLinks;
   }, [variant]);

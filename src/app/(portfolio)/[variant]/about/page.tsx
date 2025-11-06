@@ -1,5 +1,3 @@
-// src/app/(portfolio)/[variant]/about/page.tsx
-// src/app/(portfolio)/[variant]/about/page.tsx
 import { notFound } from 'next/navigation';
 
 type Props = {

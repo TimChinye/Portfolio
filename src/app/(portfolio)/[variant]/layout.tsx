@@ -55,7 +55,6 @@ export default async function PageLayout({
   );
 }
 
-
 type Props = {
   params: Promise<{ variant: string }>;
 };

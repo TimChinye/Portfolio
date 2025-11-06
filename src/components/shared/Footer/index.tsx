@@ -40,7 +40,7 @@ export const Footer = async ({ variant, ...props }: FooterProps) => {
   const data = await getFooterData(variant);
   const copyrightText = data?.copyrightText || 'ALL RIGHTS RESERVED → COPYRIGHT 2025 © ₮';
   const socialLinks = data?.socialLinks?.length ? data.socialLinks : fallbackSocialLinks;
-  const links = variant === "tiger"
+  const links = variant === 'tiger'
   ? navLinks.filter((link) => link.key !== "about")
   : navLinks;
   const filteredNavLinks = links.map(link => ({
