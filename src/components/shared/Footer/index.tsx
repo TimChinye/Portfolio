@@ -63,7 +63,7 @@ export const Footer = async ({ variant, ...props }: FooterProps) => {
           />
       </div>
 
-      <div className="absolute inset-0 top-[auto] p-8 flex items-center justify-between dark:max-md:text-[#D9D24D] flex-col md:flex-row">
+      <div className="text-[#2F2F2B] dark:text-[#D9D24D] absolute inset-0 top-[auto] p-8 flex items-center justify-between flex-col md:flex-row">
         <InteractiveLinkList
           links={filteredNavLinks}
           listClassName="flex items-center gap-x-6 gap-y-2 text-lg"

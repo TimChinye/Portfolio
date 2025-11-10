@@ -19,7 +19,7 @@ export const WorkGraphicSection = (props: WorkGraphicSectionProps) => {
     <Section
       {...props}
       ref={sectionRef}
-      stickyDuration="150vh"
+      stickyDuration="200vh"
       stickyAnimationRange={["0 1", "1 1"]}
       style={animatedStyle as React.CSSProperties}
     >

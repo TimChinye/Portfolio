@@ -21,12 +21,6 @@ export function Client() {
     [0, 100],
     { clamp: true }
   );
-
-  const smoothTranslateY = useSpring(translateY, {
-    stiffness: 1000,
-    damping: 100,
-    mass: 1,
-  });
   
   const isMobile = useMediaQuery('(max-width: 768px)');
   const verticalPadding = isMobile ? '3rem' : '4rem';
@@ -54,10 +48,17 @@ export function Client() {
             index={index}
             totalLayers={NUM_LAYERS}
             scrollYProgress={scrollYProgress}
-            offsets={offsets}
           />
         ))}
       </motion.div>
+      
+        {/* <Keycap
+          topColor={key.topColor}
+          sideGradientStart={key.gradStart}
+          sideGradientEnd={key.gradEnd}
+        >
+          {key.char}
+        </Keycap> */}
     </div>
   );
 }
