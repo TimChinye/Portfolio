@@ -1,6 +1,6 @@
 "use client"
 
-import { CSSProperties, useRef, useState, useLayoutEffect, ForwardedRef, forwardRef } from 'react';
+import { CSSProperties, useRef, useState, useLayoutEffect, forwardRef, useEffect } from 'react';
 import { motion, useTransform } from 'framer-motion';
 
 import { useSectionScrollProgress } from '@/components/ui/Section';
@@ -8,7 +8,7 @@ import { useSectionScrollProgress } from '@/components/ui/Section';
 import { CustomLink } from '@/components/ui/CustomLink';
 import type { AboutPageData } from '@/sanity/lib/queries';
 
-import MuxPlayer from '@mux/mux-player-react';
+import MuxPlayer, { MuxPlayerRefAttributes } from '@mux/mux-player-react';
 
 // A helper to ensure we can pass a ref to a potentially non-forwardRef component.
 // This makes our Client component more robust.
@@ -31,9 +31,11 @@ export function Client({ data }: ClientProps) {
 	const topParaRef = useRef<HTMLParagraphElement>(null);
 	const bottomParaRef = useRef<HTMLParagraphElement>(null);
 	const buttonRef = useRef<HTMLAnchorElement>(null);
-
-	// State to hold the final, calculated animation ranges in pixels.
-	// Initialized to [0, 0] before measurement.
+	
+    const muxPlayerRef = useRef<MuxPlayerRefAttributes>(null);
+	
+		// State to hold the final, calculated animation ranges in pixels.
+		// Initialized to [0, 0] before measurement.
 	const [heightRange, setHeightRange] = useState([0, 0]);
 	const [radiusRange, setRadiusRange] = useState([0, 0]);
 
@@ -80,6 +82,57 @@ export function Client({ data }: ClientProps) {
 		return () => observer.disconnect();
 	}, []); // Empty dependency array is correct here.
 
+    useEffect(() => {
+        const player = muxPlayerRef.current;
+        // The underlying <video> element
+        const videoEl = player?.media;
+
+        if (!videoEl) return;
+
+        // This function is our guardian. It checks and corrects the muted state.
+        const enforceMuted = () => {
+            if (!videoEl.muted) {
+                videoEl.muted = true;
+            }
+        };
+
+        // This handles cases where the browser might try to unmute on play.
+        const handlePlay = () => {
+            enforceMuted();
+        };
+
+        // This is a direct listener for any volume change, the most robust check.
+        const handleVolumeChange = () => {
+            enforceMuted();
+        };
+
+        // This handles the primary problem: tab visibility changes.
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                // When the tab becomes visible again, ensure it's muted and try to play.
+                enforceMuted();
+                videoEl.play().catch(() => {
+                    // Autoplay might be blocked, but at least we tried.
+                });
+            }
+        };
+        
+        // Attach the event listeners
+        videoEl.addEventListener('play', handlePlay);
+        videoEl.addEventListener('volumechange', handleVolumeChange);
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        // Initial check on mount
+        enforceMuted();
+
+        // IMPORTANT: Cleanup listeners on unmount to prevent memory leaks
+        return () => {
+            videoEl.removeEventListener('play', handlePlay);
+            videoEl.removeEventListener('volumechange', handleVolumeChange);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [data.playbackId]);
+
 	// Hooks are now called unconditionally on every render.
 	const animatedHeight = useTransform(stickyProgress, [0, 0.75], heightRange);
 	const animatedBorderRadius = useTransform(stickyProgress, [0, 0.75], radiusRange);
@@ -101,6 +154,7 @@ export function Client({ data }: ClientProps) {
 					className="relative w-full overflow-hidden dark:hue-rotate-[21.36deg]"
 				>
 					<MuxPlayer
+                        ref={muxPlayerRef}
 						playbackId={data.playbackId}
 						streamType="on-demand"
 						autoPlay

@@ -71,7 +71,7 @@ export default async function HomePage({
         as: "section",
         bgClasses: "bg-[#DEDA71] dark:bg-[#2F2F2B]",
         textClasses: "text-black dark:text-white",
-        className: "flex items-center justify-center",
+        className: "-translate-y-32 -mb-1 flex items-end h-screen pt-24 md:pt-32",
         variant: variant,
       }
     }

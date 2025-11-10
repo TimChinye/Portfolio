@@ -1,6 +1,6 @@
 "use client";
 
-import { ElementType, ReactNode, useEffect, useRef, useMemo, useState, useLayoutEffect, forwardRef, ForwardedRef, createContext, useContext } from 'react';
+import { ElementType, ReactNode, useEffect, useRef, useMemo, useState, useLayoutEffect, forwardRef, ForwardedRef, createContext, useContext, RefObject } from 'react';
 import { motion, useScroll, useTransform, cubicBezier, type UseScrollOptions, type MotionStyle, type MotionValue } from 'motion/react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useTheme } from "next-themes";
@@ -16,15 +16,40 @@ export function useSectionScrollProgress() {
   return context;
 }
 
+export function useElementOffsets(elementRef: RefObject<HTMLElement | null>, onParent?: boolean) {
+  const [offsets, setOffsets] = useState<[number, number]>([0, 1]);
+
+  useLayoutEffect(() => {
+    if (elementRef.current) {
+      const element = elementRef.current;
+      const containerElement = onParent ? element.parentElement : element;
+
+      if (containerElement) {
+        const containerHeight = containerElement.offsetHeight;
+        const computedStyle = window.getComputedStyle(element);
+        const paddingTop = parseFloat(computedStyle.paddingTop);
+        const paddingBottom = parseFloat(computedStyle.paddingBottom);
+
+        const startOffset = paddingTop / containerHeight;
+        const endOffset = 1 - (paddingBottom / containerHeight);
+
+        setOffsets([startOffset, endOffset]);
+      }
+    }
+  }, [elementRef]);
+
+  return offsets;
+}
+
 // Helper function to parse color values from Tailwind class strings
-const parseColorClasses = (classes: string) => {
+export const parseColorClasses = (classes: string) => {
   // Regex to find the color inside bg-[...] and dark:bg-[...]
-  const lightMatch = classes.match(/bg-\[([^\]]+)\]/);
-  const darkMatch = classes.match(/dark:bg-\[([^\]]+)\]/);
+  const lightMatch = classes.match(/bg-\[([^\]]+)\]/)?.[1];
+  const darkMatch = classes.match(/dark:bg-\[([^\]]+)\]/)?.[1];
 
   // Use the found color, or fallback to the light color if no dark variant is specified
-  const lightColor = lightMatch ? lightMatch[1] : '';
-  const darkColor = darkMatch ? darkMatch[1] : lightColor;
+  const lightColor = lightMatch || '';
+  const darkColor = darkMatch || lightColor;
   
   return { light: lightColor, dark: darkColor };
 };
@@ -53,9 +78,9 @@ export type SectionProps<T extends ElementType = 'section'> = {
   bgClasses?: string;
   textClasses?: string;
   animationRange?: UseScrollOptions['offset'];
-  scopeAnimationToContent?: boolean;
   fillScreen?: boolean;
   stickyDuration?: string;
+  stickyAnimationRange?: UseScrollOptions['offset'];
   yRange?: ResponsiveRange<readonly [string, string]>;
   scaleRange?: ResponsiveRange<readonly [number, number]>;
   radiusRange?: ResponsiveRange<readonly [string, string]>;
@@ -71,9 +96,9 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
   bgClasses = 'bg-[#F5F5EF] dark:bg-[#2F2F2B]',
   textClasses = 'text-[#2F2F2B] dark:text-[#F5F5EF]',
   animationRange = ["start end", "start 0.5"],
-  scopeAnimationToContent = false,
   fillScreen = true,
   stickyDuration,
+  stickyAnimationRange = ["start start", "end end"],
   yRange,
   scaleRange,
   radiusRange,
@@ -107,8 +132,6 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
     if (typeof ref === 'function') ref(wrapperRef.current);
     else ref.current = wrapperRef.current;
   }, [ref]);
-
-  const [offsets, setOffsets] = useState([0, 1]);
   
   const [isFirstElement, setFirstElement] = useState<boolean>(false);
   const [isLastElement, setLastElement] = useState<boolean>(false);
@@ -144,24 +167,6 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
     }
   }, [resolvedTheme, wrapperRef, noWrapperBg]);
 
-  useLayoutEffect(() => {
-    // This effect measures the elements and calculates the precise animation scope
-    if (scopeAnimationToContent && wrapperRef && 'current' in wrapperRef && wrapperRef.current && contentRef.current) {
-      const wrapperHeight = wrapperRef.current.offsetHeight;
-      
-      // Get padding values from the content element
-      const computedStyle = window.getComputedStyle(contentRef.current);
-      const paddingTop = parseFloat(computedStyle.paddingTop);
-      const paddingBottom = parseFloat(computedStyle.paddingBottom);
-
-      // Calculate the start and end points as a fraction of the total height
-      const startOffset = paddingTop / wrapperHeight;
-      const endOffset = 1 - (paddingBottom / wrapperHeight);
-      
-      setOffsets([startOffset, endOffset]);
-    }
-  }, [scopeAnimationToContent, wrapperRef]); // Re-run if the prop changes
-
   const { scrollYProgress: entryProgress } = useScroll({
     target: wrapperRef,
     offset: animationRange,
@@ -169,15 +174,10 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
 
   const { scrollYProgress: stickyProgress } = useScroll({
     target: wrapperRef,
-    offset: ["start start", "end end"],
+    offset: stickyAnimationRange,
   });
 
-  // Conditionally remap the progress. If not scoped, contentProgress is the same as scrollYProgress.
-  const contentProgress = scopeAnimationToContent
-    ? useTransform(entryProgress, offsets, [0, 1], { clamp: true })
-    : entryProgress;
-
-  const progressForChildren = stickyDuration ? stickyProgress : contentProgress;
+  const progressForChildren = stickyDuration ? stickyProgress : entryProgress;
 
   // Create separate easing functions for each property
   const getEasingFunction = (property: keyof EasingObject) => {
@@ -195,9 +195,9 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
   const radiusEase = useMemo(() => getEasingFunction('radius'), [ease]);
 
   // Updated: Use the specific easing function for each transform
-  const y = useTransform(contentProgress, [0, 1], resolvedYRange ? [...resolvedYRange] : ['0rem', '0rem'], { ease: yEase });
-  const scale = useTransform(contentProgress, [0, 1], resolvedScaleRange ? [...resolvedScaleRange] : [1, 1], { ease: scaleEase });
-  const borderRadius = useTransform(contentProgress, [0, 1], resolvedRadiusRange ? [...resolvedRadiusRange] : ['8rem 8rem 0 0', '8rem 8rem 0 0'], { ease: radiusEase });
+  const y = useTransform(entryProgress, [0, 1], resolvedYRange ? [...resolvedYRange] : ['0rem', '0rem'], { ease: yEase });
+  const scale = useTransform(entryProgress, [0, 1], resolvedScaleRange ? [...resolvedScaleRange] : [1, 1], { ease: scaleEase });
+  const borderRadius = useTransform(entryProgress, [0, 1], resolvedRadiusRange ? [...resolvedRadiusRange] : ['8rem 8rem 0 0', '8rem 8rem 0 0'], { ease: radiusEase });
 
   const motionStyle: MotionStyle = {};
 
@@ -213,7 +213,7 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
       className={clsx(
         'relative',
         resolvedScaleRange && resolvedScaleRange[0] > 1 && 'overflow-x-clip',
-        isFirstElement ? 'mt-0' : '-mt-32',
+        isFirstElement ? 'mt-0' : '-mt-24 md:-mt-32',
         isFirstElement && 'z-0'
       )}
     >
@@ -223,7 +223,8 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
         data-bg-dark={bgColors.dark}
         style={hasAnimation ? motionStyle : undefined}
         className={clsx(
-          'sticky top-0 h-fit box-content',
+          'sticky top-0 box-content overflow-hidden',
+          !className?.match(/\b(([\w-]+):)?(h)-(\d+(\.\d+)?|px|full|screen|fit|auto|\[[^\]]+\])\b/)?.[0] && 'h-fit',
           fillScreen && 'min-h-screen',
           isLastElement ? 'pt-24 md:pt-32' :
           isFirstElement ? 'pb-24 md:pb-32' :

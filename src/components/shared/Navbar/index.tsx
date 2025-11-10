@@ -49,7 +49,10 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="fixed flex items-center p-4 z-100000 gap-4 w-full justify-between md:justify-start">
+      <nav
+        className="fixed flex items-center p-4 z-100000 gap-4 w-full justify-between md:justify-start"
+        data-html2canvas-ignore="true"
+      >
         <Link
           href="/"
           aria-label="Return to homepage"
