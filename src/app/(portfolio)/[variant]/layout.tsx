@@ -28,7 +28,7 @@ export default async function PageLayout({
 
           <ContactSection
             as="section"
-            bgClasses="bg-[#F5F5EF] dark:bg-[#707067]" 
+            bgClasses="bg-[#F5F5EF] dark:bg-[#575753]" 
             textClasses="text-[#2F2F2B] dark:text-[#F5F5EF]"
             variant={variant}
           />

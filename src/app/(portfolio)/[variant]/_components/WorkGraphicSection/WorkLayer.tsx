@@ -16,7 +16,7 @@ export function WorkLayer({ index, totalLayers, scrollYProgress }: WorkLayerProp
   // --- THE "GOLDEN TRIANGLE" OF ANIMATION CONTROLS ---
 
   // How long does each word's individual (linear) animation last?
-  const singleAnimationDuration = Math.pow(0.95, index);
+  const singleAnimationDuration = Math.pow(0.875, index);
 
   // When does the FIRST word begin moving?
   const sequenceStartPoint = 0;
@@ -28,7 +28,7 @@ export function WorkLayer({ index, totalLayers, scrollYProgress }: WorkLayerProp
   // 1.0 = Linear (all words start at evenly spaced intervals)
   // 2.0 = Quadratic Ease-In (words start slowly, then the starts get closer together)
   // 0.5 = Quadratic Ease-Out (words start in a rush, then the starts spread out)
-  const cascadeEasingPower = 1.75;
+  const cascadeEasingPower = 1.25;
 
   // --- END OF CONTROLS ---
 

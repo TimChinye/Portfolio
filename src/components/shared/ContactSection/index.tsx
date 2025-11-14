@@ -91,7 +91,7 @@ export const ContactSection = ({ variant, ...props }: ContactSectionProps) => {
             href="/contact"
             aria-label="Let's talk, go to contact page"
           >
-            <Marquee baseVelocity={100} hoverVelocity={50} className="text-[min(6.7vw,8rem)]">
+            <Marquee baseVelocity={100} hoverVelocity={50} className="text-[min(12.5vw,8rem)] md:text-[min(6.7vw,8rem)]">
               LET'S TALK
             </Marquee>
           </Link>

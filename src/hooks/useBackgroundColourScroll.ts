@@ -1,6 +1,6 @@
 import { type RefObject, useLayoutEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
-import { useScroll, useTransform, type MotionStyle } from 'motion/react';
+import { useScroll, UseScrollOptions, useTransform, type MotionStyle } from 'motion/react';
 import { parseColorClasses } from '@/components/ui/Section';
 
 interface UseBackgroundColourScrollOptions {
@@ -8,6 +8,7 @@ interface UseBackgroundColourScrollOptions {
   target: RefObject<HTMLElement | null>;
   /** The Tailwind classes for the target element's background, e.g., 'bg-[#fff] dark:bg-[#000]'. */
   endBgClasses: string;
+  animationRange?: UseScrollOptions['offset'];
 }
 
 /**
@@ -23,6 +24,7 @@ interface UseBackgroundColourScrollOptions {
 export const useBackgroundColourScroll = ({
   target,
   endBgClasses,
+  animationRange = ['0.25 end', 'end end']
 }: UseBackgroundColourScrollOptions): { style: MotionStyle } => {
   const { resolvedTheme } = useTheme();
   const [startColor, setStartColor] = useState<string | null>(null);
@@ -53,7 +55,7 @@ export const useBackgroundColourScroll = ({
   const { scrollYProgress } = useScroll({
     target,
     // The animation spans the entire time the element is sticky.
-    offset: ['0.25 end', 'end end'],
+    offset: animationRange,
   });
 
   // Transform scroll progress (0 to 1) into a CSS `color-mix` string.

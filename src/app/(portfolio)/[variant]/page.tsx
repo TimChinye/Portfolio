@@ -27,8 +27,8 @@ export default async function HomePage({
         key: 'about',
         as: "section",
         noWrapperBg: true,
-        bgClasses: "bg-[#2F2F2B] dark:bg-[#b2b250]",
-        textClasses: "text-[#F5F5EF] dark:text-[#2F2F2B]",
+        bgClasses: "bg-[#2F2F2B]",
+        textClasses: "text-[#F5F5EF]",
         scaleRange: [0.75, 1],
         ease: {
           scale: [0.5, 0.5, 0, 1],
@@ -39,7 +39,7 @@ export default async function HomePage({
           mobile: ['0rem', '-6rem'],
         },
         stickyDuration: "300vh",
-        className: "-mb-1",
+        className: "-mb-1 text-[clamp(4rem,15vw,12rem)]",
         variant: variant,
       }
     },
@@ -48,8 +48,8 @@ export default async function HomePage({
       props: {
         key: 'stretchy',
         as: "section",
-        bgClasses: "bg-[#E4E191] dark:bg-[#2F2F2B]",
-        className: "flex items-center justify-center max-md:z-1 max-md:rounded-[8rem] text-black dark:text-white",
+        bgClasses: "bg-[#E4E191] dark:bg-[#43433e]",
+        className: "flex items-center justify-center max-md:z-1 max-md:rounded-[8rem] text-black dark:text-white text-[clamp(4rem,15vw,12rem)]",
         variant: variant
       }
     },
@@ -69,9 +69,9 @@ export default async function HomePage({
       props: {
         key: 'work',
         as: "section",
-        bgClasses: "bg-[#DEDA71] dark:bg-[#2F2F2B]",
+        bgClasses: "bg-[#DEDA71] dark:bg-[#393935]",
         textClasses: "text-black dark:text-white",
-        className: "-translate-y-32 -mb-1 flex items-end h-screen pt-24 md:pt-32",
+        className: "-translate-y-24 -md:translate-y-32 -mb-1 flex items-end h-screen pt-24 md:pt-32 px-[0.5em] md:px-[0.75em] text-[clamp(4rem,15vw,12rem)]",
         variant: variant,
       }
     }

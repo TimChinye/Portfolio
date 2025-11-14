@@ -16,31 +16,6 @@ export function useSectionScrollProgress() {
   return context;
 }
 
-export function useElementOffsets(elementRef: RefObject<HTMLElement | null>, onParent?: boolean) {
-  const [offsets, setOffsets] = useState<[number, number]>([0, 1]);
-
-  useLayoutEffect(() => {
-    if (elementRef.current) {
-      const element = elementRef.current;
-      const containerElement = onParent ? element.parentElement : element;
-
-      if (containerElement) {
-        const containerHeight = containerElement.offsetHeight;
-        const computedStyle = window.getComputedStyle(element);
-        const paddingTop = parseFloat(computedStyle.paddingTop);
-        const paddingBottom = parseFloat(computedStyle.paddingBottom);
-
-        const startOffset = paddingTop / containerHeight;
-        const endOffset = 1 - (paddingBottom / containerHeight);
-
-        setOffsets([startOffset, endOffset]);
-      }
-    }
-  }, [elementRef]);
-
-  return offsets;
-}
-
 // Helper function to parse color values from Tailwind class strings
 export const parseColorClasses = (classes: string) => {
   // Regex to find the color inside bg-[...] and dark:bg-[...]

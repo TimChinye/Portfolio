@@ -10,6 +10,7 @@ const SvgW: React.FC<SvgProps> = ({ className }) => (
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
     style={{
+      fill: "currentColor",
       fillRule: "evenodd",
       clipRule: "evenodd",
       strokeLinejoin: "round",
@@ -47,6 +48,7 @@ const SvgO: React.FC<SvgProps> = ({ className }) => (
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
     style={{
+      fill: "currentColor",
       fillRule: "evenodd",
       clipRule: "evenodd",
       strokeLinejoin: "round",
@@ -81,6 +83,7 @@ const SvgR: React.FC<SvgProps> = ({ className }) => (
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
     style={{
+      fill: "currentColor",
       fillRule: "evenodd",
       clipRule: "evenodd",
       strokeLinejoin: "round",
@@ -115,6 +118,7 @@ const SvgK: React.FC<SvgProps> = ({ className }) => (
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
     style={{
+      fill: "currentColor",
       fillRule: "evenodd",
       clipRule: "evenodd",
       strokeLinejoin: "round",
@@ -149,6 +153,7 @@ const SvgUnderscore: React.FC<SvgProps> = ({ className }) => (
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
     style={{
+      fill: "currentColor",
       fillRule: "evenodd",
       clipRule: "evenodd",
       strokeLinejoin: "round",

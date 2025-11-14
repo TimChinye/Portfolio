@@ -39,7 +39,7 @@ export function BubbleCursor() {
   const isTracking = useRef(false);
 
   const mouseX = useMotionValue(typeof window !== 'undefined' ? window.innerWidth / 2 : 0);
-  const mouseY = useMotionValue(typeof window !== 'undefined' ? window.innerHeight / 8 : 0);
+  const mouseY = useMotionValue(typeof window !== 'undefined' ? window.innerHeight * (7/8) : 0);
 
   // Effect to run on the client-side only
   useEffect(() => {
