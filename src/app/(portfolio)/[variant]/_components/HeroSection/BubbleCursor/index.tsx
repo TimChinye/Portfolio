@@ -109,8 +109,8 @@ export function BubbleCursor() {
 
   // --- HTML & CSS for the bubble ---
                         
-  const bubbleWrapperClasses = "fixed top-0 left-0 z-9999 rounded-full -translate-x-1/2 -translate-y-1/2 overflow-hidden"
-  const bubbleClasses = "size-32 pointer-events-none rounded-[inherit] shadow-[0px_6px_var(--outer-shadow-blur)_rgba(0,0,0,0.2)] before:absolute before:inset-0 after:absolute after:inset-1 after:rounded-[inherit] after:bg-[rgb(from_var(--tint-color)_r_g_b_/_var(--tint-opacity))] after:shadow-[inset_var(--shadow-offset)_var(--shadow-offset)_var(--shadow-blur)_var(--shadow-spread)_var(--shadow-color),_inset_calc(-1_*_var(--shadow-offset))_calc(-1_*_var(--shadow-offset))_var(--shadow-blur)_var(--shadow-spread)_var(--shadow-color)] dark:after:invert-60"
+  const bubbleWrapperClasses = "fixed top-0 left-0 z-9999 -translate-x-1/2 -translate-y-1/2 pointer-events-none overflow-hidden rounded-full"
+  const bubbleClasses = "size-32 shadow-[0px_6px_var(--outer-shadow-blur)_rgba(0,0,0,0.2)] before:rounded-[inherit] before:absolute before:inset-0 after:absolute after:inset-1 after:rounded-[inherit] after:bg-[rgb(from_var(--tint-color)_r_g_b_/_var(--tint-opacity))] after:shadow-[inset_var(--shadow-offset)_var(--shadow-offset)_var(--shadow-blur)_var(--shadow-spread)_var(--shadow-color),_inset_calc(-1_*_var(--shadow-offset))_calc(-1_*_var(--shadow-offset))_var(--shadow-blur)_var(--shadow-spread)_var(--shadow-color)] dark:after:invert-60"
   const liquidGlassClasses = "before:backdrop-filter-[blur(var(--frost-blur))_url(#glass-distortion)]";
   const frostedGlassClasses = "before:backdrop-filter-[blur(var(--frost-blur))]";
 

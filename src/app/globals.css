@@ -29,6 +29,10 @@
 
 /* --- CORRECT V4.0 UTILITY DEFINITION --- */
 @layer utilities {
+  .container-inline-size {
+    container-type: inline-size;
+  }
+
   .container-size {
     container-type: size;
   }

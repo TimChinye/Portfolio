@@ -93,10 +93,10 @@ export function Client() {
           x: slideIn,
           y: slideInT
         }}
-        className="text-[0.25em] md:text-[0.25em] translate-x-1/2 absolute md:right-0 md:top-0 max-md:bottom-[calc(2.5*clamp(4rem,20vw,24rem))] max-md:-right-[1em]"
+        className="text-[0.25em] md:text-[0.25em] translate-x- absolute md:right-0 md:top-0 max-md:bottom-[calc(2.5*clamp(4rem,20vw,24rem))] max-md:-right-[1em]"
       >
         <div className="flex -space-x-[1em] -mb-[4.5em]">
-          <KeyCap className='[&svg]:aspect-[2.21911337209/1] h-[8em]'>Space bar</KeyCap>
+          <KeyCap>Space bar</KeyCap>
         </div>
 
         <div className="flex -space-x-[1em]">
@@ -109,7 +109,7 @@ export function Client() {
           <KeyCap>U</KeyCap>
           <KeyCap className='mt-[0.625em]'>S</KeyCap>
         </div>
-      </motion.div> 
+      </motion.div>
     </div>
   );
 }

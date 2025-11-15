@@ -1,6 +1,60 @@
 import { groq } from 'next-sanity';
 import { client } from './client';
 import { sanityFetch } from "@/sanity/lib/live";
+import { urlFor } from './image';
+
+export interface GlobalContentData {
+  defaultSeoTitle: string;
+  defaultSeoDescription: string;
+  timHeroName: string;
+  timHeroBio: string;
+  tigerHeroName: string;
+  tigerHeroBio: string;
+}
+
+export async function getGlobalContent(): Promise<GlobalContentData | null> {
+  const query = groq`*[_type == "globalContent"][0]{
+    defaultSeoTitle,
+    defaultSeoDescription,
+    timHeroName,
+    timHeroBio,
+    tigerHeroName,
+    tigerHeroBio
+  }`;
+  
+  const data = await client.fetch<GlobalContentData | null>(query);
+  return data;
+};
+
+export interface HeroProject {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  thumbnail: any;
+  imageUrl: string;
+  shortDescription: string;
+  techDescription: string;
+}
+
+export async function getHeroProjects(variant: 'tim' | 'tiger'): Promise<HeroProject[]> {
+  const query = groq`*[_type == "projectContent" && $variant in visibility]{
+    _id,
+    title,
+    slug,
+    thumbnail,
+    shortDescription,
+    techDescription
+  }`;
+  
+  const projects = await client.fetch<Omit<HeroProject, 'imageUrl'>[]>(query, { variant });
+  
+  // Post-process to include the full image URL
+  return projects.map(p => ({
+    ...p,
+    imageUrl: urlFor(p.thumbnail).width(800).height(800).quality(80).url(),
+  }));
+}
+
 
 interface MetaData {
   defaultSeoTitle: string;

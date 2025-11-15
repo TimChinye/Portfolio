@@ -17,7 +17,7 @@ export default async function HomePage({
       props: {
         key: 'hero',
         bgClasses: "bg-[#F5F5EF] dark:bg-[#1A1A17]",
-        className: "content-center",
+        className: "text-center content-center",
         variant: variant,
       }
     },

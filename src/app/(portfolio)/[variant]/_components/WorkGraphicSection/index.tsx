@@ -28,8 +28,6 @@ export const WorkGraphicSection = (props: WorkGraphicSectionProps) => {
       const paddingTop = parseFloat(computedSectionElemStyle.paddingTop);
 
       setEndOffset(1 + (paddingTop / viewportHeight));
-
-      console.log([endOffset, paddingTop / viewportHeight, paddingTop, viewportHeight, computedSectionElemStyle.paddingTop, sectionElem]);
     }
   }, []);
 

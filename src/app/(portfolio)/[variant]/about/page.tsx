@@ -9,7 +9,7 @@ export default async function AboutPage({ params }: Props) {
 
   // As per the specification, the About page is only for the 'tim' variant.
   // The notFound() function will render the closest not-found.tsx file.
-  if (variant === 'tiger') {
+  if (variant !== 'tim') {
     notFound();
   }
 
