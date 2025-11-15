@@ -40,7 +40,7 @@ export const KeyCap = ({
   const width = baseWidth + (Math.max(0, children.length - 1) * extraWidthPerChar);
   const stretch = width - baseWidth;
 
-  const rotation = 12;
+  const rotation = 12.5;
   const angleDeg = -1 + rotation;
   const angleRad = angleDeg * (Math.PI / 180);
 
@@ -135,14 +135,17 @@ export const KeyCap = ({
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="100%"
-      viewBox={`0 ${stretch / 7.71084337} ${width} ${height}`}
+      viewBox={`0 ${stretch / 10} ${width} ${height}`}
       fill="none"
       className={clsx(
         'group container-size w-auto origin-bottom-right transition-transform has-hover:scale-x-95 has-hover:scale-y-90 transform-gpu',
         '[&>path]:cursor-pointer [&>path]:transition-transform [&>path]:group-has-hover:scale-y-95 [&>path]:origin-bottom-right',
-        !className?.includes('h-[') && 'h-[4.125em]',
         !className?.includes('aspect-[') && 'aspect-[1.03091408115/1]',
         className)}
+      style={{
+        height: `${4.125 + (0.484375 * (children.length - 1))}em`,
+        aspectRatio: `${1 + (0.1375 * (children.length - 1))}/1`
+      }}
     >
       <defs>
         <linearGradient
@@ -174,8 +177,8 @@ export const KeyCap = ({
       <path d={topFacePath} fill={topColor}  fillRule="evenodd" clipRule="evenodd" />
 
       <text
-        x={126 + (stretch * 0.4)}
-        y={38 + (stretch * 0.005)}
+        x={126 + (stretch * 0.5)}
+        y={38}
         dominantBaseline="middle"
         textAnchor="middle"
         fill={textColor}
