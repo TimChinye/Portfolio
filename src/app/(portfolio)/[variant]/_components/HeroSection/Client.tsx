@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import Image from 'next/image';
-import { motion, useSpring, useMotionValue, AnimatePresence } from 'motion/react';
+// import { useState, useEffect, useCallback } from 'react';
+// import Image from 'next/image';
+// import { motion, useSpring, useMotionValue, AnimatePresence } from 'motion/react';
 import { BubbleCursor } from './BubbleCursor';
 import { HeroHeading } from './HeroHeading';
-import { InfoCard } from './InfoCard';
+// import { InfoCard } from './InfoCard';
 import type { HeroProject } from '@/sanity/lib/queries';
 
 // --- Types & Config ---

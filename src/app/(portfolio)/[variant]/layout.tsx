@@ -15,7 +15,7 @@ export default async function PageLayout({
   params
 }: Readonly<{
   children: React.ReactNode;
-  params: Promise<{ variant: 'tim' | 'tiger' }>;
+  params: Promise<{ variant: string }>;
 }>) {
   const resolvedParams = await params;
   const variant = resolvedParams.variant as 'tim' | 'tiger';
@@ -55,11 +55,9 @@ export default async function PageLayout({
   );
 }
 
-type Props = {
+export async function generateMetadata({ params }: {
   params: Promise<{ variant: 'tim' | 'tiger' }>;
-};
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+}): Promise<Metadata> {
   const resolvedParams = await params;
   const variant = resolvedParams.variant as 'tim' | 'tiger';
   
