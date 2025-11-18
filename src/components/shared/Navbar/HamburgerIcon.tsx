@@ -30,7 +30,7 @@ export function HamburgerIcon({ isHovered, isScrambling, links, layout, isOpen, 
 
   return (
     <>
-      {/* --- Mobile Version (Button) --- */}
+      {/* Mobile Version (Button) */}
       <button
         className="relative w-8 h-8 flex items-center justify-center cursor-pointer hover:text-[#948D00] hover:dark:text-[#D9D24D] md:hidden"
         onClick={onClick}
@@ -64,7 +64,7 @@ export function HamburgerIcon({ isHovered, isScrambling, links, layout, isOpen, 
         })}
       </button>
 
-      {/* --- Desktop Version (Animated Links) --- */ }
+      {/* Desktop Version (Animated Links) */ }
       <div className="relative w-8 h-full hidden md:flex items-center justify-center">
         {links.map((link, index) => {
           const currentPage = pathname.split('/').pop() || '';

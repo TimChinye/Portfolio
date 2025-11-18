@@ -9,12 +9,16 @@ type PerpetualTextProps = {
 };
 
 export const PerpetualText = ({ scrollYProgress }: PerpetualTextProps) => {
-  // HOOK IS NOW HERE: Called at the top level of the component.
-  // Animates from 0% to 100% during the first half of the scroll.
   const animatedHeight = useTransform(scrollYProgress, [0, 0.5], ['0%', '100%'], { clamp: true });
 
+  const animatedVisibility = useTransform(
+    scrollYProgress,
+    [0, 0.001],
+    ['hidden', 'visible']
+  );
+
   return (
-    <motion.div style={{ height: animatedHeight }}>
+    <motion.div style={{ height: animatedHeight, visibility: animatedVisibility }}>
       <svg
         width="100%"
         height="100%"
@@ -22,8 +26,8 @@ export const PerpetualText = ({ scrollYProgress }: PerpetualTextProps) => {
         preserveAspectRatio="none"
         fill="currentColor"
         xmlns="http://www.w.org/2000/svg"
+        aria-hidden
       >
-        {/* SVG path data... */}
         <path d="M0 309.135V0H58.8311C81.1651 0 99.7768 3.78533 114.666 11.356C129.737 18.9266 140.995 29.6517 148.44 43.5313C155.884 57.4108 159.607 73.7438 159.607 92.5303C159.607 111.317 155.703 127.51 147.895 141.109C140.087 154.708 128.648 165.363 113.577 173.074C98.6874 180.644 80.4388 184.78 58.8311 185.481V309.135H0ZM58.8311 139.216C69.181 139.216 77.352 137.674 83.3441 134.59C89.3361 131.365 93.6032 126.318 96.1453 119.448C98.8689 112.579 100.231 103.746 100.231 92.9509C100.231 82.0155 98.8689 73.1129 96.1453 66.2433C93.6032 59.3736 89.2453 54.3265 83.0717 51.1019C77.0796 47.8774 68.9994 46.2651 58.8311 46.2651V139.216Z" />
         <path d="M191.507 309.135V0H326.056V46.6857H250.339V129.963H304.812V175.387H250.339V262.45H326.056V309.135H191.507Z" />
         <path d="M369.716 309.135V0H428.547C463.773 0 489.739 7.57065 506.444 22.712C523.149 37.7131 531.501 59.8643 531.501 89.1655C531.501 106.55 527.507 121.621 519.517 134.379C511.709 146.997 502.177 156.25 490.919 162.138L530.957 309.135H472.126L438.897 178.752H428.547V309.135H369.716ZM428.547 136.692C439.442 136.692 448.067 134.87 454.422 131.225C460.777 127.439 465.316 122.112 468.04 115.242C470.764 108.373 472.126 100.241 472.126 90.8479C472.126 76.1272 468.948 64.8413 462.593 56.9902C456.419 48.999 445.07 45.0034 428.547 45.0034V136.692Z" />

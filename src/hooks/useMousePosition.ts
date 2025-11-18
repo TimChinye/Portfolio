@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from 'react';
-import { useMotionValue, MotionValue } from 'framer-motion';
+import { useMotionValue, MotionValue } from 'motion/react';
 
 /**
  * An object containing MotionValues for all major mouse coordinate systems.

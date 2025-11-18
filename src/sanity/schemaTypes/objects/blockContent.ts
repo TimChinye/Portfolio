@@ -12,7 +12,7 @@ export const blockContentType = defineType({
   name: 'blockContent',
   type: 'array',
   of: [
-    // --- Default Rich Text Block ---
+    // Default Rich Text Block
     defineArrayMember({
       title: 'Block',
       type: 'block',
@@ -66,7 +66,7 @@ export const blockContentType = defineType({
       },
     }),
 
-    // --- Custom Image Block ---
+    // Custom Image Block
     defineArrayMember({
       name: 'image',
       title: 'Image',
@@ -74,7 +74,7 @@ export const blockContentType = defineType({
       icon: ImageIcon,
       options: { hotspot: true },
       fields: [
-        // --- Core Content ---
+        // Core Content
         defineField({
           name: 'alt',
           type: 'string',
@@ -94,7 +94,7 @@ export const blockContentType = defineType({
           description: 'Optional caption displayed below the image.',
         }),
 
-        // --- Layout & Styling ---
+        // Layout & Styling
         defineField({
           name: 'layout',
           title: 'Layout',
@@ -112,7 +112,7 @@ export const blockContentType = defineType({
           initialValue: 'contained',
         }),
 
-        // --- Interactivity & Accessibility ---
+        // Interactivity & Accessibility
         defineField({
           name: 'link',
           title: 'Image Link',
@@ -156,14 +156,14 @@ export const blockContentType = defineType({
       },
     }),
 
-    // --- Custom Mux Video Block ---
+    // Custom Mux Video Block
     defineArrayMember({
       name: 'muxVideo',
       title: 'Mux Video',
       type: 'object',
       icon: PlayIcon,
       fields: [
-        // --- Core Content ---
+        // Core Content
         defineField({
           name: 'video',
           title: 'Video File',
@@ -184,7 +184,7 @@ export const blockContentType = defineType({
           description: 'Optional caption displayed below the video.',
         }),
 
-        // --- Layout & Playback ---
+        // Layout & Playback
         defineField({
           name: 'layout',
           title: 'Layout',
@@ -229,14 +229,14 @@ export const blockContentType = defineType({
       },
     }),
 
-    // --- Custom MDX Block ---
+    // Custom MDX Block
     defineArrayMember({
       name: 'mdxBlock',
       title: 'MDX Content Block',
       type: 'object',
       icon: CodeIcon,
       fields: [
-        // --- Configuration ---
+        // Configuration
         defineField({
           name: 'internalTitle',
           title: 'Internal Title',
@@ -245,7 +245,7 @@ export const blockContentType = defineType({
           validation: (Rule) => Rule.required(),
         }),
 
-        // --- Content ---
+        // Content
         defineField({
           name: 'mdx',
           title: 'MDX Code',

@@ -13,7 +13,7 @@ type WorkLayerProps = {
 export function WorkLayer({ index, totalLayers, scrollYProgress }: WorkLayerProps) {
   const isLastLayer = index === totalLayers - 1;
 
-  // --- THE "GOLDEN TRIANGLE" OF ANIMATION CONTROLS ---
+  // THE "GOLDEN TRIANGLE" OF ANIMATION CONTROLS
 
   // How long does each word's individual (linear) animation last?
   const singleAnimationDuration = Math.pow(0.875, index);
@@ -30,10 +30,10 @@ export function WorkLayer({ index, totalLayers, scrollYProgress }: WorkLayerProp
   // 0.5 = Quadratic Ease-Out (words start in a rush, then the starts spread out)
   const cascadeEasingPower = 1.25;
 
-  // --- END OF CONTROLS ---
+  // END OF CONTROLS
 
 
-  // --- NON-LINEAR STAGGER DERIVATION ---
+  // NON-LINEAR STAGGER DERIVATION
 
   // Normalize the layer's position in the sequence (0 for the first, 1 for the last).
   // We use `totalLayers - 1` to ensure the final layer's index maps precisely to 1.0.
@@ -52,7 +52,7 @@ export function WorkLayer({ index, totalLayers, scrollYProgress }: WorkLayerProp
   // The end time is simply the start time plus the duration of a single animation.
   const animationEnd = animationStart + singleAnimationDuration;
 
-  // --- End of Derivations ---
+  // End of Derivations
 
   // This part of the code remains the same as it's doing its job perfectly.
   const translateY = useTransform(

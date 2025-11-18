@@ -26,13 +26,13 @@ const getRayTransformParams = (isGoingToDark: boolean, index: number): [number[]
 export function ThemeToggleButtonIcon({ onClick, progress, initialTheme }: Props) {
   const isGoingToDark = initialTheme === 'light';
 
-  // --- Main hooks ---
+  // Main hooks
   const svgRotate = useTransform(progress, [0, 100], isGoingToDark ? [40, 80] : [80, 40]);
   const moonMaskX = useTransform(progress, [0, 100], isGoingToDark ? [0, 15] : [15, 0]);
   const sunCircleScale = useTransform(progress, [0, 100], isGoingToDark ? [1, 0.55] : [0.55, 1]);
   const sunCircleRotate = useTransform(progress, [0, 100], isGoingToDark ? [0, 90] : [90, 0]);
 
-  // --- Sun Ray Hooks ---
+  // Sun Ray Hooks
   // The six hook calls are still at the top level, satisfying the rules.
   // But the logic is now centralized in the helper function, satisfying DRY.
   const sunRayScales = [

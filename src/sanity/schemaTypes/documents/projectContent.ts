@@ -37,7 +37,7 @@ export const projectContent = defineType({
       validation: (Rule) => Rule.required().min(1),
     }),
 
-    // --- Content for Homepage Hero Popup ---
+    // Content for Homepage Hero Popup
     defineField({
       name: 'thumbnail',
       title: 'Thumbnail Image',
@@ -60,7 +60,7 @@ export const projectContent = defineType({
       type: 'text',
     }),
 
-    // --- Content for Homepage Featured Section ---
+    // Content for Homepage Featured Section
     defineField({
       name: 'featuredDescription',
       title: 'Featured Description',
@@ -69,7 +69,7 @@ export const projectContent = defineType({
       validation: (Rule) => Rule.required(),
     }),
 
-    // --- Content for /projects Page ---
+    // Content for /projects Page
     defineField({
       name: 'isHighlighted',
       title: 'Highlighted Project?',
@@ -91,7 +91,7 @@ export const projectContent = defineType({
       initialValue: false,
     }),
 
-    // --- CTAs (Call to Actions) ---
+    // CTAs (Call to Actions)
     defineField({
       name: 'ctaPrimary',
       title: 'Primary CTA',
@@ -121,7 +121,7 @@ export const projectContent = defineType({
       ],
     }),
 
-    // --- Case Study Content ---
+    // Case Study Content
     defineField({
       name: 'caseStudyContent',
       title: 'Case Study Content',

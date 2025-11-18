@@ -26,14 +26,21 @@ export async function getGlobalContent(): Promise<GlobalContentData | null> {
   return data;
 };
 
+interface Cta {
+  label: string;
+  url: string;
+}
+
 export interface HeroProject {
   _id: string;
   title: string;
   slug: { current: string };
   thumbnail: any;
-  imageUrl: string;
   shortDescription: string;
   techDescription: string;
+  ctaPrimary?: Cta;
+  ctaSecondary?: Cta;
+  ctaTextLink?: Cta;
 }
 
 export async function getHeroProjects(variant: 'tim' | 'tiger'): Promise<HeroProject[]> {
@@ -43,18 +50,21 @@ export async function getHeroProjects(variant: 'tim' | 'tiger'): Promise<HeroPro
     slug,
     thumbnail,
     shortDescription,
-    techDescription
+    techDescription,
+    ctaPrimary,
+    ctaSecondary,
+    ctaTextLink
   }`;
   
-  const projects = await client.fetch<Omit<HeroProject, 'imageUrl'>[]>(query, { variant });
-  
-  // Post-process to include the full image URL
-  return projects.map(p => ({
-    ...p,
-    imageUrl: urlFor(p.thumbnail).width(800).height(800).quality(80).url(),
-  }));
-}
+  const rawProjects = await client.fetch<any[]>(query, { variant });
 
+  const projects: HeroProject[] = rawProjects.map(project => ({
+    ...project,
+    thumbnail: urlFor(project.thumbnail).width(800).url(),
+  }));
+  
+  return projects;
+}
 
 interface MetaData {
   defaultSeoTitle: string;

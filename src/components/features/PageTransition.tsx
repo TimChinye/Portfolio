@@ -28,7 +28,7 @@ export function PageTransition({ children, isNotFound = false }: PageTransitionP
   }, [pathname]);
 
 
-  // --- Determine navigation direction ---
+  // Determine navigation direction
   const prevIndex = getPageIndex(prevPathnameRef.current || '');
   const currentIndex = getPageIndex(pathname);
   let direction: 'forward' | 'backward' | 'none' = 'none';
@@ -41,7 +41,7 @@ export function PageTransition({ children, isNotFound = false }: PageTransitionP
     }
   }
 
-  // --- Animation Definitions ---
+  // Animation Definitions
 
   // Animation for the initial page load
   const initialLoadAnimation = {
@@ -71,7 +71,7 @@ export function PageTransition({ children, isNotFound = false }: PageTransitionP
     transition: { ...transition }
   };
 
-  // --- Select the appropriate animation based on the context ---
+  // Select the appropriate animation based on the context
   let overlayAnimation;
   
   if (isNotFound) overlayAnimation = notFoundAnimation;
@@ -82,14 +82,14 @@ export function PageTransition({ children, isNotFound = false }: PageTransitionP
   
   return (
     <div className="min-h-full">
-      {/* --- OVERLAY --- */}
+      {/* OVERLAY */}
       <motion.div
         key={`${pathname}-transition-overlay`}
         className="fixed top-0 left-0 w-full h-screen bg-[#D9D24D] z-1000"
         {...overlayAnimation}
       />
 
-      {/* --- PAGE CONTENT --- */}
+      {/* PAGE CONTENT */}
       <AnimatePresence mode="wait">
         <motion.div
           key={pathname}

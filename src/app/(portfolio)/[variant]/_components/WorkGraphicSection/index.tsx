@@ -14,6 +14,10 @@ export const WorkGraphicSection = (props: WorkGraphicSectionProps) => {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   const [endOffset, setEndOffset] = useState(1);
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     if (sectionRef.current) {
@@ -22,7 +26,7 @@ export const WorkGraphicSection = (props: WorkGraphicSectionProps) => {
       if (!sectionElem) return;
 
       const viewportHeight = window.innerHeight;
-      if (viewportHeight === 0) return; // Avoid division by zero
+      if (viewportHeight === 0) return;
       
       const computedSectionElemStyle = window.getComputedStyle(sectionElem);
       const paddingTop = parseFloat(computedSectionElemStyle.paddingTop);
@@ -38,7 +42,7 @@ export const WorkGraphicSection = (props: WorkGraphicSectionProps) => {
   });
   
   const isMobile = useMediaQuery('(max-width: 768px)');
-  
+
   return (
     <Section
       {...props}
@@ -46,7 +50,7 @@ export const WorkGraphicSection = (props: WorkGraphicSectionProps) => {
       fillScreen={false}
       stickyDuration={isMobile ? "fit-content" : "200vh"}
       stickyAnimationRange={["0 1", "1 1"]}
-      style={animatedStyle as React.CSSProperties}
+      style={isMounted ? (animatedStyle as React.CSSProperties) : {}}
     >
       <Client />
     </Section>

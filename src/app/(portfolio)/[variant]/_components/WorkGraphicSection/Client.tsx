@@ -93,10 +93,10 @@ export function Client() {
           x: slideIn,
           y: slideInT
         }}
-        className="text-[0.25em] md:text-[0.25em] translate-x- absolute md:right-0 md:top-0 max-md:bottom-[calc(2.5*clamp(4rem,20vw,24rem))] max-md:-right-[1em]"
+        className="text-[0.25em] md:text-[0.25em] translate-x-1/2 absolute md:right-0 md:top-0 max-md:bottom-[calc(2.5*clamp(4rem,20vw,24rem))] max-md:-right-[1em]"
       >
         <div className="flex -space-x-[1em] -mb-[4.5em]">
-          <KeyCap>Space bar</KeyCap>
+          <KeyCap className="[&>text]:-translate-x-24 md:[&>text]:-translate-x-16 [&>text]:-translate-y-4">Space bar</KeyCap>
         </div>
 
         <div className="flex -space-x-[1em]">

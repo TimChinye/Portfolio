@@ -20,14 +20,14 @@
     }
   }
 
-  /* --- CORRECT V4.0 ANIMATION DEFINITION --- */
+  /* CORRECT V4.0 ANIMATION DEFINITION */
   @keyframes marquee {
     from { transform: translateX(0%); }
     to { transform: translateX(-100%); }
   }
 }
 
-/* --- CORRECT V4.0 UTILITY DEFINITION --- */
+/* CORRECT V4.0 UTILITY DEFINITION */
 @layer utilities {
   .container-inline-size {
     container-type: inline-size;

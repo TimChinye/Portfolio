@@ -1,48 +1,142 @@
 "use client";
 
-import Image from 'next/image';
-import { motion } from 'motion/react';
+import clsx from 'clsx';
+import { motion, MotionStyle } from 'motion/react';
 import { CustomLink as Link } from '@/components/ui/CustomLink';
 import type { HeroProject } from '@/sanity/lib/queries';
+import { ForwardedRef, forwardRef, useState, useEffect } from 'react';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
+const ExternalLinkIcon = () => (
+  <span className="font-figtree -mt-1 ml-[0.5ch]">
+    ↗
+  </span>
+);
+
+interface CtaButtonProps extends React.ComponentPropsWithoutRef<'a'> {
+  href: string;
+  variant: 'primary' | 'secondary';
+  isExternal: boolean;
+}
+const CtaButton = forwardRef(function CtaButton(
+  { href, variant, isExternal, children, ...props }: CtaButtonProps,
+  ref: ForwardedRef<HTMLAnchorElement>
+) {
+  const commonClasses = "text-[1.25em] font-newsreader font-medium px-[1.5em] py-[0.75em] rounded-lg";
+  const hoverClasses = "transition-transform hover:-translate-y-1";
+  
+  const variantClasses = {
+    primary: "bg-[#D9D24D] dark:bg-[#b5b03f] text-[#000000]",
+    secondary: "bg-[#CCCCCC] dark:bg-[#AAAAAA] text-[#000000]"
+  };
+
+  const Component = isExternal ? 'a' : Link;
+
+  return (
+    <Component
+      href={href}
+      ref={ref}
+      className={`${commonClasses} ${hoverClasses} ${variantClasses[variant]}`}
+      {...(isExternal && { target: '_blank', rel: 'noopener noreferrer' })}
+      {...props}
+    >
+      {children}
+      {isExternal && <ExternalLinkIcon />}
+    </Component>
+  );
+});
+
+// Main InfoCard Component
 type InfoCardProps = {
   project: HeroProject;
   onClose: () => void;
+  className?: string;
+  style?: MotionStyle;
 };
 
-export function InfoCard({ project, onClose }: InfoCardProps) {
+export function InfoCard({ project, onClose, className, style }: InfoCardProps) {
+  const isPrimaryExternal = project.ctaPrimary?.url !== '#';
+
+  const [hasMounted, setHasMounted] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  const desktopAnimation = {
+    initial: { opacity: 0, x: '100%', y: '0%' },
+    animate: { opacity: 1, x: '0%', y: '0%' },
+    exit: { opacity: 0, x: '-100%', y: '0%' },
+  };
+
+  const mobileAnimation = {
+    initial: { opacity: 0, x: '0%', y: '100%' },
+    animate: { opacity: 1, x: '0%', y: '0%' },
+    exit: { opacity: 0, x: '0%', y: '-100%' },
+  };
+
+  if (!hasMounted) {
+    return null;
+  }
+
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9, y: 20 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.9, y: 20 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
-      className="fixed top-4 right-4 md:top-6 md:right-6 w-[calc(100%-2rem)] max-w-sm p-4 rounded-2xl bg-white/70 dark:bg-black/70 backdrop-blur-lg shadow-2xl z-50 border border-white/20 dark:border-black/20"
+      {...(hasMounted ? (isMobile ? mobileAnimation : desktopAnimation) : desktopAnimation)}
+      transition={{ duration: 0.5, ease: 'easeInOut' }}
+      className={clsx(
+        "rounded-xl md:rounded-r-none p-8 pb-4 md:p-16 md:pb-8 bg-[#F5F5EF]/25 dark:bg-[#2F2F2B]/25 shadow-[0.5rem_0.5rem_2rem_#0004] z-1000",
+        "after:content-[''] after:absolute after:-inset-0.5 after:rounded-[inherit] after:backdrop-blur-lg after:-z-1",
+        "flex flex-col gap-6 md:gap-8 text-start leading-none text-[#2F2F2B] dark:text-[#F5F5EF] max-md:text-[0.8125rem]",
+        className
+      )}
+      style={style}
     >
-      <button
-        onClick={onClose}
-        className="absolute top-2 right-2 size-8 flex items-center justify-center rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20 transition-colors"
-        aria-label="Close project details"
-      >
-        ✕
-      </button>
 
-      <div className="flex flex-col gap-4">
-        <h3 className="text-2xl font-bold font-newsreader pr-8">{project.title}</h3>
-        <p className="text-sm text-black/70 dark:text-white/70">{project.shortDescription}</p>
-        
-        {project.techDescription && (
-             <div className="text-xs text-black/60 dark:text-white/60 border-t border-black/10 dark:border-white/10 pt-2">
-                <p className="whitespace-pre-line">{project.techDescription}</p>
-             </div>
+      {/* Title and Short Description */}
+      <div className="">
+        <h3 className="text-[4em] font-newsreader dark leading-tight tracking-tight">
+          {project.title}
+        </h3>
+        <p className="text-[1em] font-figtree">
+          {project.shortDescription}
+        </p>
+      </div>
+
+      {/* Tech Description */}
+      {project.techDescription && (
+        <p className="text-[1.25em] font-figtree leading-tight dark whitespace-pre-line">
+          {project.techDescription}
+        </p>
+      )}
+
+      {/* CTAs */}
+      <div className="flex flex-col items-center gap-3">
+        <div className="flex gap-3">
+          {project.ctaSecondary?.url && (
+            <CtaButton href={project.ctaSecondary.url} variant="secondary" isExternal>
+              {project.ctaSecondary.label}
+            </CtaButton>
+          )}
+
+          {project.ctaPrimary && (
+            <CtaButton href={isPrimaryExternal ? project.ctaPrimary.url : `/project/${project.slug.current}`} variant="primary" isExternal={isPrimaryExternal}>
+              {project.ctaPrimary.label}
+            </CtaButton>
+          )}
+        </div>
+
+        {project.ctaTextLink?.url && (
+          <a
+            href={project.ctaTextLink.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline text-[1em] font-newsreader transition-transform hover:translate-y-2 hover:scale-110"
+          >
+            {project.ctaTextLink.label}
+            <ExternalLinkIcon />
+          </a>
         )}
-
-        <Link
-          href={`/project/${project.slug.current}`}
-          className="mt-2 inline-block px-4 py-2 rounded-lg bg-black/90 text-white text-center text-sm font-semibold transition hover:bg-black dark:bg-white/90 dark:text-black dark:hover:bg-white"
-        >
-          View Case Study
-        </Link>
       </div>
     </motion.div>
   );

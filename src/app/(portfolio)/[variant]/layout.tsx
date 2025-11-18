@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: {
   
   const seoData = await getPageSeo('home');
 
-  // --- Primary Logic: Use CMS data if available ---
+  // Primary Logic: Use CMS data if available
   if (seoData?.global) {
     const { global, page } = seoData;
     const siteName = global.siteName || "Tim Chinye";
@@ -124,12 +124,12 @@ export async function generateMetadata({ params }: {
   return {
     title: fallbackTitle,
     description: fallbackDescription,
-    // --- The hardcoded canonical link ---
+    // The hardcoded canonical link
     metadataBase: new URL(canonicalUrl),
     alternates: {
       canonical: '/',
     },
-    // --- Other useful hardcoded metadata ---
+    // Other useful hardcoded metadata
     openGraph: {
       title: fallbackTitle,
       description: fallbackDescription,

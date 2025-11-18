@@ -13,7 +13,7 @@ export function ProgressBar() {
   const previousPathname = useRef(pathname);
 
   useEffect(() => {
-    // --- NProgress-like animation logic ---
+    // NProgress-like animation logic
     const handleStart = (direction: NavigationDirection = 'forward') => {
       // Reset any running animations and set initial state
       controls.stop();
@@ -49,18 +49,18 @@ export function ProgressBar() {
       });
     };
 
-    // --- Subscribe to custom events ---
+    // Subscribe to custom events
     const unsubscribeStart = progressBarEvents.on('start', handleStart);
     const unsubscribeFinish = progressBarEvents.on('finish', handleFinish);
 
-    // --- Detect route changes ---
+    // Detect route changes
     // This is the key to handling back/forward navigation
     if (pathname !== previousPathname.current) {
       previousPathname.current = pathname;
       handleFinish();
     }
 
-    // --- Cleanup on unmount ---
+    // Cleanup on unmount
     return () => {
       unsubscribeStart();
       unsubscribeFinish();

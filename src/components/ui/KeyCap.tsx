@@ -31,7 +31,7 @@ export const KeyCap = ({
 }: KeyCapProps) => {
   const gradientId = useId();
 
-  // --- Dynamic Sizing Logic ---
+  // Dynamic Sizing Logic
   const baseWidth = 204;
   const height = 194;
 
@@ -47,7 +47,7 @@ export const KeyCap = ({
   const stretchX = stretch * Math.cos(angleRad);
   const stretchY = stretch * Math.sin(angleRad);
   
-  // --- Dynamic SVG Path Generation ---
+  // Dynamic SVG Path Generation
   // The paths are based on the 200x194 Figma SVG. We add the `stretch` value
   // to the x-coordinates of the points on the right side of the keycap.
 

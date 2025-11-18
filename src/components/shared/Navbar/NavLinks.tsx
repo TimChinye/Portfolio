@@ -19,11 +19,11 @@ type NavLinkItem = {
 type NavLinksProps = {
   links: readonly NavLinkItem[];
   onLayoutChange: (layout: NavLayout) => void;
-  onScrambleChange: (isActive: boolean) => void; // --- Update prop type ---
+  onScrambleChange: (isActive: boolean) => void; // Update prop type
 };
 
 export function NavLinks({ links, onLayoutChange, onScrambleChange }: NavLinksProps) {
-  // --- State is removed from here ---
+  // State is removed from here
   const pathname = usePathname();
   const navRef = useRef<HTMLElement>(null);
   const linkRefs = useRef(links.map(() => createRef<HTMLAnchorElement>()));
@@ -69,7 +69,7 @@ export function NavLinks({ links, onLayoutChange, onScrambleChange }: NavLinksPr
             href={link.href}
             className={`flex items-center text-sm hover:text-[#948D00] hover:dark:text-[#D9D24D] ${isActive ? 'font-bold' : ''}`}
           >
-            {/* --- Pass the onScrambleChange prop through --- */}
+            {/* Pass the onScrambleChange prop through */}
             <ScramblingText textOptions={textOptions} onScrambleChange={onScrambleChange} />
           </Link>
         );

@@ -73,7 +73,7 @@ export function Navbar() {
           >
             <HamburgerIcon
               isHovered={isHovered}
-              isScrambling={isScrambling} // --- Pass state down ---
+              isScrambling={isScrambling} // Pass state down
               links={filteredNavLinks}
               layout={linkLayout}
               isOpen={isMobileMenuOpen}
@@ -82,7 +82,7 @@ export function Navbar() {
             <NavLinks
               links={filteredNavLinks}
               onLayoutChange={setLinkLayout}
-              onScrambleChange={setIsScrambling} // --- Pass setter down ---
+              onScrambleChange={setIsScrambling} // Pass setter down
             />
           </div>
           <ThemeSwitcher

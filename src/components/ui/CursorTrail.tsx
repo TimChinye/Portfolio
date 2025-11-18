@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, useMotionValue, useSpring } from "motion/react";
 
-// --- Configuration & Types ---
+// Configuration & Types
 
 type TrailCircle = {
   id: number;
@@ -26,7 +26,7 @@ const FOLLOWER_CONFIG = {
   fadeDuration: 2, // seconds
 };
 
-// --- Component ---
+// Component
 
 export function CursorTrail() {
   const [mounted, setMounted] = useState(false);
@@ -78,7 +78,7 @@ export function CursorTrail() {
     // Update the last position for the next event
     lastPos.current = { x: clientX, y: clientY };
 
-    // --- Core Fix: Generate a circle based on speed, only on move ---
+    // Core Fix: Generate a circle based on speed, only on move
     // The faster the move, the more likely a circle is to spawn.
     // A speed threshold prevents circles from spawning on tiny jitters.
     if (speed > 5) {

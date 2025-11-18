@@ -10,6 +10,8 @@ type HeroHeadingProps = {
   headingClassName: string;
   /** The Tailwind class for the intro text span. */
   introClassName: string;
+  /** Optional additional classes for the container. */
+  className?: string;
 };
 
 export function HeroHeading({
@@ -17,17 +19,18 @@ export function HeroHeading({
   introText,
   headingClassName,
   introClassName,
+  className
 }: HeroHeadingProps) {
   return (
-    <header className={`inline-block w-fit text-black dark:text-white ${headingClassName}`}>
+    <header className={clsx("inline-block w-fit text-black dark:text-white", headingClassName, className)}>
       <h1 className={clsx(
-        "m-0 leading-none font-bold select-none",
+        "m-0 leading-[0.75] font-bold select-none",
         'gjpqy'.split('').some(letter => headingText.includes(letter)) && "uppercase"
       )}>
         {headingText}
       </h1>
-      <p className="text-[0px] -translate-y-1/1 container-inline-size">
-        <span className={introClassName}>
+      <p className="text-[0px] container-inline-size">
+        <span className={`-translate-y-1/1 ${introClassName}`}>
           {introText}
         </span>
       </p>
