@@ -64,9 +64,9 @@ export function Navbar() {
             wipeDirection={wipeDirection}
           />
         </Link>
-        <div className="group flex h-fit items-center gap-4 rounded-full bg-white/50 py-4 px-6 shadow-lg backdrop-blur-sm dark:bg-black/50 flex-row">
+        <div className="group flex h-fit items-center gap-4 rounded-full bg-white/75 py-4 px-6 shadow-lg backdrop-blur-sm dark:bg-black/75 flex-row">
           <div
-            className="gap-[inherit] items-center order-1 md:order-none"
+            className="gap-[inherit] items-center order-1 md:order-0"
             style={{ display: "inherit" }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}

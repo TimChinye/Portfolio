@@ -35,7 +35,7 @@ export interface HeroProject {
   _id: string;
   title: string;
   slug: { current: string };
-  thumbnail: any;
+  thumbnailUrl: string;
   shortDescription: string;
   techDescription: string;
   ctaPrimary?: Cta;
@@ -48,6 +48,7 @@ export async function getHeroProjects(variant: 'tim' | 'tiger'): Promise<HeroPro
     _id,
     title,
     slug,
+    "thumbnailUrl": thumbnail.asset->url,
     thumbnail,
     shortDescription,
     techDescription,
@@ -56,13 +57,7 @@ export async function getHeroProjects(variant: 'tim' | 'tiger'): Promise<HeroPro
     ctaTextLink
   }`;
   
-  const rawProjects = await client.fetch<any[]>(query, { variant });
-
-  const projects: HeroProject[] = rawProjects.map(project => ({
-    ...project,
-    thumbnail: urlFor(project.thumbnail).width(800).url(),
-  }));
-  
+  const projects = await client.fetch<any[]>(query, { variant });
   return projects;
 }
 
@@ -186,4 +181,26 @@ export async function getAboutPageData(): Promise<AboutPageData | null> {
     
   const { data } = await sanityFetch({ query });
   return data;
+}
+
+export interface FeaturedProject {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  thumbnailUrl: string; // URL will be pre-built
+  featuredDescription: string;
+}
+
+export async function getFeaturedProjects(variant: 'tim' | 'tiger'): Promise<FeaturedProject[]> {
+  const query = groq`*[_type == "projectContent" && $variant in visibility && defined(featuredDescription) && featuredDescription != ''] | order(_createdAt desc) [0...3] {
+    _id,
+    title,
+    slug,
+    "thumbnailUrl": thumbnail.asset->url,
+    thumbnail,
+    featuredDescription
+  }`;
+
+  const projects = await client.fetch<any[]>(query, { variant });
+  return projects;
 }

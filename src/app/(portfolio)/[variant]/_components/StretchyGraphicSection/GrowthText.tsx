@@ -67,7 +67,7 @@ export const GrowthText = ({ scrollYProgress, variant, className }: GrowthTextPr
 
   return (
     <div
-      className={clsx("flex w-full h-full items-center gap-[var(--gap)]", className)}
+      className={clsx("flex w-full h-full items-center gap-(--gap)", className)}
       style={{ '--o-cap-width': '2.5vw' } as React.CSSProperties}
     >
       <div className="flex items-center h-full flex-0 gap-[3cqh]">

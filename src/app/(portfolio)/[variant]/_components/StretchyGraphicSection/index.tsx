@@ -74,14 +74,12 @@ export const StretchyGraphicSection = ({ variant, ...props }: StretchyGraphicSec
       {...props}
       ref={containerRef}
       fillScreen={false}
-      // 5. Use the state variable here. It will be undefined on mobile, which is the desired behavior.
       radiusRange={dynamicRadiusRange}
-      animationRange={isMobile ? ["0.5 1", "1 1"] : ["0 1", "0.5 1"]}
       ease={[0, 1, 1, 1]}
     >
       <div
         style={{ '--gap': 'calc(0.75em / 4)' } as CSSProperties}
-        className={"container-size p-[0.5em] md:p-[0.75em] gap-[var(--gap)] grid grid-cols-1 grid-rows-2 w-full h-[60vw] max-h-screen font-figtree font-black uppercase leading-[0.7125em] text-black dark:text-white"}
+        className={"container-size p-[0.5em] md:p-[0.75em] gap-(--gap) grid grid-cols-1 grid-rows-2 w-full h-[60vw] max-h-screen font-figtree font-black uppercase leading-[0.7125em] text-black dark:text-white"}
       >
           <PerpetualText scrollYProgress={contentProgress} />
           <GrowthText

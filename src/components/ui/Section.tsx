@@ -49,13 +49,15 @@ export type SectionProps<T extends ElementType = 'section'> = {
   as?: T;
   children?: ReactNode | ((progress: MotionValue<number>) => ReactNode);
   className?: string;
+  wrapperClassName?: string;
   noWrapperBg?: boolean;
   bgClasses?: string;
   textClasses?: string;
-  animationRange?: UseScrollOptions['offset'];
   fillScreen?: boolean;
+  enablePaddingOffset?: boolean;
+  animationRange?: ResponsiveRange<UseScrollOptions['offset'] | Readonly<UseScrollOptions['offset']>>;
+  stickyAnimationRange?: UseScrollOptions['offset'] | Readonly<UseScrollOptions['offset']>;
   stickyDuration?: string;
-  stickyAnimationRange?: UseScrollOptions['offset'];
   yRange?: ResponsiveRange<readonly [string, string]>;
   scaleRange?: ResponsiveRange<readonly [number, number]>;
   radiusRange?: ResponsiveRange<readonly [string, string]>;
@@ -67,13 +69,15 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
   as,
   children,
   className,
+  wrapperClassName,
   noWrapperBg = false,
   bgClasses = 'bg-[#F5F5EF] dark:bg-[#2F2F2B]',
   textClasses = 'text-[#2F2F2B] dark:text-[#F5F5EF]',
-  animationRange = ["start end", "start 0.5"],
   fillScreen = true,
-  stickyDuration,
+  enablePaddingOffset = false,
+  animationRange = ["start end", "start 0.5"],
   stickyAnimationRange = ["start start", "end end"],
+  stickyDuration,
   yRange,
   scaleRange,
   radiusRange,
@@ -100,6 +104,52 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
   const resolvedYRange = resolveResponsiveProp(yRange);
   const resolvedScaleRange = resolveResponsiveProp(scaleRange);
   const resolvedRadiusRange = resolveResponsiveProp(radiusRange);
+  
+  const baseAnimationRange = useMemo(() => {
+    return resolveResponsiveProp(animationRange) as string[];
+  }, [isMobile, JSON.stringify(animationRange)]);
+
+  const baseStickyAnimationRange = useMemo(() => {
+    return resolveResponsiveProp(stickyAnimationRange) as string[];
+  }, [isMobile, JSON.stringify(stickyAnimationRange)]);
+
+  const [dynamicAnimationRange, setDynamicAnimationRange] = useState(baseAnimationRange);
+  const [dynamicStickyAnimationRange, setDynamicStickyAnimationRange] = useState(baseStickyAnimationRange);
+
+  useLayoutEffect(() => {
+    if (!enablePaddingOffset) {
+      setDynamicAnimationRange(baseAnimationRange);
+      setDynamicStickyAnimationRange(baseStickyAnimationRange);
+      return;
+    }
+
+    const measureAndSetOffset = () => {
+      if (!contentRef.current) return;
+      
+      const style = window.getComputedStyle(contentRef.current);
+      const pt = parseFloat(style.paddingTop || '0');
+      const pb = parseFloat(style.paddingBottom || '0');
+      const vh = window.innerHeight;
+
+      // Formula: 1 + ((padding top + padding bottom) / window.innerHeight)
+      const ratio = (pt + pb) / vh;
+      const endOffset = 1 + ratio;
+      const endString = `end ${endOffset}`;
+
+      // Apply the calculated end offset to the second value of the ranges
+      if (baseAnimationRange && baseAnimationRange.length >= 2) {
+        setDynamicAnimationRange([baseAnimationRange[0], endString]);
+      }
+      if (baseStickyAnimationRange && baseStickyAnimationRange.length >= 2) {
+        setDynamicStickyAnimationRange([baseStickyAnimationRange[0], endString]);
+      }
+    };
+
+    measureAndSetOffset();
+    window.addEventListener('resize', measureAndSetOffset);
+    return () => window.removeEventListener('resize', measureAndSetOffset);
+
+  }, [enablePaddingOffset, baseAnimationRange, baseStickyAnimationRange]);
 
   useLayoutEffect(() => {
     if (!ref) return;
@@ -144,12 +194,12 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
 
   const { scrollYProgress: entryProgress } = useScroll({
     target: wrapperRef,
-    offset: animationRange,
+    offset: dynamicAnimationRange as UseScrollOptions['offset'],
   });
 
   const { scrollYProgress: stickyProgress } = useScroll({
     target: wrapperRef,
-    offset: stickyAnimationRange,
+    offset: dynamicStickyAnimationRange as UseScrollOptions['offset'],
   });
 
   const progressForChildren = stickyDuration ? stickyProgress : entryProgress;
@@ -188,8 +238,9 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
       className={clsx(
         'relative',
         resolvedScaleRange && resolvedScaleRange[0] > 1 && 'overflow-x-clip',
-        isFirstElement ? 'mt-0' : '-mt-24 md:-mt-32',
-        isFirstElement && 'z-0'
+        !isFirstElement && !wrapperClassName?.match(/(([\w-]+):)?(m[tblrxyse]?)-(\d+|\[[^\]]+\])/)?.[0] && '-mt-24 md:-mt-32',
+        isFirstElement && 'z-0',
+        wrapperClassName
       )}
     >
       <MotionComponent

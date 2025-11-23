@@ -69,7 +69,7 @@ export function ProgressBar() {
 
   return (
     <motion.div
-      className="fixed top-0 h-[4px] bg-[#D9D24D] z-1000"
+      className="fixed top-0 h-1 bg-[#D9D24D] z-1000"
       initial={{ opacity: 0 }}
       animate={controls}
     />

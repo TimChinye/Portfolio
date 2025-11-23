@@ -24,7 +24,7 @@ export function HeroHeading({
   return (
     <header className={clsx("inline-block w-fit text-black dark:text-white", headingClassName, className)}>
       <h1 className={clsx(
-        "m-0 leading-[0.75] font-bold select-none",
+        "relative z-1 m-0 leading-[0.75] font-bold pointer-events-none",
         'gjpqy'.split('').some(letter => headingText.includes(letter)) && "uppercase"
       )}>
         {headingText}

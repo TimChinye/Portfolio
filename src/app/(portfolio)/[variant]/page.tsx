@@ -3,6 +3,7 @@ import { AboutSection } from './_components/AboutSection';
 import { StretchyGraphicSection } from './_components/StretchyGraphicSection';
 import { FeaturedProjectsSection } from './_components/FeaturedProjectsSection';
 import { WorkGraphicSection } from './_components/WorkGraphicSection';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default async function HomePage({
   params
@@ -50,7 +51,11 @@ export default async function HomePage({
         as: "section",
         bgClasses: "bg-[#E4E191] dark:bg-[#43433e]",
         className: "flex items-center justify-center max-md:z-1 max-md:rounded-[8rem] text-black dark:text-white text-[clamp(4rem,15vw,12rem)]",
-        variant: variant
+        variant: variant,
+        animationRange: {
+          mobile: ["0.5 1", "1 1"], 
+          desktop: ["0 1", "0.5 1"]
+        }
       }
     },
     {
@@ -60,7 +65,8 @@ export default async function HomePage({
         as: "section",
         bgClasses: "bg-[#EFEFD0] dark:bg-[#1A1A17]",
         textClasses: "text-black dark:text-white",
-        className: "flex items-center justify-center max-md:rounded-none",
+        wrapperClassName: "m-0",
+        className: "-translate-y-24 md:-translate-y-32 h-0",
         variant: variant,
       }
     },
@@ -71,7 +77,7 @@ export default async function HomePage({
         as: "section",
         bgClasses: "bg-[#DEDA71] dark:bg-[#393935]",
         textClasses: "text-black dark:text-white",
-        className: "-translate-y-24 -md:translate-y-32 -mb-1 flex items-end h-screen pt-24 md:pt-32 px-[0.5em] md:px-[0.75em] text-[clamp(4rem,15vw,12rem)]",
+        className: "-translate-y-24 md:-translate-y-32 -mb-1 flex items-end h-screen pt-24 md:pt-32 px-[0.5em] md:px-[0.75em] text-[clamp(4rem,15vw,12rem)]",
         variant: variant,
       }
     }

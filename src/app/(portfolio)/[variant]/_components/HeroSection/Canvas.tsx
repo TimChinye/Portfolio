@@ -174,7 +174,7 @@ export function Canvas({ projects, setActiveProject }: CanvasProps) {
 
     return (
         <motion.div
-            className="absolute -z-1"
+            className="absolute pointer-events-none"
             style={{
                 '--canvas-scale': CANVAS_SCALE,
                 inset: `calc(${overhangY}) calc(${overhangX})`,
@@ -190,7 +190,7 @@ export function Canvas({ projects, setActiveProject }: CanvasProps) {
                 return (
                     <motion.div
                         key={project._id}
-                        className="absolute group"
+                        className="absolute pointer-events-auto"
                         style={{
                             width: `${dynamicCardSizeRem}rem`,
                             height: `${dynamicCardSizeRem}rem`,
@@ -204,11 +204,11 @@ export function Canvas({ projects, setActiveProject }: CanvasProps) {
                     >
                         <button
                             onClick={() => setActiveProject(project)}
-                            className="w-full h-full block rounded-2xl md:rounded-4xl overflow-hidden shadow-lg transition-transform duration-300 group-hover:scale-105"
+                            className="w-full h-full cursor-pointer block rounded-2xl md:rounded-4xl overflow-hidden shadow-lg transition-transform duration-500 hover:scale-115"
                             aria-label={`View details for ${project.title}`}
                         >
                             <Image
-                                src={project.thumbnail}
+                                src={project.thumbnailUrl}
                                 alt={`Thumbnail for ${project.title}`}
                                 width={400}
                                 height={400}
