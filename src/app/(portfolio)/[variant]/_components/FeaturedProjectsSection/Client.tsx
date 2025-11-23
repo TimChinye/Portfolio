@@ -11,8 +11,8 @@ import { ContentProgressBar } from './ContentProgressBar';
 import { VerticalTrack } from './VerticalTrack';
 
 // --- CONFIGURATION ---
-const SCROLL_DISTANCE_MULTIPLIER = 5;
-const TRANSITION_GAP_MULTIPLIER = 25;
+const SCROLL_DISTANCE_MULTIPLIER = 3;
+const TRANSITION_GAP_MULTIPLIER = 15;
 const FADE_OUT_DURATION = 0.5;
 const FADE_IN_START = 0.5;
 // --- END CONFIGURATION ---
