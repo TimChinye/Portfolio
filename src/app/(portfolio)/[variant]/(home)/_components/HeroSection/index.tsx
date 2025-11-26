@@ -15,7 +15,7 @@ const HeroSectionComponent = forwardRef<HTMLDivElement, HeroSectionProps>(
     getHeroProjects(variant),
   ]);
 
-  const DEV_MODE_PROJECT_COUNT = 11;
+  const DEV_MODE_PROJECT_COUNT = 15;
   if (process.env.NODE_ENV === 'development' && projects.length > 0 && projects.length < DEV_MODE_PROJECT_COUNT) {
     projects = Array.from({ length: DEV_MODE_PROJECT_COUNT }, (_, i) => {
       // Cycle through the original projects array
@@ -35,7 +35,7 @@ const HeroSectionComponent = forwardRef<HTMLDivElement, HeroSectionProps>(
     // Graceful fallback if CMS data is missing
     return (
       <Section {...props} ref={ref}>
-        <div className="h-full w-full flex items-center justify-center text-center">
+        <div className="size-full flex items-center justify-center text-center">
           <p>Error: Could not load hero content from the CMS.</p>
         </div>
       </Section>

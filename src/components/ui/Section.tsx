@@ -230,6 +230,8 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
   if (resolvedScaleRange) motionStyle.scaleX = scale;
   if (resolvedRadiusRange) motionStyle.borderRadius = borderRadius;
   const hasAnimation = resolvedYRange || resolvedScaleRange || resolvedRadiusRange;
+
+  if (className?.includes("test")) console.log([className, !className?.match(/(([\w-]+):)?(p[tblrxyse]?)-(\d+|\[[^\]]+\])/)?.[0], 'py-24 md:py-32']);
   
   return (
     <div
@@ -249,16 +251,18 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
         data-bg-dark={bgColors.dark}
         style={hasAnimation ? motionStyle : undefined}
         className={clsx(
-          'sticky top-0 box-content overflow-hidden',
-          !className?.match(/\b(([\w-]+):)?(h)-(\d+(\.\d+)?|px|full|screen|fit|auto|\[[^\]]+\])\b/)?.[0] && 'h-fit',
+          'sticky top-0 box-content',
+          !className?.match(/\b(([\w-]+):)?overflow(-[\w\[\]-]+)?(?=\s|'|"|$)/)?.[0] && 'overflow-hidden',
+          !className?.match(/\b(([\w-]+):)?(h)-(\d+(\.\d+)?|px|full|screen|fit|auto|\[[^\]]+\])(?=\s|'|"|$)/)?.[0] && 'h-fit',
           fillScreen && 'min-h-screen',
+          !className?.match(/\b(([\w-]+):)?rounded(-[\w\[\]-]+)?(?=\s|'|"|$)/)?.[0] && (
+          isFirstElement ? 'rounded-none' : (!resolvedRadiusRange && 'rounded-t-[6rem] md:rounded-t-[8rem]')),
+          !className?.match(/\b(([\w-]+):)?(p[tblrxyse]?)-(\d+|\[[^\]]+\])(?=\s|'|"|$)/)?.[0] && (
           isLastElement ? 'pt-24 md:pt-32' :
           isFirstElement ? 'pb-24 md:pb-32' :
-          !className?.match(/(([\w-]+):)?(p[tblrxyse]?)-(\d+|\[[^\]]+\])/)?.[0] && 'py-24 md:py-32',
+          'py-24 md:py-32'),
           bgClasses,
           textClasses,
-          !isFirstElement && !resolvedRadiusRange && 'rounded-t-[6rem] md:rounded-t-[8rem]',
-          isFirstElement && 'rounded-none',
           className
         )}
         {...props}

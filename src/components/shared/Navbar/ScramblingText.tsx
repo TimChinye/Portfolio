@@ -79,7 +79,7 @@ export function ScramblingText({ textOptions, onScrambleChange }: ScramblingText
       className="relative overflow-hidden whitespace-nowrap"
     >
       {displayText}
-      <span ref={measurementRef} className="absolute invisible -z-10" />
+      <span ref={measurementRef} className="absolute invisible -z-999" />
     </motion.div>
   );
 }

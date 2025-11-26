@@ -85,7 +85,7 @@ export function InfoCard({ project, onClose, className, style }: InfoCardProps) 
       {...(hasMounted ? (isMobile ? mobileAnimation : desktopAnimation) : desktopAnimation)}
       transition={{ duration: 0.5, ease: 'easeInOut' }}
       className={clsx(
-        "rounded-xl md:rounded-r-none p-8 pb-4 md:p-16 md:pb-8 bg-[#F5F5EF]/25 dark:bg-[#2F2F2B]/25 shadow-[0.5rem_0.5rem_2rem_#0004] z-1000",
+        "rounded-xl md:rounded-r-none p-8 pb-4 md:p-16 md:pb-8 bg-[#F5F5EF]/50 dark:bg-[#2F2F2B]/50 shadow-[0.5rem_0.5rem_2rem_#0004] z-1000",
         "after:content-[''] after:absolute after:-inset-0.5 after:rounded-[inherit] after:backdrop-blur-lg after:-z-1",
         "flex flex-col gap-6 md:gap-8 text-start leading-none text-[#2F2F2B] dark:text-[#F5F5EF] max-md:text-[0.8125rem]",
         className

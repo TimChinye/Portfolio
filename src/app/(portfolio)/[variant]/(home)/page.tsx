@@ -3,7 +3,6 @@ import { AboutSection } from './_components/AboutSection';
 import { StretchyGraphicSection } from './_components/StretchyGraphicSection';
 import { FeaturedProjectsSection } from './_components/FeaturedProjectsSection';
 import { WorkGraphicSection } from './_components/WorkGraphicSection';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default async function HomePage({
   params

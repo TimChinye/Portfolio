@@ -71,7 +71,7 @@ export function Client() {
   return (
     <div
       ref={containerRef}
-      className="pb-12 md:pb-16 relative flex h-full w-full flex-col justify-start"
+      className="pb-12 md:pb-16 relative flex size-full flex-col justify-start"
     >
       <motion.div
         className="pointer-events-none z-1  flex flex-col text-[clamp(4rem,20vw,24rem)] font-black leading-none"

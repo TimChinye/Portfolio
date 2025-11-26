@@ -204,3 +204,67 @@ export async function getFeaturedProjects(variant: 'tim' | 'tiger'): Promise<Fea
   const projects = await client.fetch<any[]>(query, { variant });
   return projects;
 }
+
+interface ThemeImage {
+  light?: string;
+  dark?: string;
+}
+
+export interface ContactMethod {
+  _key: string;
+  _type: 'singleLink' | 'splitLink';
+  
+  label?: string;
+  url?: string;
+  qrCode?: ThemeImage;
+  
+  leftLabel?: string;
+  leftUrl?: string;
+  leftQrCode?: ThemeImage;
+
+  rightLabel?: string;
+  rightUrl?: string;
+  rightQrCode?: ThemeImage;
+}
+
+export interface ContactPageData {
+  directTitle: string;
+  contactMethods: ContactMethod[];
+  emailTitle: string;
+  emailAddress: string;
+  emailQrCode?: ThemeImage;
+}
+
+export async function getContactPageData(variant: 'tim' | 'tiger'): Promise<ContactPageData | null> {
+  const methodsField = variant === 'tim' ? 'timContactMethods' : 'tigerContactMethods';
+  const emailAddrField = variant === 'tim' ? 'timEmailAddress' : 'tigerEmailAddress';
+  const emailQrField = variant === 'tim' ? 'timEmailQrCode' : 'tigerEmailQrCode';
+
+  // Helper string to fetch both light and dark urls
+  const themeImageProj = `{ "light": light.asset->url, "dark": dark.asset->url }`;
+
+  const query = groq`*[_type == "pageContact"][0]{
+    directTitle,
+    emailTitle,
+    "contactMethods": ${methodsField}[]{
+      _key,
+      _type,
+      label,
+      url,
+      "qrCode": qrCode${themeImageProj},
+      
+      leftLabel,
+      leftUrl,
+      "leftQrCode": leftQrCode${themeImageProj},
+      
+      rightLabel,
+      rightUrl,
+      "rightQrCode": rightQrCode${themeImageProj}
+    },
+    "emailAddress": ${emailAddrField},
+    "emailQrCode": ${emailQrField}${themeImageProj}
+  }`;
+
+  const data = await sanityFetch({ query });
+  return data.data;
+}

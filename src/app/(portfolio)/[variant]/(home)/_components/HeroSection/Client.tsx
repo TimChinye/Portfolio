@@ -88,7 +88,7 @@ export function Client({ variant, heroName, heroBio, projects }: ClientProps) {
             
             <Canvas projects={projects} setActiveProject={setActiveProject} />
 
-            <div ref={heroRef} className="absolute inset-0 top-full -mt-24 -z-50 pointer-events-none" />
+            <div ref={heroRef} className="absolute inset-0 top-full -mt-24 -z-999 pointer-events-none" />
         </>
     );
 }
