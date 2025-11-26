@@ -1,16 +1,14 @@
 "use client";
 
-import { Section } from '@/components/ui/Section';
+import { Section, type SectionProps } from '@/components/ui/Section';
 import { AvailabilityWidget } from './_components/AvailabilityWidget';
 import { PuzzleForm } from './_components/PuzzleForm';
 
 type ContactFormProps = {
-    data?: {
-        // Data types here
-    };
-};
+  variant: 'tim' | 'tiger';
+} & SectionProps<'section'>;
 
-export function ContactFormSection({ data }: ContactFormProps) {
+export function ContactFormSection({ variant }: ContactFormProps) {
   return (
     <Section
       bgClasses="bg-transparent"
@@ -18,20 +16,22 @@ export function ContactFormSection({ data }: ContactFormProps) {
       className="overflow-visible px-4 md:px-16 py-0"
       wrapperClassName="m-0"
     >
-      <div className="grid grid-cols-5 gap-8 mx-auto">
+      <div className="
+      max-md:flex max-md:flex-col max-md:py-48
+      md:grid md:grid-cols-5 md:gap-8 md:mx-auto
+      ">
         
         {/* LEFT COLUMN: Availability Widget */}
-        <div className="block col-span-2 relative">
-          <div className="sticky top-0 h-screen flex items-center justify-center">
+        <div className="block col-span-2 relative text-[1rem] md:text-[clamp(0.625rem,1.125vw,1rem)]">
+          <div className="md:h-screen sticky top-0 flex items-center justify-center">
             <AvailabilityWidget />
           </div>
         </div>
 
         {/* RIGHT COLUMN: Contact Form Area */}
-        <div className="py-48 col-span-3 flex flex-col gap-8">
-          {/* Replaced placeholder with PuzzleForm */}
+        <div className="md:py-48 col-span-3 flex flex-col gap-8">
           <div className="min-h-[600px] flex items-center justify-center rounded-xl p-8">
-             <PuzzleForm />
+             <PuzzleForm variant={variant} />
           </div>
         </div>
       </div>

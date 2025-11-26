@@ -1,11 +1,10 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useMotionValue, useTransform } from 'motion/react';
-import { useEffect } from 'react';
+import { useTransform } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 
-import { useElementBounds } from '@/hooks/useElementBounts';
 import { useMousePosition } from '@/hooks/useMousePosition';
 import { useWindowScrollY } from '@/hooks/useWindowScrollY';
 
@@ -22,13 +21,40 @@ type ContactSectionProps = {
 export const ContactSection = ({ variant, ...props }: ContactSectionProps) => {
   const pathname = usePathname();
   const isOnContactPage = pathname.includes('/contact');
-  // Use `next-themes` to get the current theme.
-  // `resolvedTheme` is 'light' or 'dark', even if `theme` is 'system'.
-  const { resolvedTheme } = useTheme();
 
+  const { resolvedTheme } = useTheme();
   const { clientY } = useMousePosition();
   const scrollY = useWindowScrollY();
-  const [marqueeRef, marqueeBounds] = useElementBounds<HTMLAnchorElement>();
+
+  const marqueeRef = useRef<HTMLAnchorElement>(null);
+  const [marqueeBounds, setMarqueeBounds] = useState({ top: 0, bottom: 0 });
+
+  useEffect(() => {
+    const updateBounds = () => {
+      if (!marqueeRef.current) return;
+      const rect = marqueeRef.current.getBoundingClientRect();
+      const currentScroll = window.scrollY;
+      
+      setMarqueeBounds({
+        top: rect.top + currentScroll,
+        bottom: rect.bottom + currentScroll,
+      });
+    };
+
+    updateBounds();
+
+    window.addEventListener('resize', updateBounds);
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateBounds();
+    });
+    resizeObserver.observe(document.body);
+
+    return () => {
+      window.removeEventListener('resize', updateBounds);
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   const transitionDistance = 300;
   let inputRange: number[];
@@ -50,13 +76,12 @@ export const ContactSection = ({ variant, ...props }: ContactSectionProps) => {
     
     outputRange = ['#D9D24D', blackOrWhite, blackOrWhite, '#D9D24D'];
   } else {
-    // A sensible fallback if bounds aren't measured yet.
     inputRange = [0, 500, 1000]; 
     outputRange = ['#D9D24D', blackOrWhite, '#D9D24D'];
   }
 
   const viewportMouseY = useTransform(() => scrollY.get() + clientY.get());
-  let arrowColor = useTransform(viewportMouseY, inputRange, outputRange);
+  let arrowColour = useTransform(viewportMouseY, inputRange, outputRange);
 
   return (
     <Section {...props}>
@@ -82,7 +107,7 @@ export const ContactSection = ({ variant, ...props }: ContactSectionProps) => {
 
           <PointingArrow 
             className='absolute top-16 right-16'
-            color={arrowColor}
+            color={arrowColour}
             initRotation={180}
           />
 
@@ -98,7 +123,7 @@ export const ContactSection = ({ variant, ...props }: ContactSectionProps) => {
           
           <PointingArrow 
             className='absolute bottom-16 left-16'
-            color={arrowColor}
+            color={arrowColour}
             initRotation={0}
           />
 
