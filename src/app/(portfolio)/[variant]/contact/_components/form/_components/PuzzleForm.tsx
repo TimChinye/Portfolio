@@ -224,11 +224,7 @@ const CustomSelect = ({
     );
 };
 
-type PuzzleFormProps = {
-    variant: 'tim' | 'tiger';
-};
-
-export function PuzzleForm({ variant }: PuzzleFormProps) {
+export function PuzzleForm() {
     // --- State ---
     const [name, setName] = useState("");
     const [company, setCompany] = useState("");
@@ -338,7 +334,6 @@ export function PuzzleForm({ variant }: PuzzleFormProps) {
         >
             {/* --- HIDDEN FIELDS FOR FORM SUBMISSION --- */}
 
-            <input type="hidden" name="variant" value={variant} />
             <input type="hidden" name="name" value={name} />
             <input type="hidden" name="company" value={company} />
             <input type="hidden" name="reason" value={reason} />
