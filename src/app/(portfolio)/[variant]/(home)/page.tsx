@@ -67,6 +67,7 @@ export default async function HomePage({
         wrapperClassName: "m-0",
         className: "-translate-y-32 max-md:rounded-none h-0",
         variant: variant,
+        enablePaddingOffset: true,
       }
     },
     {

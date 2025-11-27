@@ -38,7 +38,7 @@ export default async function ContactPage({ params }: Props) {
       
       <GetInTouchSection
         key="get-in-touch"
-        bgClasses="bg-[#EFEFD0] dark:bg-[#10102F]"
+        bgClasses="bg-[#EFEFD0] dark:bg-[#2F2F2B]"
         className="flex items-center justify-center h-[75vh]"
         animationRange={["start 0.5", "end 0.75"]}
         fillScreen={false}

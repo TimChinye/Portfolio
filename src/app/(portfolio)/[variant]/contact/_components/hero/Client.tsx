@@ -61,7 +61,7 @@ export function Client() {
       <div className="relative size-full text-center content-center">
         
         {/* LAYER A: THE MASK (Text color flips based on theme) */}
-        <h1 className={clsx(textClasses, "text-black dark:text-white")}>
+        <h1 className={clsx(textClasses, "text-[#2F2F2B] dark:text-[#F5F5EF]")}>
           <TextContent />
         </h1>
 
@@ -76,10 +76,11 @@ export function Client() {
         {/* LAYER C: THE STROKE */}
         <h1 
           className={clsx(textClasses, "text-transparent")}
-          style={{ 
+          style={{
             WebkitTextStroke: '0.0125em',
-            WebkitTextStrokeColor: mounted && resolvedTheme === 'dark' ? 'white' : 'black'
+            WebkitTextStrokeColor: mounted && resolvedTheme === 'dark' ? '#F5F5EF' : '#2F2F2B'
           }}
+          data-html2canvas-ignore="true"
         >
           <TextContent />
         </h1>

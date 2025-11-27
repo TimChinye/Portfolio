@@ -10,7 +10,7 @@ export function ContactFormSection() {
       bgClasses="bg-transparent"
       fillScreen={false}
       className="overflow-visible px-4 md:px-16 py-0"
-      wrapperClassName="m-0"
+      wrapperClassName="my-32"
     >
       <div className="
       max-md:flex max-md:flex-col max-md:py-48

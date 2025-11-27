@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 
 // --- 1. Constants & Configuration (Exact copy from provided JS) ---
 
@@ -53,17 +54,27 @@ const LABEL_POINTS = [
 ];
 
 // --- 2. CSS Variable Mapping ---
-function getSegmentColor(type: string) {
+function getSegmentColor(type: string, theme?: string) {
+    const isDark = theme === 'dark';
+
+    const colours = [
+        ["#2F2F2B20", "#F5F5EF20"],
+        ["#ECE9A7", "#727248"],
+        ["#D9D24D", "#9c9957"]
+    ]
+
     switch (type) {
-        case "rest": return "";
-        case "commute": return "#ece9a7";
-        case "dinner": return "#ece9a7";
-        case "noon": return "#d9d24d";
-        default: return "";
+        case "rest": return colours[0][+isDark];
+        case "commute": return colours[1][+isDark];
+        case "noon": return colours[2][+isDark];
+        case "dinner": return colours[1][+isDark];
+        default: return colours[0][+isDark];
     }
 }
 
 export function AvailabilityWidget() {
+    const { resolvedTheme } = useTheme();
+
     // State to hold all dynamic values calculated by updateWidget
     const [state, setState] = useState<{
         timeHtml: string; 
@@ -104,7 +115,7 @@ export function AvailabilityWidget() {
             // HTML Structure matching: <span class="time-numerals">...</span> <span class="punct">...</span>
             const timeHtml = `
                 <span class="tabular-nums">${timeStr}</span> 
-                <span class="text-[#2f2f2bbf]">[</span>${tz}<span class="text-[#2f2f2bbf]">] - (</span>${dateStr}<span class="text-[#2f2f2bbf]">)</span>
+                <span class="text-[#2F2F2BBF] dark:text-[#F5F5EFBF]">[</span>${tz}<span class="text-[#2F2F2BBF] dark:text-[#F5F5EFBF]">] - (</span>${dateStr}<span class="text-[#2F2F2BBF] dark:text-[#F5F5EFBF]">)</span>
             `;
 
             // Pin Position
@@ -160,23 +171,23 @@ export function AvailabilityWidget() {
 
     return (
         /* .component-wrapper */
-        <div className="relative -rotate-[7.5deg] opacity-75 m-[50px] h-fit w-min font-figtree text-[#2f2f2bbf]">
+        <div className="relative -rotate-[7.5deg] opacity-75 m-[50px] h-fit w-min font-figtree text-[#2F2F2BBF] dark:text-[#F5F5EFBF]">
             
             {/* .offset-border */}
-            <div className="absolute inset-1/2 -translate-x-[calc(50%+1rem)] -translate-y-[calc(50%-1rem)] w-full h-full border-[0.25em] border-[#2f2f2b30] rounded-xl pointer-events-none z-0 box-border" />
+            <div className="absolute inset-1/2 -translate-x-[calc(50%+1rem)] -translate-y-[calc(50%-1rem)] w-full h-full border-[0.25em] border-[#2F2F2B30] dark:border-[#F5F5EF30] rounded-xl pointer-events-none z-0 box-border" />
             
             {/* .card */}
-            <div className="relative bg-[#f3f4ef] border-[0.25em] border-[#2f2f2b30] rounded-xl p-[2.5em] z-10 flex flex-col gap-[2em] box-border w-min">
+            <div className="relative bg-[#F5F5EF] dark:bg-[#1A1A17] border-[0.25em] border-[#2F2F2B30] dark:border-[#F5F5EF30] rounded-xl p-[2.5em] z-10 flex flex-col gap-[2em] box-border w-min">
                 
                 {/* .section-header */}
                 <div className="flex flex-col gap-[0.5em]">
                     {/* h1 */}
-                    <h1 className="text-[2.5em] font-bold m-0 leading-none whitespace-nowrap text-[#2f2f2bbf]">
+                    <h1 className="text-[2.5em] font-bold m-0 leading-none whitespace-nowrap text-[#2F2F2BBF] dark:text-[#F5F5EFBF]">
                         My local time:
                     </h1>
                     {/* .time-display (#clock-display) */}
                     <div 
-                        className="text-[1.75em] font-bold whitespace-nowrap text-[#86800ebf]"
+                        className="text-[1.75em] font-bold whitespace-nowrap text-[#86800ebf] dark:text-[#d5d076bf]"
                         dangerouslySetInnerHTML={{ __html: state.timeHtml }} 
                     />
                 </div>
@@ -184,7 +195,7 @@ export function AvailabilityWidget() {
                 {/* .section-status */}
                 <div className="flex flex-col gap-0">
                     {/* h2 */}
-                    <h2 className="text-[1.75em] font-bold m-0 leading-[1.2] whitespace-nowrap text-[#2f2f2bbf]">
+                    <h2 className="text-[1.75em] font-bold m-0 leading-[1.2] whitespace-nowrap text-[#2F2F2BBF] dark:text-[#F5F5EFBF]">
                         At This Time:
                     </h2>
                     {/* .status-text (#status-header) */}
@@ -196,7 +207,7 @@ export function AvailabilityWidget() {
                 {/* .section-timeline */}
                 <div className="flex flex-col gap-[0.5em]">
                     {/* h3 */}
-                    <h3 className="text-[1.75em] font-bold m-0 mb-[0.5em] whitespace-nowrap text-[#2f2f2bbf]">
+                    <h3 className="text-[1.75em] font-bold m-0 mb-[0.5em] whitespace-nowrap text-[#2F2F2BBF] dark:text-[#F5F5EFBF]">
                         A Typical Day:
                     </h3>
                     
@@ -204,13 +215,13 @@ export function AvailabilityWidget() {
                     <div className="relative h-6 w-full">
                         
                         {/* .timeline-bar (#timeline-segments) */}
-                        <div className="w-full h-full rounded-xl overflow-hidden flex bg-[#2f2f2b20]">
+                        <div className="w-full h-full rounded-xl overflow-hidden flex">
                             {SCHEDULE.map((block, i) => (
                                 <div 
                                     key={i} 
                                     style={{ 
                                         flexGrow: block.end - block.start,
-                                        backgroundColor: getSegmentColor(block.type),
+                                        backgroundColor: getSegmentColor(block.type, resolvedTheme),
                                         height: '100%'
                                     }} 
                                 />
@@ -219,11 +230,11 @@ export function AvailabilityWidget() {
 
                         {/* .timeline-pin (#pin) */}
                         <div 
-                            className="absolute -inset-y-1.5 w-0.5 bg-[#6c692d] z-10 transition-[left] duration-500"
+                            className="absolute -inset-y-1.5 w-0.5 bg-[#6c692d] dark:bg-[#cbc996] z-10 transition-[left] duration-500"
                             style={{ left: `${state.pinLeft}%` }}
                         >
                             {/* ::after pseudo-element for the dot */}
-                            <div className="absolute top-0 -left-[5px] w-3 h-3 bg-[#6c692d] rounded-full" />
+                            <div className="absolute -translate-y-1/2 -inset-x-1.5 aspect-square bg-[#6c692d] dark:bg-[#cbc996] rounded-full" />
                         </div>
 
                         {/* .hour-tick (Generated 1-23) - Hidden per CSS var(--show-hours: hidden) but implemented for completeness */}
@@ -237,7 +248,7 @@ export function AvailabilityWidget() {
                     </div>
 
                     {/* .timeline-labels (#timeline-labels) */}
-                    <div className="relative h-[1.5em] text-[0.75em] font-normal text-[#2f2f2bbf] opacity-80 mt-[5px] w-full">
+                    <div className="relative h-[1.5em] text-[0.75em] font-normal text-[#2F2F2BBF] dark:text-[#F5F5EFBF] opacity-80 mt-[5px] w-full">
                         {LABEL_POINTS.map((point, i) => (
                             <span 
                                 key={i}
@@ -251,7 +262,7 @@ export function AvailabilityWidget() {
                 </div>
 
                 {/* .summary-text (#status-message) */}
-                <div className="text-[1.25em] font-normal leading-[1.4] m-0 text-[#2f2f2bbf]">
+                <div className="text-[1.25em] font-normal leading-[1.4] m-0 text-[#2F2F2BBF] dark:text-[#F5F5EFBF]">
                     {state.messageText}
                 </div>
 

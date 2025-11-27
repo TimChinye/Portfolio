@@ -152,7 +152,7 @@ function generateEmailText(data: any, variant: string) {
 // 2. HTML Generator
 function generateEmailHtml(data: any, variant: string) {
   // Portfolio Design Tokens
-  const c = {
+  const colour = {
     bg: "#F5F5EF",       // The site's beige background
     text: "#2F2F2B",     // The site's dark charcoal text
     accent: "#D9D24D",   // The site's yellow/green
@@ -168,13 +168,13 @@ function generateEmailHtml(data: any, variant: string) {
   // Helper for the "Underlined Input" style rows
   const row = (label: string, value: string) => `
     <tr>
-      <td style="padding: 16px 0 4px 0; border-bottom: 2px solid ${c.border}; vertical-align: bottom; width: 30%;">
-        <span style="font-family: ${fonts.sans}; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: ${c.text}; opacity: 0.6;">
+      <td style="padding: 16px 0 4px 0; border-bottom: 2px solid ${colour.border}; vertical-align: bottom; width: 30%;">
+        <span style="font-family: ${fonts.sans}; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: ${colour.text}; opacity: 0.6;">
           ${label}
         </span>
       </td>
-      <td style="padding: 16px 0 4px 16px; border-bottom: 2px solid ${c.border}; vertical-align: bottom;">
-        <span style="font-family: ${fonts.serif}; font-size: 18px; color: ${c.text}; font-weight: 500; font-style: italic;">
+      <td style="padding: 16px 0 4px 16px; border-bottom: 2px solid ${colour.border}; vertical-align: bottom;">
+        <span style="font-family: ${fonts.serif}; font-size: 18px; color: ${colour.text}; font-weight: 500; font-style: italic;">
           ${value}
         </span>
       </td>
@@ -207,15 +207,15 @@ function generateEmailHtml(data: any, variant: string) {
     <meta charset="utf-8">
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
     <style>
-      body { margin: 0; padding: 0; background-color: ${c.bg}; -webkit-font-smoothing: antialiased; }
-      a { color: ${c.text}; text-decoration-color: ${c.accent}; text-decoration-thickness: 2px; }
+      body { margin: 0; padding: 0; background-color: ${colour.bg}; -webkit-font-smoothing: antialiased; }
+      a { color: ${colour.text}; text-decoration-color: ${colour.accent}; text-decoration-thickness: 2px; }
     </style>
   </head>
-  <body style="background-color: ${c.bg}; padding: 40px 20px;">
-    <div style="max-width: 600px; margin: 0 auto; color: ${c.text};">
+  <body style="background-color: ${colour.bg}; padding: 40px 20px;">
+    <div style="max-width: 600px; margin: 0 auto; color: ${colour.text};">
       
       <!-- 1. Branding Header -->
-      <div style="margin-bottom: 40px; border-left: 4px solid ${c.accent}; padding-left: 20px;">
+      <div style="margin-bottom: 40px; border-left: 4px solid ${colour.accent}; padding-left: 20px;">
         <h1 style="margin: 0; font-family: ${fonts.serif}; font-size: 32px; font-weight: 400; line-height: 1;">
           New Inquiry
         </h1>
@@ -228,7 +228,7 @@ function generateEmailHtml(data: any, variant: string) {
       <table style="width: 100%; border-collapse: collapse; margin-bottom: 50px;">
         ${row("From", data.name)}
         ${row("Company", data.company || "—")}
-        ${row("Reply To", `<a href="mailto:${data.email}" style="color: ${c.text}; text-decoration: none; border-bottom: 1px solid ${c.accent};">${data.email}</a>`)}
+        ${row("Reply To", `<a href="mailto:${data.email}" style="color: ${colour.text}; text-decoration: none; border-bottom: 1px solid ${colour.accent};">${data.email}</a>`)}
           ${row("Intent", getLabelForValue(data.reason, 'reason'))}
           ${detailsSection}
         </table>
@@ -238,7 +238,7 @@ function generateEmailHtml(data: any, variant: string) {
         <p style="font-family: ${fonts.sans}; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.6; margin-bottom: 10px;">
           MESSAGE CONTENT
         </p>
-        <div style="font-family: ${fonts.serif}; font-size: 18px; line-height: 1.6; white-space: pre-wrap; background: rgba(0,0,0,0.025); padding: 24px; border-radius: 4px; border-left: 2px solid ${c.text};">
+        <div style="font-family: ${fonts.serif}; font-size: 18px; line-height: 1.6; white-space: pre-wrap; background: ${colour.text}08; padding: 24px; border-radius: 4px; border-left: 2px solid ${colour.text}40;">
 ${data.message}
         </div>
         </div>

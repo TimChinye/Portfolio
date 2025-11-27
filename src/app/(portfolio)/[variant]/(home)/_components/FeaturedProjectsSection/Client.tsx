@@ -1,4 +1,3 @@
-// src/app/(portfolio)/[variant]/_components/FeaturedProjectsSection/Client.tsx
 "client";
 
 import { useState, useRef, useLayoutEffect, useEffect, useCallback } from 'react';
@@ -78,13 +77,11 @@ export function Client({ projects, onDurationCalculated }: ClientProps) {
     opacity: useMotionValue(0),
   }))).current;
 
-  // --- FIX: REMOVED the useEffect that was causing the race condition ---
   // The useLayoutEffect below now handles all initialization.
 
   const masterScrollYProgress = useSectionScrollProgress();
 
   useLayoutEffect(() => {
-    // ... measurement logic (unchanged) ...
     const container = containerRef.current;
     if (!container) return;
     const wordSpans = Array.from(container.querySelectorAll<HTMLSpanElement>('[data-word-index]'));
