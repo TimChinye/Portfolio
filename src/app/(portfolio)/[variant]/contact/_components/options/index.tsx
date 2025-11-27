@@ -198,7 +198,7 @@ export function ContactOptions({ data }: ContactOptionsProps) {
         >
             {/* Group 1: Direct Contact */}
             <div className="flex flex-col items-center gap-4">
-                {data.contactMethods.length > 0 && (
+                {data.contactMethods?.length > 0 && (
                     <>
                         <h2 className="font-figtree text-[#2F2F2B] dark:text-[#F5F5EF] text-[clamp(2.5rem,5vw,4rem)] leading-tight">
                             {data.directTitle}

@@ -65,7 +65,7 @@ export default async function HomePage({
         bgClasses: "bg-[#EFEFD0] dark:bg-[#1A1A17]",
         textClasses: "text-black dark:text-white",
         wrapperClassName: "m-0",
-        className: "-translate-y-32 max-md:rounded-none h-0",
+        className: "-translate-y-24 md:-translate-y-32 h-0",
         variant: variant,
         enablePaddingOffset: true,
       }

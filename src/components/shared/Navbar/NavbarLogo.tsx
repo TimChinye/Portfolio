@@ -78,7 +78,7 @@ export function NavbarLogo({
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="relative text-black"
+      className="relative pointer-events-auto text-black"
     >
       <AnimatePresence>
         {isHovered &&

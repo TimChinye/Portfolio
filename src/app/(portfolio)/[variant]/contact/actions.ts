@@ -17,7 +17,6 @@ export async function submitContactForm(
   // 1. SECURITY: Anti-Bot / Honeypot Check
   const honeypot = formData.get("business_url");
   if (honeypot) {
-    console.log("Bot detected: Honeypot filled.");
     return { success: true, message: "Message sent successfully!" };
   }
 

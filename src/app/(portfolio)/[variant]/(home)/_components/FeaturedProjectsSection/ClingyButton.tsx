@@ -126,13 +126,15 @@ export const ClingyButton = forwardRef<HTMLButtonElement, ClingyButtonProps>(
             onMouseLeave={handleMouseLeave}
             style={{ x: smoothGravityX }}
             className={clsx(`
-                bg-[#7A751A] text-[#3D3B0D]
+                bg-[#7A751A] dark:bg-[#EFEFD0]
+                text-[#3D3B0D] dark:text-[#9a996b]
                 relative w-fit aspect-square rounded-full cursor-pointer border-none outline-none
                 inline-block text-center content-center translate-0
                 p-[2.125em] text-[7.5cqw] font-bold uppercase whitespace-nowrap
 
                 after:absolute after:-z-10 after:-inset-px after:rounded-[inherit]
-                after:border-4 after:border-[#7A751A] after:bg-[#EFEFD0] dark:after:bg-[#1A1A17]
+                after:border-4 after:border-[#7A751A] dark:after:border-[#EFEFD0]
+                after:bg-[#EFEFD0] dark:after:bg-[#1A1A17]
 
                 after:translate-x-(--offset-x) after:translate-y-(--offset-y)
             `, className)}

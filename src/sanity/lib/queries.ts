@@ -268,3 +268,78 @@ export async function getContactPageData(variant: 'tim' | 'tiger'): Promise<Cont
   const data = await sanityFetch({ query });
   return data.data;
 }
+
+export interface HighlightedProject {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  yearCompleted: number;
+  isNew: boolean;
+}
+
+export async function getHighlightedProjects(variant: 'tim' | 'tiger'): Promise<HighlightedProject[]> {
+  const query = groq`*[_type == "projectContent" && $variant in visibility && isHighlighted == true] | order(isNew desc, yearCompleted desc) [0...3] {
+    _id,
+    title,
+    slug,
+    yearCompleted,
+    isNew
+  }`;
+
+  const projects = await client.fetch<HighlightedProject[]>(query, { variant });
+  return projects;
+}
+
+export interface ProjectDetails {
+  _id: string;
+  title: string;
+  yearCompleted: number;
+  shortDescription: string;
+  techDescription: string;
+  featuredDescription: string;
+  thumbnailUrl: string;
+  ctaPrimary?: Cta;
+  ctaSecondary?: Cta;
+  ctaTextLink?: Cta;
+}
+
+export async function getProjectBySlug(slug: string, variant: 'tim' | 'tiger'): Promise<ProjectDetails | null> {
+  const query = groq`*[_type == "projectContent" && slug.current == $slug && $variant in visibility][0]{
+    _id,
+    title,
+    yearCompleted,
+    shortDescription,
+    techDescription,
+    featuredDescription,
+    "thumbnailUrl": thumbnail.asset->url,
+    ctaPrimary,
+    ctaSecondary,
+    ctaTextLink
+  }`;
+
+  const project = await client.fetch<ProjectDetails | null>(query, { slug, variant });
+  return project;
+}
+
+export interface DiscoveryProject {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  yearCompleted: number;
+  shortDescription: string;
+  thumbnailUrl: string;
+}
+
+export async function getAllProjects(variant: 'tim' | 'tiger'): Promise<DiscoveryProject[]> {
+  const query = groq`*[_type == "projectContent" && $variant in visibility] | order(yearCompleted desc) {
+    _id,
+    title,
+    slug,
+    yearCompleted,
+    shortDescription,
+    "thumbnailUrl": thumbnail.asset->url
+  }`;
+
+  const projects = await client.fetch<DiscoveryProject[]>(query, { variant });
+  return projects;
+}

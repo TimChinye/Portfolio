@@ -50,7 +50,7 @@ export function Navbar() {
   return (
     <>
       <nav
-        className="fixed flex items-center p-4 z-100000 gap-4 w-full justify-between md:justify-start"
+        className="fixed flex items-center p-4 z-100000 gap-4 w-full justify-between md:justify-start pointer-events-none"
         data-html2canvas-ignore="true"
       >
         <Link
@@ -64,7 +64,7 @@ export function Navbar() {
             wipeDirection={wipeDirection}
           />
         </Link>
-        <div className="group flex h-fit items-center gap-4 rounded-full bg-white/75 py-4 px-6 shadow-lg backdrop-blur-sm dark:bg-black/75 flex-row">
+        <div className="group pointer-events-auto flex h-fit items-center gap-4 rounded-full bg-white/75 py-4 px-6 shadow-lg backdrop-blur-sm dark:bg-black/75 flex-row">
           <div
             className="gap-[inherit] items-center order-1 md:order-0"
             style={{ display: "inherit" }}

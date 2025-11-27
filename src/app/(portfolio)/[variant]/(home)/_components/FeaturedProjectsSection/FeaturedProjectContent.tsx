@@ -145,8 +145,7 @@ export function FeaturedProjectContent({
         style={{ y: isMeasured ? textTranslateY : 0, opacity: isMeasured ? 1 : 0 }}
         aria-hidden={!isMeasured}
       >
-        {/* --- FIX: Added m-0 to reset default margin --- */}
-        <h1 className="text-[#948D00FF] text-[1.5em] leading-[inherit] m-0">
+        <h1 className="text-[#948D00] dark:text-[#E4E191] text-[1.5em] leading-[inherit] m-0">
           {allWords.filter(w => w.type === 'title').map(({ word }, i) => (
             <AnimatedWord
               key={`title-${i}`}
@@ -157,8 +156,8 @@ export function FeaturedProjectContent({
             />
           ))}
         </h1>
-        {/* --- FIX: Added m-0 to reset default margin --- */}
-        <p className="text-[#3D3B0D] leading-[inherit] m-0">
+
+        <p className="text-[#3D3B0D] dark:text-[#EFEFD0] leading-[inherit] m-0">
           {allWords.filter(w => w.type === 'description').map(({ word }, i) => {
             const titleWordCount = allWords.filter(w => w.type === 'title').length;
             return (

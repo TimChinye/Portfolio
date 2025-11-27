@@ -78,20 +78,6 @@ export const globalContent = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'timHomepageAboutText',
-      title: 'Homepage "About Me" Text (Tim)',
-      type: 'text',
-      group: 'tim',
-      validation: (Rule) => Rule.required(),
-    }),
-     defineField({
-      name: 'timHomepageAboutVideo',
-      title: 'Homepage "About Me" Video (Tim)',
-      description: 'This is where you will upload the video for the about me section.',
-      type: 'file', // Or use 'mux.video' if you set up the Mux plugin
-      group: 'tim',
-    }),
-    defineField({
       name: 'timFooterLinks',
       title: 'Footer Social Links (Tim)',
       type: 'array',

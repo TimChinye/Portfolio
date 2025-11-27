@@ -50,6 +50,7 @@ export const useBackgroundColourScroll = ({
         : prevInnerElement?.dataset?.bgLight;
 
     setStartColor(prevColor || currentEndColor);
+  
   }, [resolvedTheme, currentEndColor, target]);
 
   const { scrollYProgress } = useScroll({
@@ -61,11 +62,12 @@ export const useBackgroundColourScroll = ({
   // Transform scroll progress (0 to 1) into a CSS `color-mix` string.
   // This delegates the color interpolation to the browser for high performance.
   const backgroundColor = useTransform(scrollYProgress, (value) => {
+    console.log(startColor, currentEndColor);
     if (!startColor || startColor === currentEndColor) {
       return currentEndColor;
     }
     // As `value` goes from 0 to 1, we mix an increasing percentage of the end color.
-    return `color-mix(in oklch, ${startColor}, ${currentEndColor} ${value * 100}%)`;
+    return `color-mix(in oklab, ${startColor}, ${currentEndColor} ${value * 100}%)`;
   });
 
   return { style: { backgroundColor } };

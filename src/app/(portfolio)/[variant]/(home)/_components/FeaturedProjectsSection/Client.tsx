@@ -1,7 +1,7 @@
 "client";
 
 import { useState, useRef, useLayoutEffect, useEffect, useCallback } from 'react';
-import { motion, useMotionValue, MotionValue } from 'motion/react';
+import { motion, useMotionValue, MotionValue, useTransform } from 'motion/react';
 import { useSectionScrollProgress } from '@/components/ui/Section';
 import type { FeaturedProject } from '@/sanity/lib/queries';
 
@@ -47,8 +47,10 @@ function ProjectDisplay({ project, localProgressMV, opacityMV, isLastProject, se
     };
   }, [opacityMV, localProgressMV, finalOpacity, isLastProject]);
 
+  const pointerEvents = useTransform(finalOpacity, (opacity) => opacity > 0 ? 'auto' : 'none');
+
   return (
-    <motion.div style={{ opacity: finalOpacity }} className="flex absolute inset-0">
+    <motion.div style={{ opacity: finalOpacity, pointerEvents }} className="flex absolute inset-0">
       <FeaturedProjectContent
         activeProject={project}
         scrollYProgress={localProgressMV}
@@ -192,20 +194,21 @@ export function Client({ projects, onDurationCalculated }: ClientProps) {
 
   return (
     <div ref={containerRef} className="size-full">
-      <div style={{ opacity: 0, pointerEvents: 'none', visibility: isInitialMeasurement ? 'visible' : 'hidden' }} className="absolute inset-0 size-full py-24 px-8 md:py-32 md:px-16 flex gap-4 md:gap-8">
-        <div className="flex-1 flex flex-col gap-8 text-[5vw] font-bold leading-none">
-          {projects.map((project, projectIndex) => (
-            <div key={project._id}>
-              <h1 className="text-[#948D00FF] text-[1.5em] leading-[inherit] m-0">{project.title.split(' ').map((word, i) => <span key={i} data-project-index={projectIndex} data-word-index className="inline-block">{word}&nbsp;</span>)}</h1>
-              <p className="text-[#3D3B0D80] leading-[inherit] m-0">{project.featuredDescription.split(/\s+/).map((word, i) => <span key={i} data-project-index={projectIndex} data-word-index className="inline-block">{word}&nbsp;</span>)}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
       <div className="size-full py-24 px-8 md:py-32 md:px-16 flex gap-4 md:gap-8">
         <ContentProgressBar projectNumber={currentProjectIndex + 1} progress={contentProgress} />
+        
         <div className="flex-1 relative">
+          <div style={{ opacity: 0, pointerEvents: 'none', visibility: isInitialMeasurement ? 'visible' : 'hidden' }} className="absolute inset-0 flex">
+            <div className="flex-1 flex flex-col gap-8 text-[5vw] font-bold leading-none">
+              {projects.map((project, projectIndex) => (
+                <div key={project._id}>
+                  <h1 className="text-[#948D00FF] dark:text-[#948D00FF] text-[1.5em] leading-[inherit] m-0">{project.title.split(' ').map((word, i) => <span key={i} data-project-index={projectIndex} data-word-index className="inline-block">{word}&nbsp;</span>)}</h1>
+                  <p className="text-[#3D3B0D80] dark:text-[#3D3B0D80] leading-[inherit] m-0">{project.featuredDescription.split(/\s+/).map((word, i) => <span key={i} data-project-index={projectIndex} data-word-index className="inline-block">{word}&nbsp;</span>)}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {projects.map((project, index) => (
             <ProjectDisplay
               key={project._id}
@@ -217,6 +220,7 @@ export function Client({ projects, onDurationCalculated }: ClientProps) {
             />
           ))}
         </div>
+
         <VerticalTrack projectSlug={activeProjectSlug} />
       </div>
     </div>

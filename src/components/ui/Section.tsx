@@ -231,8 +231,6 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
   if (resolvedRadiusRange) motionStyle.borderRadius = borderRadius;
   const hasAnimation = resolvedYRange || resolvedScaleRange || resolvedRadiusRange;
 
-  if (className?.includes("test")) console.log([className, !className?.match(/(([\w-]+):)?(p[tblrxyse]?)-(\d+|\[[^\]]+\])/)?.[0], 'py-24 md:py-32']);
-  
   return (
     <div
       ref={wrapperRef}

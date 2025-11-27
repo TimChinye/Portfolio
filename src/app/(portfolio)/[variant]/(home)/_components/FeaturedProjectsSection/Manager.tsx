@@ -11,7 +11,7 @@ type ManagerProps = {
   projects: FeaturedProject[];
 } & SectionProps<'section'>;
 
-export function Manager({ projects, ...sectionProps }: ManagerProps) {
+export function Manager({ projects, ...props }: ManagerProps) {
   // State to hold the dynamically calculated height for the sticky container
   const [stickyDuration, setStickyDuration] = useState('500vh'); // Default large value
   // State to control the initial fade-in after measurement is complete
@@ -27,7 +27,7 @@ export function Manager({ projects, ...sectionProps }: ManagerProps) {
 
   return (
     // This div handles the initial fade-in to hide the layout measurement
-    <Section {...sectionProps} stickyDuration={stickyDuration}>
+    <Section {...props} stickyDuration={stickyDuration}>
         <motion.div
             className="h-full"
             animate={{ opacity: isMeasured ? 1 : 0 }}

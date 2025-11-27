@@ -1,31 +1,52 @@
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useEffect } from "react";
+
 type ContentProgressBarProps = {
   projectNumber: number;
-  progress: number; // A value from 0 to 100
+  progress: number;
 };
 
 export function ContentProgressBar({ projectNumber, progress }: ContentProgressBarProps) {
+  // Clamp the value between 0 and 100
   const finalProgress = Math.max(Math.min(progress, 100), 0);
 
+  // 1. Create a MotionValue to hold the raw target value
+  const targetProgress = useMotionValue(finalProgress);
+
+  // 2. Sync the MotionValue with the prop whenever it changes
+  // This bridges React State -> Framer Motion
+  useEffect(() => {
+    targetProgress.set(finalProgress);
+  }, [finalProgress, targetProgress]);
+
+  // 3. Create a spring that follows the targetProgress MotionValue
+  // Lower stiffness = smoother/more lag. Higher stiffness = more responsive.
+  const smoothProgress = useSpring(targetProgress, {
+    stiffness: 500,
+    damping: 50,
+    restDelta: 0.001
+  });
+
+  // 4. Transform the spring number (0-100) to a string ("0%"-"100%")
+  const height = useTransform(smoothProgress, (val) => `${val}%`);
+
   return (
-    <div className="pt-32 pb-16 px-4 md:px-8 flex flex-col text-center items-center gap-4">
-      <div className="text-[#7A751A] font-figtree text-4xl font-bold leading-none w-[2ch]">
-        { projectNumber }
+    <div className="pt-32 pb-16 px-4 md:px-8 flex flex-col text-center items-center gap-4 h-full">
+      <div className="text-[#7A751A] dark:text-[#EFEFD0] font-figtree text-4xl font-bold leading-none w-[2ch]">
+        {projectNumber}
       </div>
 
       {/* Progress Track */}
-      <div className="relative grow rounded-full w-1 bg-[#E4E191]">
+      {/* Ensure the parent has height so 'grow' works. Added h-full to container above just in case */}
+      <div className="relative grow rounded-full w-1 bg-[#E4E191] dark:bg-[#9a996b]">
         
-        {/* Progress Thumb (Fill) */}
-        <div
-          className="relative rounded-[inherit] w-full bg-[#7A751A]"
-          style={{ height: `${finalProgress}%` }}
-        >
-          {false && finalProgress > 0 && (
-            <span className="absolute bottom-0 -translate-x-1/2 translate-y-1/2 text-white bg-[#7A751A] px-2 rounded-sm text-sm leading-relaxed">
-              {Math.round(finalProgress)}%
-            </span>
-          )}
-        </div>
+        {/* Progress Thumb */}
+        <motion.div
+          className="relative rounded-[inherit] w-full bg-[#7A751A] dark:bg-[#EFEFD0]"
+          // Apply the transformed MotionValue to the style prop
+          style={{ height }}
+        />
+        
       </div>
     </div>
   );
