@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { Section } from "@/components/ui/Section";
 import { getProjectBySlug } from '@/sanity/lib/queries';
 import { CustomLink } from '@/components/ui/CustomLink';
+import { Metadata } from 'next';
 
 type Props = {
   params: Promise<{
@@ -10,6 +11,25 @@ type Props = {
     slug: string;
   }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { variant, slug } = await params;
+  const project = await getProjectBySlug(slug, variant);
+
+  if (!project) {
+    return {
+      title: "Project Not Found"
+    };
+  }
+
+  return {
+    title: project.title,
+    description: project.shortDescription,
+    openGraph: {
+        images: [project.thumbnailUrl]
+    }
+  };
+}
 
 export default async function ProjectPage({ params }: Props) {
   const { variant, slug } = await params;

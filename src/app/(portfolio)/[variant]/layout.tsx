@@ -1,10 +1,10 @@
-import React, { Children, isValidElement, ReactElement, ReactNode } from 'react';
+import React from 'react';
 import { Metadata } from 'next';
 import { draftMode } from "next/headers";
 import { VisualEditing } from "next-sanity/visual-editing";
 
 import { SanityLive } from "@/sanity/lib/live";
-import { getPageSeo } from '@/sanity/lib/queries';
+import { getGlobalContent } from '@/sanity/lib/queries';
 import { DisableDraftMode } from "@/components/ui/DisableDraftMode";
 import { PageTransition } from '@/components/features/PageTransition';
 import { ContactSection } from '@/components/shared/ContactSection';
@@ -61,87 +61,66 @@ export async function generateMetadata({ params }: {
   const resolvedParams = await params;
   const variant = resolvedParams.variant as 'tim' | 'tiger';
   
-  const seoData = await getPageSeo('home');
+  // Fetch global content to determine Site Name and Base URL
+  const globalData = await getGlobalContent();
 
-  // Primary Logic: Use CMS data if available
-  if (seoData?.global) {
-    const { global, page } = seoData;
-    const siteName = global.siteName || "Tim Chinye";
+  // 1. Determine Site Name based on Variant
+  const timName = globalData?.timFullName || "Tim Chinye";
+  const tigerName = globalData?.tigerFullName || "Tiger";
+  const siteName = variant === 'tim' ? timName : tigerName;
 
-    const baseTitle = page?.seoTitle ?? "Professional Portfolio";
-    const baseDescription = page?.seoDescription ?? `The professional portfolio of ${siteName}. Explore projects in frontend development and creative technology.`;
-
-    const titlePersona = variant === 'tim' ? baseTitle : "TigerYT | Creative Coder & Digital Artist";
-    const descriptionPersona = variant === 'tim' ? baseDescription : "Welcome to the digital playground of Tiger. Explore interactive projects, creative coding experiments, and unique web artistry.";
-
-    const fullTitle = `${titlePersona} | ${siteName}`;
-
-    const metadata: Metadata = {
-      title: fullTitle,
-      description: descriptionPersona,
-      openGraph: {
-        title: fullTitle,
-        description: descriptionPersona,
-        siteName: siteName,
-        locale: 'en_US',
-        type: 'website',
-      },
-      twitter: {
-        card: 'summary_large_image',
-        title: fullTitle,
-        description: descriptionPersona,
-      },
-    };
-
-    if (global.siteUrl) {
-      try {
-        metadata.metadataBase = new URL(global.siteUrl);
-        metadata.alternates = { canonical: '/' };
-        if (metadata.openGraph) {
-          metadata.openGraph.url = global.siteUrl;
-        }
-      } catch {
-        console.error("Invalid 'siteUrl' from Sanity, cannot generate canonical link:", global.siteUrl);
-      }
-    }
-    return metadata;
-  }
-
-  // This block runs ONLY if the CMS data (`seoData.global`) could not be fetched.
-  console.warn("CMS data not found. Using hardcoded metadata fallback.");
-
-  const canonicalUrl = 'https://timchinye.com';
-  const siteName = "Tim Chinye";
-
-  const fallbackTitle = variant === 'tim' 
-    ? `Professional Portfolio | ${siteName}` 
-    : `TigerYT | Creative Coder & Digital Artist | ${siteName}`;
-
-  const fallbackDescription = variant === 'tim'
-    ? `The professional portfolio of ${siteName}. Explore projects in frontend development and creative technology.`
+  // 2. Determine Description based on Variant
+  const defaultDescription = globalData?.defaultSeoDescription || "The professional portfolio of Tim Chinye.";
+  const description = variant === 'tim' 
+    ? defaultDescription 
     : "Welcome to the digital playground of Tiger. Explore interactive projects, creative coding experiments, and unique web artistry.";
 
+  // 3. Define the Title Template
+  // format: "Site Name | Page Name"
+  const titleTemplate = `${siteName} | %s`;
+  const defaultTitle = `${siteName} | Home`;
+
+  // 4. Canonical URL logic
+  let metadataBase: URL | undefined = undefined;
+  if (globalData?.siteUrl) {
+    try {
+      metadataBase = new URL(globalData.siteUrl);
+    } catch (e) {
+      console.error("Invalid siteUrl in Sanity", e);
+    }
+  } else {
+    // Fallback if CMS data is missing
+    metadataBase = new URL('https://timchinye.com');
+  }
+
   return {
-    title: fallbackTitle,
-    description: fallbackDescription,
-    // The hardcoded canonical link
-    metadataBase: new URL(canonicalUrl),
-    alternates: {
-      canonical: '/',
+    metadataBase,
+    title: {
+      default: defaultTitle, // Used when a child page doesn't specify a title (e.g. Home)
+      template: titleTemplate, // Used when a child page specifies a title (e.g. Contact -> "Tim Chinye | Contact")
     },
-    // Other useful hardcoded metadata
+    description: description,
     openGraph: {
-      title: fallbackTitle,
-      description: fallbackDescription,
-      url: canonicalUrl,
+      title: {
+        default: defaultTitle,
+        template: titleTemplate,
+      },
+      description: description,
       siteName: siteName,
       locale: 'en_US',
       type: 'website',
+      url: globalData?.siteUrl,
     },
     twitter: {
       card: 'summary_large_image',
-      title: fallbackTitle,
-      description: fallbackDescription,
+      title: {
+        default: defaultTitle,
+        template: titleTemplate,
+      },
+      description: description,
+    },
+    alternates: {
+      canonical: '/',
     },
   };
 }

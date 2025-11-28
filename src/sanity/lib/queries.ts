@@ -6,20 +6,26 @@ import { urlFor } from './image';
 export interface GlobalContentData {
   defaultSeoTitle: string;
   defaultSeoDescription: string;
+  timFullName: string;
   timHeroName: string;
   timHeroBio: string;
+  tigerFullName: string;
   tigerHeroName: string;
   tigerHeroBio: string;
+  siteUrl: string;
 }
 
 export async function getGlobalContent(): Promise<GlobalContentData | null> {
   const query = groq`*[_type == "globalContent"][0]{
     defaultSeoTitle,
     defaultSeoDescription,
+    timFullName,
     timHeroName,
     timHeroBio,
+    tigerFullName,
     tigerHeroName,
-    tigerHeroBio
+    tigerHeroBio,
+    siteUrl
   }`;
   
   const data = await client.fetch<GlobalContentData | null>(query);

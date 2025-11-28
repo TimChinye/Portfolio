@@ -3,9 +3,14 @@ import { Section } from '@/components/ui/Section';
 import { notFound } from 'next/navigation';
 import { getGlobalContent } from '@/sanity/lib/queries';
 import { PortfolioIcon } from '@/components/ui/PortfolioIcon';
+import { Metadata } from 'next';
 
 type Props = {
   params: Promise<{ variant: 'tim' | 'tiger' }>;
+};
+
+export const metadata: Metadata = {
+  title: "About",
 };
 
 export default async function AboutPage({ params }: Props) {

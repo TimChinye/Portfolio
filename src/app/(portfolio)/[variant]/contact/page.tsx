@@ -4,9 +4,15 @@ import { ContactHeroSection } from './_components/hero';
 import { ContactFormSection } from './_components/form';
 import { GetInTouchSection } from './_components/getInTouch';
 import { getContactPageData } from '@/sanity/lib/queries';
+import { Metadata } from 'next';
 
 type Props = {
   params: Promise<{ variant: 'tim' | 'tiger' }>;
+};
+
+export const metadata: Metadata = {
+  title: "Contact",
+  description: "Get in touch for collaborations, projects, or just to say hello."
 };
 
 export default async function ContactPage({ params }: Props) {

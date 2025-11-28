@@ -5,9 +5,15 @@ import { Section } from '@/components/ui/Section';
 import { ProjectsHero } from './_components/ProjectsHero';
 import { getAllProjects } from '@/sanity/lib/queries';
 import { PortfolioIcon } from '@/components/ui/PortfolioIcon';
+import { Metadata } from 'next';
 
 type Props = {
   params: Promise<{ variant: 'tim' | 'tiger' }>;
+};
+
+export const metadata: Metadata = {
+  title: "Projects",
+  description: "A curated selection of my recent work and case studies."
 };
 
 export default async function ProjectsPage({ params }: Props) {

@@ -51,6 +51,14 @@ export const globalContent = defineType({
 
     // === Group: Tim ===
     defineField({
+      name: 'timFullName',
+      title: 'Full Name (Tiger)',
+      type: 'string',
+      group: 'tim',
+      initialValue: 'tim',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: 'timHeroName',
       title: 'Homepage Hero Name (Tim)',
       type: 'string',
@@ -102,6 +110,14 @@ export const globalContent = defineType({
     }),
 
     // === Group: Tiger ===
+    defineField({
+      name: 'tigerFullName',
+      title: 'Full Name (Tiger)',
+      type: 'string',
+      group: 'tiger',
+      initialValue: 'Tiger',
+      validation: (Rule) => Rule.required(),
+    }),
     defineField({
       name: 'tigerHeroName',
       title: 'Homepage Hero Name (Tiger)',
