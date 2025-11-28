@@ -34,7 +34,7 @@ export default async function ContactPage({ params }: Props) {
       <ContactOptions data={data} />
 
       {/* 2. Main Content Grid */}
-      <ContactFormSection />
+      <ContactFormSection variant={variant} />
       
       <GetInTouchSection
         key="get-in-touch"

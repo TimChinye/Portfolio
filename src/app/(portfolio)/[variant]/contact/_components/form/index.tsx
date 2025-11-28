@@ -4,7 +4,11 @@ import { Section, type SectionProps } from '@/components/ui/Section';
 import { AvailabilityWidget } from './_components/AvailabilityWidget';
 import { PuzzleForm } from './_components/PuzzleForm';
 
-export function ContactFormSection() {
+type ContactFormSectionProps = {
+  variant: 'tim' | 'tiger';
+};
+
+export function ContactFormSection({ variant }: ContactFormSectionProps) {
   return (
     <Section
       bgClasses="bg-transparent"
@@ -27,7 +31,7 @@ export function ContactFormSection() {
         {/* RIGHT COLUMN: Contact Form Area */}
         <div className="md:py-48 col-span-3 flex flex-col gap-8">
           <div className="min-h-[600px] flex items-center justify-center rounded-xl p-8">
-             <PuzzleForm />
+             <PuzzleForm variant={variant} />
           </div>
         </div>
       </div>

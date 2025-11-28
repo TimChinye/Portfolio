@@ -19,7 +19,7 @@ const ProjectStrip = ({ project }: { project: HighlightedProject }) => {
     <Link
       href={`/project/${project.slug.current}`}
       className={clsx(
-        "group relative flex border-black transition-colors duration-300 hover:bg-[#E4E191]",
+        "group relative flex gap-4 border-black transition-colors duration-300 hover:bg-[#E4E191]",
         // Mobile: Horizontal rows, border-top, fixed height
         "max-md:w-full max-md:h-24 max-md:items-center max-md:justify-between max-md:border-t-[3px] max-md:px-6",
         // Desktop: Vertical columns, border-left, fixed width
@@ -28,11 +28,11 @@ const ProjectStrip = ({ project }: { project: HighlightedProject }) => {
     >
       {/* Title */}
       <h3 className={clsx(
-        "font-black text-[#2F2F2B] leading-none uppercase shrink-0 whitespace-nowrap font-figtree",
+        "font-black text-[#2F2F2B] leading-none uppercase whitespace-nowrap font-figtree shrink overflow-hidden text-ellipsis",
         // Mobile: Normal text, size 64 unitless (4rem)
         "max-md:text-[2rem]", 
         // Desktop: Rotated vertical text, size 64 unitless (4rem)
-        "md:text-[4rem] md:[writing-mode:vertical-rl] md:rotate-180"
+        "md:text-[4rem] md:[writing-mode:sideways-lr] md:rotate-180"
       )}>
         {project.title}
       </h3>

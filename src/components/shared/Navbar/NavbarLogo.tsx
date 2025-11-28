@@ -80,11 +80,6 @@ export function NavbarLogo({
       onMouseLeave={() => setIsHovered(false)}
       className="relative pointer-events-auto text-black"
     >
-      <AnimatePresence>
-        {isHovered &&
-          (variant === 'tim' ? <TimHoverEffect /> : <TigerHoverEffect />)}
-      </AnimatePresence>
-
       <motion.div style={{ filter: wipeDirection ? animatedFilter : idleFilter }}>
         <PortfolioIcon className="size-12 text-black" strokeClass="fill-white" />
       </motion.div>

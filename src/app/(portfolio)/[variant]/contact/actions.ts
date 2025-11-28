@@ -14,6 +14,7 @@ export async function submitContactForm(
   prevState: ContactFormState,
   formData: FormData
 ): Promise<ContactFormState> {
+
   // 1. SECURITY: Anti-Bot / Honeypot Check
   const honeypot = formData.get("business_url");
   if (honeypot) {
@@ -45,12 +46,29 @@ export async function submitContactForm(
   };
 
   // 3. Basic Server-Side Validation
-  if (!rawData.email || !rawData.message || !rawData.name) {
+  if (!rawData.email || !rawData.message || !rawData.reason || !rawData.name) {
     return { success: false, message: "Please fill in all required fields." };
   }
 
   try {
-    // 4. SECURITY: Fetch destination email from Sanity
+    // 4. CONFIGURATION: Select Credentials based on Variant
+    let apiKey = "";
+    let senderEmail = "";
+    
+    if (variant === 'tiger') {
+        apiKey = process.env.SMTP_PASS_TIGER || "";
+        senderEmail = process.env.SMTP_FROM_TIGER || "";
+    } else {
+        apiKey = process.env.SMTP_PASS_TIM || "";
+        senderEmail = process.env.SMTP_FROM_TIM || "";
+    }
+
+    if (!apiKey || !senderEmail) {
+        console.error(`Missing API Key or Sender Email for variant: ${variant}`);
+        return { success: false, message: "System configuration error." };
+    }
+    
+    // 5. SECURITY: Fetch destination email from Sanity
     const emailField = variant === 'tim' ? 'timContactEmail' : 'tigerContactEmail';
     const query = groq`*[_type == "globalContent"][0]{ ${emailField} }`;
     const sanityData = await client.fetch(query);
@@ -62,32 +80,94 @@ export async function submitContactForm(
       return { success: false, message: "Configuration error. Please contact via social media." };
     }
 
-    // 5. Construct Email Content
-    const subject = `[${variant === 'tim' ? "Tim" : "Tiger"}'s Portfolio] New Inquiry from ${rawData.name}`;
-    
-    // Generate the HTML body
-    const htmlBody = generateEmailHtml(rawData, variant);
-    const textBody = generateEmailText(rawData, variant);
-
-    // 6. Send Email via Nodemailer
+    // 6. Create Transporter
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT),
       secure: process.env.SMTP_SECURE === 'true',
       auth: {
         user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        pass: apiKey,
       },
     });
 
+    // 7. Construct & Send NOTIFICATION TO YOU
+    const subjectToYou = `[${variant === 'tim' ? "Tim" : "Tiger"}'s Portfolio] New Inquiry from ${rawData.name}`;
+    const htmlBodyToYou = generateEmailHtml(rawData, variant);
+    const textBodyToYou = generateEmailText(rawData, variant);
+
     await transporter.sendMail({
-      from: `"${rawData.name}" <${process.env.SMTP_FROM}>`,
+      from: `"${rawData.name}" <${senderEmail}>`,
       replyTo: rawData.email,
       to: destinationEmail,
-      subject: subject,
-      text: textBody,
-      html: htmlBody,
+      subject: subjectToYou,
+      text: textBodyToYou,
+      html: htmlBodyToYou,
     });
+
+    // 8. Construct & Send CONFIRMATION TO USER
+    const senderName = variant === 'tim' ? 'Tim Chinye' : 'Tiger';
+    const subjectToUser = `Message Received - Thanks for reaching out!`;
+    const confirmationText = `Got it. Hi ${rawData.name}, This is an automated confirmation to let you know I've received your message. I'm looking forward to reading it and will get back to you as soon as possible. Best regards, ${senderName}`;
+    
+    // Shared design tokens for both emails
+    const colour = {
+        bg: "#F5F5EF", text: "#2F2F2B", accent: "#D9D24D",
+    };
+    const fonts = {
+        sans: `'Figtree', 'Helvetica Neue', Helvetica, Arial, sans-serif`,
+        serif: `'Newsreader', Georgia, 'Times New Roman', serif`,
+    };
+
+    const confirmationHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+        <style>
+          body { margin: 0; padding: 0; background-color: ${colour.bg}; -webkit-font-smoothing: antialiased; }
+        </style>
+      </head>
+      <body style="background-color: ${colour.bg}; padding: 40px 20px;">
+        <div style="max-width: 600px; margin: 0 auto; color: ${colour.text};">
+          
+          <div style="margin-bottom: 40px; border-left: 4px solid ${colour.accent}; padding-left: 20px;">
+            <h1 style="margin: 0; font-family: ${fonts.serif}; font-size: 32px; font-weight: 400; line-height: 1;">
+              Got it.
+            </h1>
+            <p style="margin: 8px 0 0 0; font-family: ${fonts.sans}; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.6;">
+              AUTOMATED CONFIRMATION
+            </p>
+          </div>
+
+          <div style="font-family: ${fonts.sans}; font-size: 16px; line-height: 1.6;">
+            <p>Hi ${rawData.name},</p>
+            <p>This is to confirm I've received your message. I'm looking forward to reading it and will get back to you as soon as possible.</p>
+            <p>Best regards,<br/>${senderName}</p>
+          </div>
+
+          <div style="text-align: center; opacity: 0.4; margin-top: 60px;">
+            <p style="font-family: ${fonts.sans}; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; margin: 0;">
+              You received this after submitting the contact form on ${variant === 'tim' ? 'timchinye.com' : 'tigerfolio.com'}
+            </p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+    
+    try {
+        await transporter.sendMail({
+            from: `"${senderName}" <${senderEmail}>`,
+            to: rawData.email,
+            subject: subjectToUser,
+            text: confirmationText,
+            html: confirmationHtml,
+        });
+    } catch (confirmationError) {
+        console.warn("Successfully sent notification to admin, but failed to send confirmation to user:", confirmationError);
+    }
 
     return { success: true, message: "Message sent! I'll get back to you soon." };
 
@@ -97,7 +177,7 @@ export async function submitContactForm(
   }
 }
 
-// --- Helpers ---
+// --- Helpers --- (generateEmailText and generateEmailHtml remain unchanged)
 
 function getLabelForValue(value: string, type: 'reason' | 'opportunity') {
     const map: Record<string, string> = {
@@ -112,7 +192,6 @@ function getLabelForValue(value: string, type: 'reason' | 'opportunity') {
     return map[value] || value;
 }
 
-// 1. Plain Text Generator (Comprehensive)
 function generateEmailText(data: any, variant: string) {
   let text = `New Inquiry via ${variant === 'tim' ? "Tim Chinye" : "Tiger"} Portfolio\n`;
   text += `========================================\n\n`;
@@ -122,7 +201,6 @@ function generateEmailText(data: any, variant: string) {
   text += `Email:      ${data.email}\n`;
   text += `Intent:     ${getLabelForValue(data.reason, 'reason')}\n`;
 
-  // Conditional Logic mirroring HTML
   if (['project', 'full-time', 'collaborate'].includes(data.reason)) {
     let locationStr = getLabelForValue(data.opportunity, 'opportunity');
     if (['on-site', 'hybrid'].includes(data.opportunity)) {
@@ -143,28 +221,24 @@ function generateEmailText(data: any, variant: string) {
   text += `${data.message}\n`;
   text += `----------------------------------------\n\n`;
   
-  text += `(Note: Fields were extracted from a fill-in-the-blanks puzzle form.)`;
+  text += `(Note: Fields were extracted from a fill-in-the-blanks puzzle form, and therefore may not be formatted accurated.)`;
 
   return text;
 }
 
-// 2. HTML Generator
 function generateEmailHtml(data: any, variant: string) {
-  // Portfolio Design Tokens
   const colour = {
-    bg: "#F5F5EF",       // The site's beige background
-    text: "#2F2F2B",     // The site's dark charcoal text
-    accent: "#D9D24D",   // The site's yellow/green
-    border: "rgba(47, 47, 43, 0.3)", // A subtle charcoal border
+    bg: "#F5F5EF",
+    text: "#2F2F2B",
+    accent: "#D9D24D",
+    border: "rgba(47, 47, 43, 0.3)",
   };
 
-  // Font Stacks (Attempt to load webfonts, fallback gracefully)
   const fonts = {
     sans: `'Figtree', 'Helvetica Neue', Helvetica, Arial, sans-serif`,
     serif: `'Newsreader', Georgia, 'Times New Roman', serif`,
   };
   
-  // Helper for the "Underlined Input" style rows
   const row = (label: string, value: string) => `
     <tr>
       <td style="padding: 16px 0 4px 0; border-bottom: 2px solid ${colour.border}; vertical-align: bottom; width: 30%;">
@@ -182,7 +256,6 @@ function generateEmailHtml(data: any, variant: string) {
 
   let detailsSection = "";
 
-  // Dynamic Rows
   if (['project', 'full-time', 'collaborate'].includes(data.reason)) {
     let locationStr = getLabelForValue(data.opportunity, 'opportunity');
     
@@ -213,7 +286,6 @@ function generateEmailHtml(data: any, variant: string) {
   <body style="background-color: ${colour.bg}; padding: 40px 20px;">
     <div style="max-width: 600px; margin: 0 auto; color: ${colour.text};">
       
-      <!-- 1. Branding Header -->
       <div style="margin-bottom: 40px; border-left: 4px solid ${colour.accent}; padding-left: 20px;">
         <h1 style="margin: 0; font-family: ${fonts.serif}; font-size: 32px; font-weight: 400; line-height: 1;">
           New Inquiry
@@ -223,7 +295,6 @@ function generateEmailHtml(data: any, variant: string) {
         </p>
       </div>
 
-      <!-- 2. The Data Table (Mimicking the Form Inputs) -->
       <table style="width: 100%; border-collapse: collapse; margin-bottom: 50px;">
         ${row("From", data.name)}
         ${row("Company", data.company || "—")}
@@ -232,7 +303,6 @@ function generateEmailHtml(data: any, variant: string) {
           ${detailsSection}
         </table>
 
-      <!-- 3. The Message Body -->
       <div style="margin-bottom: 40px;">
         <p style="font-family: ${fonts.sans}; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.6; margin-bottom: 10px;">
           MESSAGE CONTENT
@@ -242,7 +312,6 @@ ${data.message}
         </div>
         </div>
 
-      <!-- 4. Footer -->
       <div style="text-align: center; opacity: 0.4; margin-top: 60px;">
         <p style="font-family: ${fonts.sans}; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; margin: 0;">
           Sent from the Portfolio

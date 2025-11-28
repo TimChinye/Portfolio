@@ -6,7 +6,7 @@ import { Graphic } from './Graphic';
 
 // --- CONFIGURATION ---
 const SHADOW_COUNT = 3;
-const SHADOW_OFFSET = 44; // The 44px offset from your Figma design
+const SHADOW_OFFSET = 14; // The 44px offset from your Figma design
 // --- END CONFIGURATION ---
 
 export function Client() {
@@ -16,7 +16,7 @@ export function Client() {
     const start = 0.1 + i * 0.1;
     const end = 0.4 + i * 0.1;
     const finalY = SHADOW_OFFSET * (i + 1);
-    return useTransform(scrollYProgress, [start, end], [0, finalY], { clamp: true });
+    return useTransform(scrollYProgress, [start, end], ['0%', `${finalY}%`], { clamp: true });
   });
 
   return (

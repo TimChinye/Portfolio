@@ -224,23 +224,22 @@ const CustomSelect = ({
     );
 };
 
-export function PuzzleForm() {
+type PuzzleFormProps = {
+    variant: 'tim' | 'tiger';
+};
+
+export function PuzzleForm({ variant }: PuzzleFormProps) {
     // --- State ---
     const [name, setName] = useState("");
     const [company, setCompany] = useState("");
     const [reason, setReason] = useState("");
-
-    // Opportunity / Location State
     const [opportunity, setOpportunity] = useState("");
     const [location, setLocation] = useState("");
     const [otherLocation, setOtherLocation] = useState("");
-
-    // Full-Time Specific State
     const [compensationAmount, setCompensationAmount] = useState("");
     const [compensationPeriod, setCompensationPeriod] = useState("year");
     const [weeklyHours, setWeeklyHours] = useState("");
     const [schedule, setSchedule] = useState("");
-
     const [message, setMessage] = useState("");
     const [email, setEmail] = useState("");
 
@@ -297,6 +296,34 @@ export function PuzzleForm() {
         }
     }, [message]);
 
+    // --- Client-Side Validation ---
+    const isFormValid = (() => {
+        // Base fields that are always visible and required
+        if (!name || !company || !reason || !message || !email) {
+            return false;
+        }
+    
+        // Conditional fields based on 'reason'
+        if (showOpportunityLine) {
+            if (!opportunity) return false;
+            
+            // Conditional fields based on 'opportunity'
+            if (showLocation) {
+                if (!location) return false;
+                if (location === 'Other' && !otherLocation) return false;
+            }
+        }
+    
+        // Fields specific to 'full-time' reason
+        if (isFullTime) {
+            if (!compensationAmount || !weeklyHours || !schedule) {
+                return false;
+            }
+        }
+    
+        return true;
+    })();
+
   // --- Success View ---
   if (state.success) {
     return (
@@ -334,6 +361,7 @@ export function PuzzleForm() {
         >
             {/* --- HIDDEN FIELDS FOR FORM SUBMISSION --- */}
 
+            <input type="hidden" name="variant" value={variant} /> 
             <input type="hidden" name="name" value={name} />
             <input type="hidden" name="company" value={company} />
             <input type="hidden" name="reason" value={reason} />
@@ -384,7 +412,7 @@ export function PuzzleForm() {
                     value={reason}
                     onChange={setReason}
                     options={REASONS}
-                    placeholder="Collaborate with you"
+                    placeholder="Select reason"
                 />
                 <span>.</span>
             </div>
@@ -418,12 +446,11 @@ export function PuzzleForm() {
                                     value={location}
                                     onChange={setLocation}
                                     options={LOCATIONS}
-                                    placeholder="London"
+                                    placeholder="Select location"
                                 />
                             </motion.span>
                         )}
                         <span>.</span>
-
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -508,15 +535,13 @@ export function PuzzleForm() {
                     <textarea
                         ref={textareaRef}
                         value={message}
-                        required
                         onChange={(e) => setMessage(e.target.value)}
                         placeholder="Enter your message..."
                         rows={1}
                         name="message_ui"
                         className={clsx(
                             "w-full bg-transparent resize-none outline-none border-none p-0 mt-1",
-                            "text-(length:--fs-label)",
-                            "text-[#2F2F2BBF] dark:text-[#F5F5EF]",
+                            "text-(length:--fs-label)", "text-[#2F2F2BBF] dark:text-[#F5F5EF]",
                             "placeholder:text-[#2F2F2B80] dark:placeholder:text-[#F5F5EF80]",
                             "leading-normal min-h-[120px] "
                         )}
@@ -537,19 +562,23 @@ export function PuzzleForm() {
                     <span>.</span>
                 </div>
 
-            <div className="self-end flex items-center gap-4">
-                {state.message && !state.success && (
-                    <p className="text-red-500 dark:text-red-400 text-sm">{state.message}</p>
-                )}
+                <div className="self-end flex items-center gap-4">
+                    {state.message && !state.success && (
+                        <p className="text-red-500 dark:text-red-400 text-sm">{state.message}</p>
+                    )}
                     <button
                         type="submit"
-                        disabled={isPending}
+                        disabled={!isFormValid || isPending}
                         className={clsx(
-                            "group flex items-center gap-3 px-8 py-3 rounded-full cursor-pointer",
+                            "group flex items-center gap-3 px-8 py-3 rounded-full",
                             "border-[calc(var(--spacing)*1)] border-[#2F2F2B40] dark:border-[#F5F5EF40]",
                             "text-[#2F2F2B80] dark:text-[#F5F5EFBF]",
                         "text-(length:--fs-label) font-normal tracking-wide",
-                        isPending && "opacity-50 cursor-wait"
+                            {
+                                'opacity-50 cursor-wait': isPending,
+                                'opacity-50 cursor-not-allowed': !isPending && !isFormValid,
+                                'cursor-pointer': !isPending && isFormValid
+                            }
                         )}
                     >
                     <span>{isPending ? "Sending..." : "Send Message"}</span>
