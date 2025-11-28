@@ -7,12 +7,14 @@ import type { FeaturedProject } from '@/sanity/lib/queries';
 
 import { ClingyButton } from './ClingyButton';
 import { CustomLink as Link } from '@/components/ui/CustomLink';
+import clsx from 'clsx';
 
 type VerticalTrackProps = {
   projectSlug: string;
+  className: string;
 };
 
-export function VerticalTrack({ projectSlug }: VerticalTrackProps) {
+export function VerticalTrack({ projectSlug, className }: VerticalTrackProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const buttonHeightRef = useRef(0);
@@ -63,7 +65,7 @@ export function VerticalTrack({ projectSlug }: VerticalTrackProps) {
   const buttonY = useTransform(smoothProgressY, (v) => `calc(${v} * (100cqh - 100%))`);
 
   return (
-    <div ref={trackRef} className="w-32 md:w-40 h-full container-size text-center">
+    <div ref={trackRef} className={clsx("w-32 md:w-40 h-full container-size text-center", className)}>
       <motion.div
         style={{ y: buttonY }}
       >

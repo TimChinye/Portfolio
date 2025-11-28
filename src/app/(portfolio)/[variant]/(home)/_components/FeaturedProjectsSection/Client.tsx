@@ -1,4 +1,4 @@
-"client";
+"use client";
 
 import { useState, useRef, useLayoutEffect, useEffect, useCallback } from 'react';
 import { motion, useMotionValue, MotionValue, useTransform } from 'motion/react';
@@ -8,9 +8,11 @@ import type { FeaturedProject } from '@/sanity/lib/queries';
 import { FeaturedProjectContent } from './FeaturedProjectContent';
 import { ContentProgressBar } from './ContentProgressBar';
 import { VerticalTrack } from './VerticalTrack';
+import { SectionTitle } from './SectionTitle';
+import { CustomLink as Link } from '@/components/ui/CustomLink';
 
 // --- CONFIGURATION ---
-const SCROLL_DISTANCE_MULTIPLIER = 3;
+const SCROLL_DISTANCE_MULTIPLIER = 2;
 const TRANSITION_GAP_MULTIPLIER = 15;
 const FADE_OUT_DURATION = 0.5;
 const FADE_IN_START = 0.5;
@@ -79,8 +81,7 @@ export function Client({ projects, onDurationCalculated }: ClientProps) {
     opacity: useMotionValue(0),
   }))).current;
 
-  // The useLayoutEffect below now handles all initialization.
-
+  // Access the master scroll progress for the section
   const masterScrollYProgress = useSectionScrollProgress();
 
   useLayoutEffect(() => {
@@ -105,6 +106,7 @@ export function Client({ projects, onDurationCalculated }: ClientProps) {
       }
     });
     if (totalLines > 0) avgLineHeight /= totalLines;
+    
     let currentPos = 0;
     const newScrollMap: ScrollMapItem[] = [];
     projectsMetrics.forEach((metrics, index) => {
@@ -128,7 +130,6 @@ export function Client({ projects, onDurationCalculated }: ClientProps) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // --- REFACTORED UPDATE LOGIC ---
   const updateVisualsFromScroll = useCallback((progress: number) => {
     const totalDuration = scrollMapRef.current[scrollMapRef.current.length - 1]?.end ?? 0;
     if (totalDuration === 0) return;
@@ -167,62 +168,93 @@ export function Client({ projects, onDurationCalculated }: ClientProps) {
           setCurrentProjectIndex(prevItem.projectIndex!);
           setActiveProjectSlug(projects[prevItem.projectIndex!]?.slug.current ?? '');
         }
-        break; // Exit the loop once we've found the active segment
+        break;
       }
     }
     
-    // Handle edge case where scroll is exactly at 0
-    if (!activeFound && progress === 0) {
+    // Handle edge case where scroll is less than 1
+    if (!activeFound && progress < 1) {
         projectMotionValues[0].opacity.set(1);
         projectMotionValues[0].localProgress.set(0);
     }
 
   }, [projects, projectMotionValues]);
 
-  // This effect listens for CHANGES during active scrolling.
   useEffect(() => {
     const unsubscribe = masterScrollYProgress.on("change", updateVisualsFromScroll);
     return () => unsubscribe();
   }, [masterScrollYProgress, updateVisualsFromScroll]);
 
-  // This effect SYNCHRONIZES the state on initial render and re-renders.
   useLayoutEffect(() => {
     updateVisualsFromScroll(masterScrollYProgress.get());
-  }, [masterScrollYProgress, updateVisualsFromScroll, isInitialMeasurement]); // Re-sync after measurement
+  }, [masterScrollYProgress, updateVisualsFromScroll, isInitialMeasurement]); 
 
-  // --- END OF REFACTORED LOGIC ---
+  // Animations for the "View All Projects" button
+  const buttonOpacity = useTransform(masterScrollYProgress, [0.9, 1], [0, 1]);
+  const buttonY = useTransform(masterScrollYProgress, [0.9, 1], ['2rem', '0rem']);
+  const buttonPointerEvents = useTransform(masterScrollYProgress, (v) => v >= 0.95 ? 'auto' : 'none');
 
   return (
-    <div ref={containerRef} className="size-full">
-      <div className="size-full py-24 px-8 md:py-32 md:px-16 flex gap-4 md:gap-8">
-        <ContentProgressBar projectNumber={currentProjectIndex + 1} progress={contentProgress} />
-        
-        <div className="flex-1 relative">
-          <div style={{ opacity: 0, pointerEvents: 'none', visibility: isInitialMeasurement ? 'visible' : 'hidden' }} className="absolute inset-0 flex">
-            <div className="flex-1 flex flex-col gap-8 text-[5vw] font-bold leading-none">
-              {projects.map((project, projectIndex) => (
-                <div key={project._id}>
-                  <h1 className="text-[#948D00FF] dark:text-[#948D00FF] text-[1.5em] leading-[inherit] m-0">{project.title.split(' ').map((word, i) => <span key={i} data-project-index={projectIndex} data-word-index className="inline-block">{word}&nbsp;</span>)}</h1>
-                  <p className="text-[#3D3B0D80] dark:text-[#3D3B0D80] leading-[inherit] m-0">{project.featuredDescription.split(/\s+/).map((word, i) => <span key={i} data-project-index={projectIndex} data-word-index className="inline-block">{word}&nbsp;</span>)}</p>
+    <div ref={containerRef} className="size-full relative">
+        {/* Absolute Positioning for the Title to allow overlay/flow-out */}
+        <SectionTitle containerRef={containerRef} stickyProgress={masterScrollYProgress} />
+
+        {/* Padding adjustment to visually center content but allow full height usage */}
+        {/* <div className="size-full py-24 px-8 md:py-32 md:px-16 flex gap-4 md:gap-8"></div> */}
+        <div className="size-full px-8 md:px-16 h-full flex flex-col">
+            <div className="flex gap-4 md:gap-8 flex-1 min-h-0">
+                <ContentProgressBar
+                  projectNumber={currentProjectIndex + 1}
+                  progress={contentProgress}
+                  className="pt-56 pb-40 md:pt-64 md:pb-48"
+                />
+                
+                <div className="flex-1 relative">
+                    {/* Measurement Layer */}
+                    <div style={{ opacity: 0, pointerEvents: 'none', visibility: isInitialMeasurement ? 'visible' : 'hidden' }} className="absolute inset-0 flex">
+                        <div className="flex-1 flex flex-col gap-8 text-[5vw] font-bold leading-none">
+                            {projects.map((project, projectIndex) => (
+                            <div key={project._id}>
+                                <h1 className="text-[#948D00FF] dark:text-[#948D00FF] text-[1.5em] leading-[inherit] m-0">{project.title.split(' ').map((word, i) => <span key={i} data-project-index={projectIndex} data-word-index className="inline-block">{word}&nbsp;</span>)}</h1>
+                                <p className="text-[#3D3B0D80] dark:text-[#3D3B0D80] leading-[inherit] m-0">{project.featuredDescription.split(/\s+/).map((word, i) => <span key={i} data-project-index={projectIndex} data-word-index className="inline-block">{word}&nbsp;</span>)}</p>
+                            </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Project Displays */}
+                    {projects.map((project, index) => (
+                    <ProjectDisplay
+                        key={project._id}
+                        project={project}
+                        localProgressMV={projectMotionValues[index].localProgress}
+                        opacityMV={projectMotionValues[index].opacity}
+                        isLastProject={index === projects.length - 1}
+                        setContentProgress={setContentProgress}
+                    />
+                    ))}
+
+                    {/* VIEW ALL PROJECTS BUTTON */}
+                    <motion.div
+                        style={{ opacity: buttonOpacity, y: buttonY, pointerEvents: buttonPointerEvents }}
+                        className="absolute bottom-0 left-0"
+                    >
+                        <Link 
+                        href="/projects" 
+                        className="group flex items-center gap-2 text-[clamp(1rem,1.5vw,1.25rem)] font-figtree font-bold uppercase tracking-wide text-[#7A751A] hover:text-[#948D00] dark:text-[#EFEFD0] dark:hover:text-[#9a996b] hover:opacity-100 transition-[color,opacity]"
+                        >
+                        <span>View All Projects</span>
+                        <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                        </Link>
+                    </motion.div>
                 </div>
-              ))}
+
+                <VerticalTrack
+                  className="py-24 md:py-32"
+                  projectSlug={activeProjectSlug}
+                />
             </div>
-          </div>
-
-          {projects.map((project, index) => (
-            <ProjectDisplay
-              key={project._id}
-              project={project}
-              localProgressMV={projectMotionValues[index].localProgress}
-              opacityMV={projectMotionValues[index].opacity}
-              isLastProject={index === projects.length - 1}
-              setContentProgress={setContentProgress}
-            />
-          ))}
         </div>
-
-        <VerticalTrack projectSlug={activeProjectSlug} />
-      </div>
     </div>
   );
 }

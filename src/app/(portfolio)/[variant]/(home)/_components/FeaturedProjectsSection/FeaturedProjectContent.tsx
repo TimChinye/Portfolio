@@ -200,7 +200,7 @@ export function FeaturedProjectContent({
           alt={`Background for ${activeProject.title}`}
           fill
           sizes="120vw"
-          className="object-contain opacity-20 dark:opacity-10"
+          className="object-contain blur opacity-20 dark:opacity-10"
           priority
         />
       </motion.div>
