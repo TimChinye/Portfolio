@@ -1,9 +1,19 @@
+// src/app/(portfolio)/[variant]/(home)/_components/FeaturedProjectsSection/FeaturedProjectContent.tsx
 "use client";
 
 import { useState, useRef, useLayoutEffect, useEffect } from 'react';
 import type { FeaturedProject } from '@/sanity/lib/queries';
 import { motion, useTransform, type MotionValue } from 'motion/react';
 import Image from 'next/image';
+
+// --- CONFIGURATION ---
+const BG_CONFIG = {
+  SCALE: 0.5,           // Image size (0.5 = 50% of original size)
+  DRIFT_DISTANCE: 10,   // Constant distance the image moves (in % of container)
+  CURVE_MIN: -10,       // Minimum arc strength (Negative for one direction)
+  CURVE_MAX: 10,        // Maximum arc strength (Positive for the other)
+};
+// --- END CONFIGURATION ---
 
 // Represents the measured properties of a single line of text
 type LineMetrics = {
@@ -51,6 +61,63 @@ export function FeaturedProjectContent({
   const lineMetrics = useRef<LineMetrics[]>([]);
   const lastHighlightedIndexRef = useRef<number | null>(0);
   const [isMeasured, setIsMeasured] = useState(false);
+
+  const [coords, setCoords] = useState<{
+    start: { x: number, y: number },
+    end: { x: number, y: number },
+    control: { x: number, y: number }
+  } | null>(null);
+
+  useEffect(() => {
+    // 1. Random Start Position (Keep within 20-80% to avoid edge clipping)
+    const startX = 20 + Math.random() * 60;
+    const startY = 20 + Math.random() * 60;
+
+    // 2. End Position (Based on constant DRIFT_DISTANCE)
+    const angle = Math.random() * 2 * Math.PI; // Random direction
+    const endX = startX + (Math.cos(angle) * BG_CONFIG.DRIFT_DISTANCE);
+    const endY = startY + (Math.sin(angle) * BG_CONFIG.DRIFT_DISTANCE);
+
+    // 3. Curve Control Point (Quadratic Bezier)
+    // Find midpoint
+    const midX = (startX + endX) / 2;
+    const midY = (startY + endY) / 2;
+
+    // Determine curve strength randomly between MIN and MAX
+    const strength = BG_CONFIG.CURVE_MIN + Math.random() * (BG_CONFIG.CURVE_MAX - BG_CONFIG.CURVE_MIN);
+    
+    // Calculate perpendicular angle to the drift direction
+    const perpAngle = angle + (Math.PI / 2);
+
+    // Offset midpoint by strength in the perpendicular direction
+    const controlX = midX + Math.cos(perpAngle) * strength;
+    const controlY = midY + Math.sin(perpAngle) * strength;
+
+    setCoords({
+      start: { x: startX, y: startY },
+      end: { x: endX, y: endY },
+      control: { x: controlX, y: controlY }
+    });
+  }, []); // Runs once on mount
+
+  // Quadratic Bezier Interpolation: B(t) = (1-t)^2 P0 + 2(1-t)t P1 + t^2 P2
+  const bgLeft = useTransform(scrollYProgress, (t) => {
+    if (!coords) return "50%";
+    const p0 = coords.start.x;
+    const p1 = coords.control.x;
+    const p2 = coords.end.x;
+    const val = (1 - t) * (1 - t) * p0 + 2 * (1 - t) * t * p1 + t * t * p2;
+    return `${val}%`;
+  });
+
+  const bgTop = useTransform(scrollYProgress, (t) => {
+    if (!coords) return "50%";
+    const p0 = coords.start.y;
+    const p1 = coords.control.y;
+    const p2 = coords.end.y;
+    const val = (1 - t) * (1 - t) * p0 + 2 * (1 - t) * t * p1 + t * t * p2;
+    return `${val}%`;
+  });
 
   const allWords = [
     ...activeProject.title.split(' ').map(word => ({ word, type: 'title' as const })),
@@ -139,7 +206,7 @@ export function FeaturedProjectContent({
   });
 
   return (
-    <div ref={containerRef} className="flex-1 flex flex-col gap-8 text-[5vw] font-bold leading-none container-size relative overflow-hidden">
+    <div ref={containerRef} className="flex-1 flex flex-col gap-8 text-[5vw] font-bold leading-none container-size relative">
       <motion.div
         className="absolute top-0 left-0 w-full"
         style={{ y: isMeasured ? textTranslateY : 0, opacity: isMeasured ? 1 : 0 }}
@@ -174,13 +241,11 @@ export function FeaturedProjectContent({
       </motion.div>
 
       <div style={{ opacity: 0, pointerEvents: 'none', visibility: isMeasured ? 'hidden' : 'visible' }}>
-        {/* --- FIX: Added m-0 to reset default margin --- */}
         <h1 className="text-[#948D00FF] text-[1.5em] leading-[inherit] m-0">
           {allWords.filter(w => w.type === 'title').map(({ word }, i) => (
             <span key={i} data-word-index={i} className="inline-block">{word}&nbsp;</span>
           ))}
         </h1>
-        {/* --- FIX: Added m-0 to reset default margin --- */}
         <p className="text-[#3D3B0D80] leading-[inherit] m-0">
           {allWords.filter(w => w.type === 'description').map(({ word }, i) => {
             const titleWordCount = allWords.filter(w => w.type === 'title').length;
@@ -190,10 +255,16 @@ export function FeaturedProjectContent({
           })}
         </p>
       </div>
-      
+
       <motion.div
-        className="absolute -z-1 w-[120%] h-[80%] -translate-x-1/2 -translate-y-1/2"
-        style={{ x: '50cqw', y: '50cqh' }}
+        className="absolute -z-1 w-[120%] h-[80%] -translate-1/2"
+        style={{
+          left: bgLeft,
+          top: bgTop,
+          scale: BG_CONFIG.SCALE,
+          opacity: coords ? 1 : 0,
+          transition: 'opacity 0.5s ease-in'
+        }}
       >
         <Image
           src={activeProject.thumbnailUrl}
