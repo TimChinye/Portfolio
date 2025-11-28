@@ -46,7 +46,7 @@ export const Word = ({ isClipped }: WordProps) => {
             // FIX: Apply clip-path and cursor here, on the element listening for the mouse.
             // This ensures the hit-area is physically clipped, not just visually.
             className={clsx(
-              "h-full relative -mt-px cursor-pointer", 
+              "h-full relative -mt-4 cursor-pointer", 
               {
                 "[clip-path:inset(0_0_15%_0)]": char !== '_'
               }
