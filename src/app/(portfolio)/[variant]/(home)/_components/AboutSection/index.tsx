@@ -11,6 +11,8 @@ export const AboutSection = async ({ variant, ...props }: AboutSectionProps) => 
   const data = await getAboutPageData();
   if (!data) return null;
 
+  if (variant !== 'tim') return;
+
   return (
     <Section 
       {...props}

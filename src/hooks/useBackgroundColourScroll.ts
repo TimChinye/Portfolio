@@ -62,7 +62,6 @@ export const useBackgroundColourScroll = ({
   // Transform scroll progress (0 to 1) into a CSS `color-mix` string.
   // This delegates the color interpolation to the browser for high performance.
   const backgroundColor = useTransform(scrollYProgress, (value) => {
-    console.log(startColor, currentEndColor);
     if (!startColor || startColor === currentEndColor) {
       return currentEndColor;
     }
