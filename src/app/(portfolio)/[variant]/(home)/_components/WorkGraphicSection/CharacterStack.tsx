@@ -40,7 +40,7 @@ export const CharacterStack = ({
       
       {/* Top layer SVG - Animated Directly */}
       <SvgComponent 
-        className="h-full w-auto fill-white dark:fill-black -translate-y-15/100 -mb-px" 
+        className="h-full w-auto fill-white dark:fill-[#D9D24D] -translate-y-15/100 -mb-px" 
         animate={{ y: animateY }}
         transition={transition}
       />

@@ -54,7 +54,7 @@ export function WorkLayer({ index, totalLayers, scrollYProgress }: WorkLayerProp
       }}
     >
       <motion.div
-        style={{ y: isLastLayer ? "0" : y }}
+        style={{ y: isLastLayer ? "0.5rem" : y }}
         className="w-fit"
       >
         <Word isClipped={!isLastLayer} />

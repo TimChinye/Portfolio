@@ -28,7 +28,7 @@ export const Word = ({ isClipped }: WordProps) => {
           return (
             <SvgComponent
               key={`${char}-clipped`}
-              className="h-full w-auto text-black dark:text-white"
+              className="h-full w-auto fill-[black] dark:fill-white"
             />
           );
         }

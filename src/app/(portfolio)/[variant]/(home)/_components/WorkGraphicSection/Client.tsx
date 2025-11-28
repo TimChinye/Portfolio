@@ -74,7 +74,7 @@ export function Client() {
       className="pb-12 md:pb-16 relative flex size-full flex-col justify-start"
     >
       <motion.div
-        className="z-1  flex flex-col text-[clamp(4rem,20vw,24rem)] font-black leading-none"
+        className="flex flex-col text-[clamp(4rem,20vw,24rem)] font-black leading-none"
         style={{ y: translateToFit }}
       >
         {[...Array(NUM_LAYERS)].map((_, index) => (
