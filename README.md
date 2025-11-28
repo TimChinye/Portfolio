@@ -15,7 +15,7 @@ This repository contains the source code for my personal portfolio, a project de
 
 This project was architected with a **design-first methodology**. The high-fidelity Figma file served as the definitive source of truth for all visual components, animation specifications, and layout structures.
 
-This strict adherence to a pre-defined design plan was a key factor in the project's rapid development, enabling the initial MVP - from concept and design to a fully functional codebase - to be completed single-handedly in just **2 months and 7 days**.
+I wholeheartedly believe that a pre-defined design plan was a key factor in the project's rapid development, enabling the initial MVP go from nothingness to complete design and a fully functional codebase, single-handedly, in just 2 months and 7 days.
 
 ## Architectural Highlights & Key Features
 
