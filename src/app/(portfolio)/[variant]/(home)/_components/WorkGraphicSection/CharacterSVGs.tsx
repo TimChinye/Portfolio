@@ -1,21 +1,23 @@
+"use client";
+
 import React from 'react';
+import { motion, type SVGMotionProps } from 'motion/react';
 
-export type SvgProps = { className?: string };
+export type SvgProps = SVGMotionProps<SVGSVGElement>;
 
-const SvgW: React.FC<SvgProps> = ({ className }) => (
-  <svg
-    className={className}
+const SvgW: React.FC<SvgProps> = (props) => (
+  <motion.svg
     viewBox="0 0 460 386"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
     style={{
-      fill: "currentColor",
       fillRule: "evenodd",
       clipRule: "evenodd",
       strokeLinejoin: "round",
       strokeMiterlimit: 2,
     }}
+    {...props}
   >
     <g transform="matrix(0.285459,0,0,1,0,0)">
       <rect
@@ -37,23 +39,22 @@ const SvgW: React.FC<SvgProps> = ({ className }) => (
         </g>
       </g>
     </g>
-  </svg>
+  </motion.svg>
 );
 
-const SvgO: React.FC<SvgProps> = ({ className }) => (
-  <svg
-    className={className}
+const SvgO: React.FC<SvgProps> = (props) => (
+  <motion.svg
     viewBox="0 0 374 386"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
     style={{
-      fill: "currentColor",
       fillRule: "evenodd",
       clipRule: "evenodd",
       strokeLinejoin: "round",
       strokeMiterlimit: 2,
     }}
+    {...props}
   >
     <g transform="matrix(1,0,0,1,-459,0)">
       <g transform="matrix(0.231491,0,0,1,459.564,0)">
@@ -72,23 +73,22 @@ const SvgO: React.FC<SvgProps> = ({ className }) => (
         </g>
       </g>
     </g>
-  </svg>
+  </motion.svg>
 );
 
-const SvgR: React.FC<SvgProps> = ({ className }) => (
-  <svg
-    className={className}
+const SvgR: React.FC<SvgProps> = (props) => (
+  <motion.svg
     viewBox="0 0 298 386"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
     style={{
-      fill: "currentColor",
       fillRule: "evenodd",
       clipRule: "evenodd",
       strokeLinejoin: "round",
       strokeMiterlimit: 2,
     }}
+    {...props}
   >
     <g transform="matrix(1,0,0,1,-832,0)">
       <g transform="matrix(0.184523,0,0,1,832.244,0)">
@@ -107,23 +107,22 @@ const SvgR: React.FC<SvgProps> = ({ className }) => (
         </g>
       </g>
     </g>
-  </svg>
+  </motion.svg>
 );
 
-const SvgK: React.FC<SvgProps> = ({ className }) => (
-  <svg
-    className={className}
+const SvgK: React.FC<SvgProps> = (props) => (
+  <motion.svg
     viewBox="0 0 302 386"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
     style={{
-      fill: "currentColor",
       fillRule: "evenodd",
       clipRule: "evenodd",
       strokeLinejoin: "round",
       strokeMiterlimit: 2,
     }}
+    {...props}
   >
     <g transform="matrix(1,0,0,1,-1129,0)">
       <g transform="matrix(0.187215,0,0,1,1129.31,0)">
@@ -142,23 +141,22 @@ const SvgK: React.FC<SvgProps> = ({ className }) => (
         </g>
       </g>
     </g>
-  </svg>
+  </motion.svg>
 );
 
-const SvgUnderscore: React.FC<SvgProps> = ({ className }) => (
-  <svg
-    className={className}
+const SvgUnderscore: React.FC<SvgProps> = (props) => (
+  <motion.svg
     viewBox="0 0 180 386"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
     style={{
-      fill: "currentColor",
       fillRule: "evenodd",
       clipRule: "evenodd",
       strokeLinejoin: "round",
       strokeMiterlimit: 2,
     }}
+    {...props}
   >
     <g transform="matrix(1,0,0,1,-1430,0)">
       <g transform="matrix(0.111311,0,0,1,1430.71,0)">
@@ -185,7 +183,7 @@ const SvgUnderscore: React.FC<SvgProps> = ({ className }) => (
         </g>
       </g>
     </g>
-  </svg>
+  </motion.svg>
 );
 
 export const SVG_MAP = { W: SvgW, O: SvgO, R: SvgR, K: SvgK, _: SvgUnderscore } as const;

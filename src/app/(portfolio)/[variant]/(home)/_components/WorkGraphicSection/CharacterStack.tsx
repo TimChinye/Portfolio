@@ -1,28 +1,49 @@
-// src/components/CharacterStack.tsx
-import { SVG_MAP, type SvgProps } from './CharacterSVGs';
+"use client";
+
+import clsx from 'clsx';
+import { type Transition } from 'motion/react';
+import { type SvgProps } from './CharacterSVGs';
 import React from 'react';
 
-// Define the props for this component using a TypeScript interface
 interface CharacterStackProps {
   SvgComponent: React.FC<SvgProps>;
-}
+  className: string;
+  animateY?: string;
+  delay?: number;
+};
 
-/**
- * Renders a duplicated two-SVG stack for a single character.
- * The SVGs are layered on top of each other using absolute positioning.
- */
-export const CharacterStack = ({ SvgComponent }: CharacterStackProps) => {
+export const CharacterStack = ({ 
+  SvgComponent, 
+  className, 
+  animateY = "0%", 
+  delay = 0 
+}: CharacterStackProps) => {
+
+  const transition: Transition = { 
+    type: "spring", 
+    stiffness: 300, 
+    damping: 25, 
+    mass: 1,
+    delay: delay 
+  };
 
   return (
-    // The parent div is a relative container for the absolute children.
-    // h-full: Corresponds to `height: 100%` from the original CSS.
-    // The component itself will be sized by its parent in Word.tsx
-    <div className="relative h-full">
-      {/* Bottom layer SVG: This is the "white" one. */}
-      <SvgComponent className="h-full w-auto fill-black dark:fill-white" />
+    // The outer div maintains the clip-path and sizing
+    <div className={clsx("relative h-full", className)}>
       
-      {/* Top layer SVG: This is the "black" one, which matches the current theme color. */}
-      <SvgComponent className="h-full w-auto fill-white dark:fill-black" />
+      {/* Bottom layer SVG - Animated Directly */}
+      <SvgComponent 
+        className="h-full w-auto fill-black dark:fill-white" 
+        animate={{ y: animateY }}
+        transition={transition}
+      />
+      
+      {/* Top layer SVG - Animated Directly */}
+      <SvgComponent 
+        className="h-full w-auto fill-white dark:fill-black -translate-y-15/100 -mb-px" 
+        animate={{ y: animateY }}
+        transition={transition}
+      />
     </div>
   );
 };

@@ -1,4 +1,3 @@
-// src/components/ui/Keycap.tsx
 import React, { useId } from 'react';
 import clsx from 'clsx';
 
@@ -138,8 +137,8 @@ export const KeyCap = ({
       viewBox={`0 ${stretch / 10} ${width} ${height}`}
       fill="none"
       className={clsx(
-        'group container-size w-auto origin-bottom-right transition-transform has-hover:scale-x-95 has-hover:scale-y-90 transform-gpu',
-        '[&>path]:cursor-pointer [&>path]:transition-transform [&>path]:group-has-hover:scale-y-95 [&>path]:origin-bottom-right',
+        'group container-size w-auto origin-bottom-right transition-transform hover:scale-x-95 hover:scale-y-90 transform-gpu',
+        '[&>path]:cursor-pointer [&>path]:transition-transform [&>path]:group-hover:scale-y-95 [&>path]:origin-bottom-right',
         !className?.includes('aspect-[') && 'aspect-[1.03091408115/1]',
         className)}
       style={{
