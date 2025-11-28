@@ -33,10 +33,10 @@ This project demonstrates a deep understanding of modern web development princip
 
 ## Tech Stack
 
--   **Framework:** Next.js 14+ (App Router)
+-   **Framework:** Next.js 16+ (App Router)
 -   **CMS:** Sanity.io (Embedded Studio, Presentation Tool)
--   **UI Library:** React 19
--   **Styling:** Tailwind CSS 4
--   **Animation:** Framer Motion / Motion One
+-   **UI Library:** React 19.2
+-   **Styling:** TailwindCSS 4.1
+-   **Animation:** Motion.dev
 -   **Video Platform:** Mux
 -   **Language:** TypeScript
