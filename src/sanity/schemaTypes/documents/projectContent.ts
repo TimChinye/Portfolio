@@ -36,6 +36,28 @@ export const projectContent = defineType({
       },
       validation: (Rule) => Rule.required().min(1),
     }),
+    defineField({
+      name: 'projectType',
+      title: 'Project Type',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Case Study', value: 'Case Study' },
+          { title: 'Role', value: 'Role' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'Case Study',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'liveVersionExists',
+      title: 'Does a live version exist?',
+      type: 'boolean',
+      initialValue: false,
+      // This field will only show if the projectType is 'Case Study'
+      hidden: ({ parent }) => parent?.projectType !== 'Case Study',
+    }),
 
     // Content for Homepage Hero Popup
     defineField({
@@ -126,7 +148,7 @@ export const projectContent = defineType({
       name: 'caseStudyContent',
       title: 'Case Study Content',
       description: 'The full, unique case study for the project focus page (/project/[slug]).',
-      type: 'blockContent', // This references blockContentType.ts
+      type: 'blockContent',
     }),
   ],
   preview: {
@@ -134,12 +156,15 @@ export const projectContent = defineType({
       title: 'title',
       media: 'thumbnail',
       visibility: 'visibility',
+      projectType: 'projectType',
     },
-    prepare({title, media, visibility}) {
+    prepare({title, media, visibility, projectType}) {
       const personas = (visibility || []).join(', ').replace('tim', 'Tim').replace('tiger', 'Tiger')
+      const subtitle = `Type: ${projectType || 'N/A'} | Visible to: ${personas || 'None'}`;
+
       return {
         title: title,
-        subtitle: `Visible to: ${personas || 'None'}`,
+        subtitle: subtitle,
         media: media,
       }
     },

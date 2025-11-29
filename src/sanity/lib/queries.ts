@@ -47,6 +47,8 @@ export interface HeroProject {
   ctaPrimary?: Cta;
   ctaSecondary?: Cta;
   ctaTextLink?: Cta;
+  projectType: 'Case Study' | 'Role';
+  liveVersionExists?: boolean;
 }
 
 export async function getHeroProjects(variant: 'tim' | 'tiger'): Promise<HeroProject[]> {
@@ -60,7 +62,9 @@ export async function getHeroProjects(variant: 'tim' | 'tiger'): Promise<HeroPro
     techDescription,
     ctaPrimary,
     ctaSecondary,
-    ctaTextLink
+    ctaTextLink,
+    projectType,
+    liveVersionExists
   }`;
   
   const projects = await client.fetch<any[]>(query, { variant });

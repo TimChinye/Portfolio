@@ -91,9 +91,10 @@ const generateLayouts = (count: number): CardLayout[] => {
 type CanvasProps = {
     projects: HeroProject[];
     setActiveProject: (project: HeroProject | null) => void;
+    setHoveredProject: (project: HeroProject | null) => void;
 };
 
-export function Canvas({ projects, setActiveProject }: CanvasProps) {
+export function Canvas({ projects, setActiveProject, setHoveredProject }: CanvasProps) {
     const isMobile = useMediaQuery('(max-width: 768px)');
     
     // Base sizing constants
@@ -153,7 +154,7 @@ export function Canvas({ projects, setActiveProject }: CanvasProps) {
 
     return (
         <motion.div
-            className="absolute pointer-events-none"
+            className="absolute pointer-events-none dark:brightness-95"
             style={{
                 '--canvas-scale': CANVAS_SCALE,
                 inset: `calc(${overhangY}) calc(${overhangX})`,
@@ -188,7 +189,9 @@ export function Canvas({ projects, setActiveProject }: CanvasProps) {
                     >
                         <button
                             onClick={() => setActiveProject(project)}
-                            className="size-full cursor-pointer block rounded-2xl md:rounded-4xl p-4 overflow-hidden shadow-lg transition-transform duration-500 hover:scale-110 hover:z-10 bg-[#F5F5EF] dark:bg-[#1A1A17]"
+                            onMouseEnter={() => setHoveredProject(project)}
+                            onMouseLeave={() => setHoveredProject(null)}
+                            className="size-full cursor-pointer block rounded-2xl md:rounded-4xl p-4 overflow-hidden shadow-lg transition-transform duration-500 bg-[#F5F5EF] dark:bg-[#1A1A17]"
                             aria-label={`View details for ${project.title}`}
                         >
                             <Image

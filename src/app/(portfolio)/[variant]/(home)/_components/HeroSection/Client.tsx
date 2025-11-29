@@ -41,6 +41,7 @@ export function Client({ variant, heroName, heroBio, projects }: ClientProps) {
 
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [activeProject, setActiveProject] = useState<HeroProject | null>(projects[0]);
+    const [hoveredProject, setHoveredProject] = useState<HeroProject | null>(null);
 
     // Mobile Scroll Animation Logic
     const heroRef = useRef<HTMLDivElement>(null); 
@@ -61,7 +62,7 @@ export function Client({ variant, heroName, heroBio, projects }: ClientProps) {
 
     return (
         <>
-            <BubbleCursor />
+            <BubbleCursor hoveredProject={hoveredProject} />
             
             <HeroHeading
                 headingText={heroName}
@@ -86,7 +87,11 @@ export function Client({ variant, heroName, heroBio, projects }: ClientProps) {
                 )}
             </AnimatePresence>
             
-            <Canvas projects={projects} setActiveProject={setActiveProject} />
+            <Canvas
+              projects={projects} 
+              setActiveProject={setActiveProject}
+              setHoveredProject={setHoveredProject}
+            />
 
             <div ref={heroRef} className="absolute inset-0 top-full -mt-24 -z-999 pointer-events-none" />
         </>

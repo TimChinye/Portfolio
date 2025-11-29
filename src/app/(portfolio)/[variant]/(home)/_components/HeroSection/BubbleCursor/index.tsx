@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, useMotionValue, useSpring, useScroll, useTransform } from "motion/react";
+import { motion, useMotionValue, useSpring, useScroll, useTransform, AnimatePresence } from "motion/react";
 import { Filter } from "./Filter";
+import type { HeroProject } from "@/sanity/lib/queries";
 
 // Settings derived from the prompt
 const settings = {
@@ -32,7 +33,22 @@ const supportsSvgBackdropFilter = () => {
     return true;
 }
 
-export function BubbleCursor() {
+const getHoverText = (project: HeroProject | null): string => {
+  if (!project) return "";
+  if (project.projectType === 'Role') {
+    return "Explore Role";
+  }
+  if (project.projectType === 'Case Study' && project.liveVersionExists) {
+    return "Try it Live";
+  }
+  return "View Case Study";
+};
+
+type BubbleCursorProps = {
+  hoveredProject: HeroProject | null;
+};
+
+export function BubbleCursor({ hoveredProject }: BubbleCursorProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
   const [viewportHeight, setViewportHeight] = useState(0);
@@ -55,7 +71,7 @@ export function BubbleCursor() {
     window.addEventListener('resize', handleResize);
     
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [mouseX, mouseY]);
 
   const springConfig = { damping: 25, stiffness: 200, mass: 0.5 };
   const smoothMouseX = useSpring(mouseX, springConfig);
@@ -68,8 +84,22 @@ export function BubbleCursor() {
     [0, viewportHeight * 0.75, viewportHeight],
     [1, 0.5, 0]
   );
+  
+  // Spring for the hover scale effect
+  const hoverSpringConfig = { damping: 20, stiffness: 250, mass: 0.5 };
+  const hoverScale = useSpring(1, hoverSpringConfig);
 
-  // OPTIMIZATION LOGIC
+  // Update hoverScale when hoveredProject changes
+  useEffect(() => {
+    hoverScale.set(hoveredProject ? 2 : 1);
+  }, [hoveredProject, hoverScale]);
+
+  // Combine scroll-based zoom and hover-based scale
+  const finalScale = useTransform(
+    [zoomLevel, hoverScale],
+    ([z, h]: number[]) => z * h
+  );
+
   // Wrap handleMouseMove in useCallback to ensure its reference is stable.
   const handleMouseMove = useCallback((e: MouseEvent) => {
       mouseX.set(e.clientX);
@@ -103,13 +133,12 @@ export function BubbleCursor() {
     };
   }, [zoomLevel, handleMouseMove]);
 
-  if (!isMounted) {
-    return null;
-  }
+  if (!isMounted) return null;
+
+  const bubbleText = getHoverText(hoveredProject);
 
   // HTML & CSS for the bubble
-                        
-  const bubbleWrapperClasses = "fixed top-0 left-0 z-999 -translate-x-1/2 -translate-y-1/2 pointer-events-none overflow-hidden rounded-full"
+  const bubbleWrapperClasses = "fixed top-0 left-0 z-999 -translate-x-1/2 -translate-y-1/2 pointer-events-none overflow-hidden rounded-full container-size"
   const bubbleClasses = "size-32 shadow-[0px_6px_var(--outer-shadow-blur)_rgba(0,0,0,0.2)] before:rounded-[inherit] before:absolute before:inset-0 after:absolute after:inset-1 after:rounded-[inherit] after:bg-[rgb(from_var(--tint-color)_r_g_b_/_var(--tint-opacity))] after:shadow-[inset_var(--shadow-offset)_var(--shadow-offset)_var(--shadow-blur)_var(--shadow-spread)_var(--shadow-color),_inset_calc(-1_*_var(--shadow-offset))_calc(-1_*_var(--shadow-offset))_var(--shadow-blur)_var(--shadow-spread)_var(--shadow-color)] dark:after:invert-60"
   const liquidGlassClasses = "before:backdrop-filter-[blur(var(--frost-blur))_url(#glass-distortion)]";
   const frostedGlassClasses = "before:backdrop-filter-[blur(var(--frost-blur))]";
@@ -126,11 +155,28 @@ export function BubbleCursor() {
           ...customProperties,
           x: smoothMouseX,
           y: smoothMouseY,
-          scale: zoomLevel
+          scale: finalScale
         }}
         className={`${bubbleWrapperClasses} ${bubbleClasses} ${isSupported ? liquidGlassClasses : frostedGlassClasses}`}
         data-html2canvas-ignore="true"
-      />
+      >
+        <AnimatePresence>
+          {hoveredProject && (
+            <motion.div
+              key="bubble-text"
+              className="z-1 absolute inset-0 flex items-center justify-center text-center p-2"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1, transition: { delay: 0.1 } }}
+              exit={{ opacity: 0, scale: 0.5 }}
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            >
+              <span className="font-figtree font-bold text-white whitespace-nowrap text-[7.5cqw]">
+                {bubbleText}
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </>
   );
 };
