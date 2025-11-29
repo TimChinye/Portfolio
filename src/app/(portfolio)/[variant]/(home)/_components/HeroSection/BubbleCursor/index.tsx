@@ -33,17 +33,6 @@ const supportsSvgBackdropFilter = () => {
     return true;
 }
 
-const getHoverText = (project: HeroProject | null): string => {
-  if (!project) return "";
-  if (project.projectType === 'Role') {
-    return "Explore Role";
-  }
-  if (project.projectType === 'Case Study' && project.liveVersionExists) {
-    return "Try it Live";
-  }
-  return "View Case Study";
-};
-
 type BubbleCursorProps = {
   hoveredProject: HeroProject | null;
 };
@@ -135,7 +124,7 @@ export function BubbleCursor({ hoveredProject }: BubbleCursorProps) {
 
   if (!isMounted) return null;
 
-  const bubbleText = getHoverText(hoveredProject);
+  const bubbleText = hoveredProject ? hoveredProject.ctaPrimary.label : '';
 
   // HTML & CSS for the bubble
   const bubbleWrapperClasses = "fixed top-0 left-0 z-999 -translate-x-1/2 -translate-y-1/2 pointer-events-none overflow-hidden rounded-full container-size"

@@ -36,28 +36,6 @@ export const projectContent = defineType({
       },
       validation: (Rule) => Rule.required().min(1),
     }),
-    defineField({
-      name: 'projectType',
-      title: 'Project Type',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Case Study', value: 'Case Study' },
-          { title: 'Role', value: 'Role' },
-        ],
-        layout: 'radio',
-      },
-      initialValue: 'Case Study',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'liveVersionExists',
-      title: 'Does a live version exist?',
-      type: 'boolean',
-      initialValue: false,
-      // This field will only show if the projectType is 'Case Study'
-      hidden: ({ parent }) => parent?.projectType !== 'Case Study',
-    }),
 
     // Content for Homepage Hero Popup
     defineField({
@@ -100,10 +78,27 @@ export const projectContent = defineType({
       initialValue: false,
     }),
     defineField({
-      name: 'yearCompleted',
-      title: 'Year Completed',
-      type: 'number',
-      validation: (Rule) => Rule.required().integer().min(2010).max(new Date().getFullYear() + 1),
+      name: 'dateCompleted',
+      title: 'Date Completed',
+      type: 'date',
+      options: {
+        dateFormat: 'MMMM-YYYY',
+      },
+      validation: (Rule) => Rule.required().custom((dateString: string | undefined) => {
+        if (typeof dateString === 'undefined') {
+          return true; // Let the .required() rule handle this.
+        }
+        
+        // The dateString is in "YYYY-MM-DD" format.
+        const day = dateString.substring(8, 10);
+
+        if (day !== '01') {
+          const correctedDate = `${dateString.substring(0, 8)}01`;
+          return `Invalid day. Please use the first of the month (e.g., change to '${correctedDate}').`;
+        }
+        
+        return true;
+      }),
     }),
     defineField({
       name: 'isNew',
@@ -156,11 +151,10 @@ export const projectContent = defineType({
       title: 'title',
       media: 'thumbnail',
       visibility: 'visibility',
-      projectType: 'projectType',
     },
-    prepare({title, media, visibility, projectType}) {
+    prepare({title, media, visibility}) {
       const personas = (visibility || []).join(', ').replace('tim', 'Tim').replace('tiger', 'Tiger')
-      const subtitle = `Type: ${projectType || 'N/A'} | Visible to: ${personas || 'None'}`;
+      const subtitle = ` Visible to: ${personas || 'None'}`;
 
       return {
         title: title,

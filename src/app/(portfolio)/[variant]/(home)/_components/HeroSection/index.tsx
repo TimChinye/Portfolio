@@ -15,8 +15,9 @@ const HeroSectionComponent = forwardRef<HTMLDivElement, HeroSectionProps>(
     getHeroProjects(variant),
   ]);
 
-  const DEV_MODE_PROJECT_COUNT = 15;
-  if (process.env.NODE_ENV === 'development' && projects.length > 0 && projects.length < DEV_MODE_PROJECT_COUNT) {
+  const INFLATE_PROJECT_COUNT = false;
+  const DEV_MODE_PROJECT_COUNT = 5;
+  if (INFLATE_PROJECT_COUNT && process.env.NODE_ENV === 'development' && projects.length > 0 && projects.length < DEV_MODE_PROJECT_COUNT) {
     projects = Array.from({ length: DEV_MODE_PROJECT_COUNT }, (_, i) => {
       // Cycle through the original projects array
       const originalProject = projects[i % projects.length];
@@ -26,7 +27,7 @@ const HeroSectionComponent = forwardRef<HTMLDivElement, HeroSectionProps>(
         _id: `${originalProject._id}-dev-${i}`,
       };
     });
-  }
+  };
 
   const heroName = variant === 'tim' ? globalContent?.timHeroName : globalContent?.tigerHeroName;
   const heroBio = variant === 'tim' ? globalContent?.timHeroBio : globalContent?.tigerHeroBio;
@@ -40,7 +41,9 @@ const HeroSectionComponent = forwardRef<HTMLDivElement, HeroSectionProps>(
         </div>
       </Section>
     );
-  }
+  };
+
+  console.log(projects);
 
   return (
     <Section {...props} ref={ref}>

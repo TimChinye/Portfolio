@@ -22,7 +22,7 @@ const CtaButton = forwardRef(function CtaButton(
   { href, variant, isExternal, children, ...props }: CtaButtonProps,
   ref: ForwardedRef<HTMLAnchorElement>
 ) {
-  const commonClasses = "text-[1.25em] font-newsreader font-medium px-[1.5em] py-[0.75em] rounded-lg";
+  const commonClasses = "text-[1.25em] font-newsreader font-medium px-[1.5em] py-[0.75em] rounded-lg content-center";
   const hoverClasses = "transition-transform hover:-translate-y-1";
   
   const variantClasses = {
@@ -55,7 +55,7 @@ type InfoCardProps = {
 };
 
 export function InfoCard({ project, onClose, className, style }: InfoCardProps) {
-  const isPrimaryExternal = project.ctaPrimary?.url !== '#';
+  const isPrimaryExternal = !project.ctaPrimary?.url.startsWith('/');
 
   const [hasMounted, setHasMounted] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -95,7 +95,7 @@ export function InfoCard({ project, onClose, className, style }: InfoCardProps) 
 
       {/* Title and Short Description */}
       <div className="">
-        <h3 className="text-[4em] font-newsreader dark leading-tight tracking-tight">
+        <h3 className="text-[4em] font-newsreader dark leading-none tracking-tight">
           {project.title}
         </h3>
         <p className="text-[1em] font-figtree">

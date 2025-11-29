@@ -40,6 +40,13 @@ export default async function ProjectPage({ params }: Props) {
     notFound();
   }
 
+  const formattedDate = new Date(project.dateCompleted)
+  .toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    timeZone: 'UTC'
+  });
+
   return (
     <Section 
       wrapperClassName='m-0 pb-32'
@@ -52,7 +59,7 @@ export default async function ProjectPage({ params }: Props) {
         <div className="flex flex-col gap-6 text-center items-center">
           <div className="flex items-center gap-4">
              <div className="inline-block border border-[#2F2F2B]/20 dark:border-[#F5F5EF]/20 px-3 py-1 rounded-full font-figtree text-xs uppercase tracking-widest opacity-60">
-              {project.yearCompleted}
+              {formattedDate}
             </div>
             <div className="inline-block bg-[#D9D24D] text-black px-3 py-1 rounded-full font-figtree font-bold text-xs uppercase tracking-widest">
               Case Study Coming Soon

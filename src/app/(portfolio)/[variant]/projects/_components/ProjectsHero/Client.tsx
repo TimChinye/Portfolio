@@ -47,7 +47,7 @@ const ProjectStrip = ({ project }: { project: HighlightedProject }) => {
       )}>
         {/* Year - Size 24 unitless (1.5rem) */}
         <span className="font-newsreader text-[1.5rem] text-[#3D3B0D]">
-          {project.yearCompleted}
+          {project.dateCompleted.substring(0, 4)}
         </span>
 
         {/* New Tag - Size 16 unitless (1rem) */}

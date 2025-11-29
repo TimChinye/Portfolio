@@ -40,27 +40,23 @@ export const Word = ({ isClipped }: WordProps) => {
         // Stagger delay based on distance (0.05s per step)
         const delay = isHovering ? distance * 0.125 : 0;
 
+        const OFFSET_PERC = 15.15;
+
         return (
           <div 
             key={`${char}-stack`} 
             // FIX: Apply clip-path and cursor here, on the element listening for the mouse.
             // This ensures the hit-area is physically clipped, not just visually.
-            className={clsx(
-              "h-full relative -mt-4 cursor-pointer", 
-              {
-                "[clip-path:inset(0_0_15%_0)]": char !== '_'
-              }
-            )}
+            className="h-full relative cursor-pointer"
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
             <CharacterStack
               SvgComponent={SvgComponent}
               // We no longer need to pass the clip-path down, just ensure it fills the parent
-              className={clsx("size-full", {
-                "[clip-path:inset(15%_0_0_0)]": char === '_'
-              })}
-              animateY={isHovering ? `-${100 - 15}%` : "0%"}
+              className="size-full"
+              style={{ clipPath: char === '_' ? `inset(${OFFSET_PERC}% 0 0 0)` : `inset(0 0 ${OFFSET_PERC}% 0)` }}
+              animateY={isHovering ? `-${100 - OFFSET_PERC}%` : "0%"}
               delay={delay}
             />
           </div>

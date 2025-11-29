@@ -42,7 +42,14 @@ export default async function ProjectsPage({ params }: Props) {
       */}
       <Section wrapperClassName='m-0 pb-32' className='rounded-none p-0'>
         <div className="flex flex-col">
-          {projects.map((project, index) => (
+          {projects.map((project, index) => {
+            const formattedDate = new Date(project.dateCompleted)
+            .toLocaleDateString('en-US', {
+              year: 'numeric',
+              timeZone: 'UTC'
+            });
+
+            return (
             <div 
               key={project._id} 
               id={project.slug.current}
@@ -86,7 +93,7 @@ export default async function ProjectsPage({ params }: Props) {
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-4 mb-4">
                       <span className="font-newsreader italic text-xl md:text-2xl text-[#2F2F2B]/60 dark:text-[#F5F5EF]/60">
-                        {project.yearCompleted}
+                        {formattedDate}
                       </span>
                       <span className="px-3 py-1 rounded-full border border-[#86800E]/50 text-[#86800E] dark:border-[#D9D24D]/50 dark:text-[#D9D24D] text-xs font-bold uppercase tracking-widest dark:bg-[#F5F5EF]/5">
                         Case Study Coming Soon
@@ -113,7 +120,7 @@ export default async function ProjectsPage({ params }: Props) {
                 </div>
               </div>
             </div>
-          ))}
+          )})}
         </div>
       </Section>
     </>

@@ -10,13 +10,15 @@ interface CharacterStackProps {
   className: string;
   animateY?: string;
   delay?: number;
+  style?: React.CSSProperties;
 };
 
 export const CharacterStack = ({ 
   SvgComponent, 
   className, 
   animateY = "0%", 
-  delay = 0 
+  delay = 0,
+  style
 }: CharacterStackProps) => {
 
   const transition: Transition = { 
@@ -29,7 +31,7 @@ export const CharacterStack = ({
 
   return (
     // The outer div maintains the clip-path and sizing
-    <div className={clsx("relative h-full", className)}>
+    <div style={style} className={clsx("relative h-full", className)}>
       
       {/* Bottom layer SVG - Animated Directly */}
       <SvgComponent 

@@ -48,17 +48,15 @@ export interface HeroProject {
   thumbnailUrl: string;
   shortDescription: string;
   techDescription: string;
-  ctaPrimary?: Cta;
+  ctaPrimary: Cta;
   ctaSecondary?: Cta;
   ctaTextLink?: Cta;
-  projectType: 'Case Study' | 'Role';
-  liveVersionExists?: boolean;
 }
 
 export async function getHeroProjects(variant: 'tim' | 'tiger'): Promise<HeroProject[]> {
   if (useMock) return mockProjects.filter(p => (p.visibility as readonly string[]).includes(variant));
 
-  const query = groq`*[_type == "projectContent" && $variant in visibility]{
+  const query = groq`*[_type == "projectContent" && $variant in visibility] {
     _id,
     title,
     slug,
@@ -68,9 +66,7 @@ export async function getHeroProjects(variant: 'tim' | 'tiger'): Promise<HeroPro
     techDescription,
     ctaPrimary,
     ctaSecondary,
-    ctaTextLink,
-    projectType,
-    liveVersionExists
+    ctaTextLink
   }`;
   
   const projects = await client.fetch<any[]>(query, { variant });
@@ -210,7 +206,7 @@ export interface FeaturedProject {
 export async function getFeaturedProjects(variant: 'tim' | 'tiger'): Promise<FeaturedProject[]> {
   if (useMock) return mockProjects.filter(p => (p.visibility as readonly string[]).includes(variant) && p.featuredDescription).slice(0, 3);
 
-  const query = groq`*[_type == "projectContent" && $variant in visibility && defined(featuredDescription) && featuredDescription != ''] | order(_createdAt desc) [0...3] {
+  const query = groq`*[_type == "projectContent" && $variant in visibility && defined(featuredDescription) && featuredDescription != ''] | order(dateCompleted desc) [0...3] {
     _id,
     title,
     slug,
@@ -291,18 +287,18 @@ export interface HighlightedProject {
   _id: string;
   title: string;
   slug: { current: string };
-  yearCompleted: number;
+  dateCompleted: string;
   isNew: boolean;
 }
 
 export async function getHighlightedProjects(variant: 'tim' | 'tiger'): Promise<HighlightedProject[]> {
-  if (useMock) return mockProjects.filter(p => (p.visibility as readonly string[]).includes(variant) && p.isHighlighted).sort((a, b) => a.isNew === b.isNew ? b.yearCompleted - a.yearCompleted : a.isNew ? -1 : 1).slice(0, 3);
+  if (useMock) return mockProjects.filter(p => (p.visibility as readonly string[]).includes(variant) && p.isHighlighted).sort((a, b) => a.isNew === b.isNew ? new Date(b.dateCompleted).getTime() - new Date(a.dateCompleted).getTime() : a.isNew ? -1 : 1).slice(0, 3);
 
-  const query = groq`*[_type == "projectContent" && $variant in visibility && isHighlighted == true] | order(isNew desc, yearCompleted desc) [0...3] {
+  const query = groq`*[_type == "projectContent" && $variant in visibility && isHighlighted == true] | order(isNew desc, dateCompleted desc) [0...3] {
     _id,
     title,
     slug,
-    yearCompleted,
+    dateCompleted,
     isNew
   }`;
 
@@ -313,7 +309,7 @@ export async function getHighlightedProjects(variant: 'tim' | 'tiger'): Promise<
 export interface ProjectDetails {
   _id: string;
   title: string;
-  yearCompleted: number;
+  dateCompleted: string;
   shortDescription: string;
   techDescription: string;
   featuredDescription: string;
@@ -329,7 +325,7 @@ export async function getProjectBySlug(slug: string, variant: 'tim' | 'tiger'): 
   const query = groq`*[_type == "projectContent" && slug.current == $slug && $variant in visibility][0]{
     _id,
     title,
-    yearCompleted,
+    dateCompleted,
     shortDescription,
     techDescription,
     featuredDescription,
@@ -347,19 +343,19 @@ export interface DiscoveryProject {
   _id: string;
   title: string;
   slug: { current: string };
-  yearCompleted: number;
+  dateCompleted: string;
   shortDescription: string;
   thumbnailUrl: string;
 }
 
 export async function getAllProjects(variant: 'tim' | 'tiger'): Promise<DiscoveryProject[]> {
-  if (useMock) return mockProjects.filter(p => (p.visibility as readonly string[]).includes(variant)).sort((a, b) => b.yearCompleted - a.yearCompleted);
+  if (useMock) return mockProjects.filter(p => (p.visibility as readonly string[]).includes(variant)).sort((a, b) => new Date(b.dateCompleted).getTime() - new Date(a.dateCompleted).getTime());
 
-  const query = groq`*[_type == "projectContent" && $variant in visibility] | order(yearCompleted desc) {
+  const query = groq`*[_type == "projectContent" && $variant in visibility] | order(dateCompleted desc) {
     _id,
     title,
     slug,
-    yearCompleted,
+    dateCompleted,
     shortDescription,
     "thumbnailUrl": thumbnail.asset->url
   }`;
