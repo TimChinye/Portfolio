@@ -3,6 +3,10 @@ import { client } from './client';
 import { sanityFetch } from "@/sanity/lib/live";
 import { urlFor } from './image';
 
+// Import Mock Data
+import { mockProjects, USE_MOCK_DATA } from './mockData';
+const useMock = process.env.NODE_ENV === 'development' && USE_MOCK_DATA;
+
 export interface GlobalContentData {
   defaultSeoTitle: string;
   defaultSeoDescription: string;
@@ -52,6 +56,8 @@ export interface HeroProject {
 }
 
 export async function getHeroProjects(variant: 'tim' | 'tiger'): Promise<HeroProject[]> {
+  if (useMock) return mockProjects.filter(p => (p.visibility as readonly string[]).includes(variant));
+
   const query = groq`*[_type == "projectContent" && $variant in visibility]{
     _id,
     title,
@@ -202,6 +208,8 @@ export interface FeaturedProject {
 }
 
 export async function getFeaturedProjects(variant: 'tim' | 'tiger'): Promise<FeaturedProject[]> {
+  if (useMock) return mockProjects.filter(p => (p.visibility as readonly string[]).includes(variant) && p.featuredDescription).slice(0, 3);
+
   const query = groq`*[_type == "projectContent" && $variant in visibility && defined(featuredDescription) && featuredDescription != ''] | order(_createdAt desc) [0...3] {
     _id,
     title,
@@ -288,6 +296,8 @@ export interface HighlightedProject {
 }
 
 export async function getHighlightedProjects(variant: 'tim' | 'tiger'): Promise<HighlightedProject[]> {
+  if (useMock) return mockProjects.filter(p => (p.visibility as readonly string[]).includes(variant) && p.isHighlighted).sort((a, b) => a.isNew === b.isNew ? b.yearCompleted - a.yearCompleted : a.isNew ? -1 : 1).slice(0, 3);
+
   const query = groq`*[_type == "projectContent" && $variant in visibility && isHighlighted == true] | order(isNew desc, yearCompleted desc) [0...3] {
     _id,
     title,
@@ -314,6 +324,8 @@ export interface ProjectDetails {
 }
 
 export async function getProjectBySlug(slug: string, variant: 'tim' | 'tiger'): Promise<ProjectDetails | null> {
+  if (useMock) return mockProjects.find(p => p.slug.current === slug && (p.visibility as readonly string[]).includes(variant)) || null;
+
   const query = groq`*[_type == "projectContent" && slug.current == $slug && $variant in visibility][0]{
     _id,
     title,
@@ -341,6 +353,8 @@ export interface DiscoveryProject {
 }
 
 export async function getAllProjects(variant: 'tim' | 'tiger'): Promise<DiscoveryProject[]> {
+  if (useMock) return mockProjects.filter(p => (p.visibility as readonly string[]).includes(variant)).sort((a, b) => b.yearCompleted - a.yearCompleted);
+
   const query = groq`*[_type == "projectContent" && $variant in visibility] | order(yearCompleted desc) {
     _id,
     title,
