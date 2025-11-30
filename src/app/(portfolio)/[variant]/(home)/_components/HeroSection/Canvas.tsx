@@ -5,7 +5,8 @@ import { motion, MotionStyle, useSpring, useTransform } from 'motion/react';
 import { useMousePosition } from '@/hooks/useMousePosition';
 import type { HeroProject } from '@/sanity/lib/queries';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { PixelatedImage } from '@/components/ui/PixelatedImage';
+import Image from 'next/image';
+// import { PixelatedImage } from '@/components/ui/PixelatedImage';
 
 const CANVAS_SCALE = 2.5; // x times the viewport size
 
@@ -169,18 +170,11 @@ export function Canvas({ projects, setActiveProject, setHoveredProject }: Canvas
                             className="size-full cursor-pointer block rounded-2xl md:rounded-4xl p-4 overflow-hidden shadow-lg transition-transform duration-500 bg-[#F5F5EF] dark:bg-[#1A1A17]"
                             aria-label={`View details for ${project.title}`}
                         >
-                            <PixelatedImage
+                            <Image
                                 src={project.thumbnailUrl}
                                 alt={`Thumbnail for ${project.title}`}
                                 width={400}
                                 height={400}
-                                pixelationStart={1} 
-                                pixelationIn={1}
-                                pixelationOut={24}
-                                stepsOut={10}
-                                durationIn={500}
-                                durationOut={500}
-                                wrapperClassName="size-full rounded-[inherit]"
                                 className="size-full object-cover rounded-[inherit]"
                                 sizes={`${Math.ceil(baseCardSizeRem)}rem`}
                                 priority={index < 8}

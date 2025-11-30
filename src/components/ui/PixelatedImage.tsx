@@ -55,7 +55,6 @@ export const PixelatedImage: React.FC<PixelatedImageProps> = ({
     // Guard against 0 dimensions causing Infinity/NaN
     if (offsetWidth <= 0 || offsetHeight <= 0) return;
 
-    // Vanilla math
     const minNumBlocks = Math.max(2, Math.round(offsetWidth / (defaults.pixelationOut * 2)));
     const pixelWidthMax = offsetWidth / minNumBlocks;
     const pixelHeightMax = offsetHeight / minNumBlocks;
@@ -207,7 +206,6 @@ export const PixelatedImage: React.FC<PixelatedImageProps> = ({
         className={clsx("transition-transform duration-500 origin-top-left", className)}
         style={{ 
           filter: `url(#${uniqueFilterId})`,
-          // transform: scale(1.125) matches the bleed required for dilate
           transform: 'scale(1.125)',
         }}
         {...props}
