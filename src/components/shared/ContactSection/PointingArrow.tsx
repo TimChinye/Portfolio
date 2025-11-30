@@ -140,16 +140,18 @@ export const PointingArrow = ({
     const handleFocus = () => { isFirstMoveAfterFocus.current = true; };
     
     if (isInView) {
-    window.addEventListener('focus', handleFocus);
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('scroll', handleScroll, { passive: true });
+      window.addEventListener('focus', handleFocus);
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('scroll', handleScroll, { passive: true });
 
-    return () => {
-      window.removeEventListener('focus', handleFocus);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
-    };
+      return () => {
+        window.removeEventListener('focus', handleFocus);
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('scroll', handleScroll);
+      };
     }
+
+    return;
   }, [isInView, handleMouseMove, handleScroll]);
 
   const svgSize = dynamicLengthScale + dynamicHeadSize + dynamicStrokeWidth;

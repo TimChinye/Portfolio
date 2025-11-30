@@ -53,7 +53,7 @@ type InfoCardProps = {
   style?: MotionStyle;
 };
 
-export function InfoCard({ project, onClose, className, style }: InfoCardProps) {
+export function InfoCard({ project, className, style }: InfoCardProps) {
   const isPrimaryExternal = !project.ctaPrimary?.url.startsWith('/');
 
   const [hasMounted, setHasMounted] = useState(false);

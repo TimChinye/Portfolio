@@ -1,6 +1,6 @@
 "use client";
 
-import { Section, type SectionProps } from '@/components/ui/Section';
+import { Section } from '@/components/ui/Section';
 import { AvailabilityWidget } from './_components/AvailabilityWidget';
 import { PuzzleForm } from './_components/PuzzleForm';
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { CSSProperties, useRef } from 'react';
+import { useRef } from 'react';
 import { motion, useTransform } from 'motion/react';
 import MuxPlayer, { MuxCSSProperties, MuxPlayerRefAttributes } from '@mux/mux-player-react';
 

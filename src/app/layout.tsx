@@ -1,5 +1,4 @@
 import "./globals.css";
-import Script from 'next/script';
 
 import localFont from "next/font/local";
 

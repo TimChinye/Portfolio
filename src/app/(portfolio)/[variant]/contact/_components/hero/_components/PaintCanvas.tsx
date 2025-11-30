@@ -14,7 +14,7 @@ const lerp = (start: number, end: number, factor: number) => {
   return start + (end - start) * factor;
 };
 
-export function PaintCanvas({ className, brushSize, color }: PaintCanvasProps) {
+export function PaintCanvas({ brushSize, color }: PaintCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const { clientX, clientY } = useMousePosition();

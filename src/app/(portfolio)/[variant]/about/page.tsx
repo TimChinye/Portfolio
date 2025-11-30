@@ -1,8 +1,7 @@
-import { Section } from '@/components/ui/Section';
-import { notFound } from 'next/navigation';
-import { getGlobalContent } from '@/sanity/lib/queries';
 import { PortfolioIcon } from '@/components/ui/PortfolioIcon';
+import { Section } from '@/components/ui/Section';
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 type Props = {
   params: Promise<{ variant: 'tim' | 'tiger' }>;
@@ -19,7 +18,6 @@ export default async function AboutPage({ params }: Props) {
     return notFound();
   }
 
-  const data = await getGlobalContent();
 
   return (
     <Section 

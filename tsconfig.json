@@ -26,7 +26,11 @@
       "@/*": [
         "./src/*"
       ]
-    }
+    },
+    "noUnusedLocals": true,          /* Reports an error when you declare a variable but don't use it */
+    "noUnusedParameters": true,      /* Reports an error for unused function parameters */
+    "noImplicitReturns": true,       /* Reports error when not all code paths in function return a value */
+    "noImplicitAny": true            /* Raises error on expressions with an implied 'any' type */
   },
   "include": [
     "next-env.d.ts",

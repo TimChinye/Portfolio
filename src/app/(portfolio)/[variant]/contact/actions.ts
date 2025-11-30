@@ -11,7 +11,7 @@ type ContactFormState = {
 };
 
 export async function submitContactForm(
-  prevState: ContactFormState,
+  _prevState: ContactFormState,
   formData: FormData
 ): Promise<ContactFormState> {
 
@@ -169,7 +169,7 @@ export async function submitContactForm(
   }
 }
 
-function getLabelForValue(value: string, type: 'reason' | 'opportunity') {
+function getLabelForValue(value: string) {
     const map: Record<string, string> = {
         "project": "Hire for a project",
         "full-time": "Discuss a full-time role",
@@ -189,10 +189,10 @@ function generateEmailText(data: any, variant: string) {
   text += `Name:       ${data.name}\n`;
   text += `Company:    ${data.company || "Individual"}\n`;
   text += `Email:      ${data.email}\n`;
-  text += `Intent:     ${getLabelForValue(data.reason, 'reason')}\n`;
+  text += `Intent:     ${getLabelForValue(data.reason)}\n`;
 
   if (['project', 'full-time', 'collaborate'].includes(data.reason)) {
-    let locationStr = getLabelForValue(data.opportunity, 'opportunity');
+    let locationStr = getLabelForValue(data.opportunity);
     if (['on-site', 'hybrid'].includes(data.opportunity)) {
        const specificLoc = data.location === 'Other' ? data.otherLocation : data.location;
        locationStr += ` (${specificLoc})`;
@@ -247,7 +247,7 @@ function generateEmailHtml(data: any, variant: string) {
   let detailsSection = "";
 
   if (['project', 'full-time', 'collaborate'].includes(data.reason)) {
-    let locationStr = getLabelForValue(data.opportunity, 'opportunity');
+    let locationStr = getLabelForValue(data.opportunity);
     
     if (['on-site', 'hybrid'].includes(data.opportunity)) {
        locationStr += ` (${data.location === 'Other' ? data.otherLocation : data.location})`;
@@ -289,7 +289,7 @@ function generateEmailHtml(data: any, variant: string) {
         ${row("From", data.name)}
         ${row("Company", data.company || "—")}
         ${row("Reply To", `<a href="mailto:${data.email}" style="color: ${colour.text}; text-decoration: none; border-bottom: 1px solid ${colour.accent};">${data.email}</a>`)}
-          ${row("Intent", getLabelForValue(data.reason, 'reason'))}
+          ${row("Intent", getLabelForValue(data.reason))}
           ${detailsSection}
         </table>
 

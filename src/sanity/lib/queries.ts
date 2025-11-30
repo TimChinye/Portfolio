@@ -1,7 +1,6 @@
 import { groq } from 'next-sanity';
 import { client } from './client';
 import { sanityFetch } from "@/sanity/lib/live";
-import { urlFor } from './image';
 
 // Import Mock Data
 import { mockProjects, USE_MOCK_DATA } from './mockData';

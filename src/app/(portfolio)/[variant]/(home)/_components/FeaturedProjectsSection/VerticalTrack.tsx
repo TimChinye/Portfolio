@@ -3,8 +3,6 @@
 import { useRef, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, useSpring } from 'motion/react';
 
-import type { FeaturedProject } from '@/sanity/lib/queries';
-
 import { ClingyButton } from './ClingyButton';
 import { CustomLink as Link } from '@/components/ui/CustomLink';
 import clsx from 'clsx';

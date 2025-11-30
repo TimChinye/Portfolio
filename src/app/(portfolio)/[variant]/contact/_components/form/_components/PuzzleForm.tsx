@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef, type RefObject, FormEvent, startTransition, useActionState } from "react";
-import { motion, AnimatePresence } from "motion/react";
 import clsx from "clsx";
+import { AnimatePresence, motion } from "motion/react";
+import { FormEvent, useActionState, useEffect, useRef, useState, type RefObject } from "react";
 import { submitContactForm } from "../../../actions";
 
 const REASONS = [
@@ -70,7 +70,6 @@ const InputBlank = ({
     value,
     onChange,
     placeholder,
-    name,
     className
 }: {
     value: string;

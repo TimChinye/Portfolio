@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from 'react';
-import clsx from 'clsx';
 import { SVG_MAP, type CharacterKey, type SvgProps } from './CharacterSVGs';
 import { CharacterStack } from './CharacterStack';
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from 'react'; // Import useState and useEffect
-import { motion, useTransform, useSpring } from 'motion/react';
+import { motion, useTransform } from 'motion/react';
 import { WorkLayer } from './WorkLayer';
 
 import { useSectionScrollProgress } from '@/components/ui/Section';

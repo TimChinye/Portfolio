@@ -24,8 +24,8 @@ export function useThemeWipe({
   const [originalTheme, setOriginalTheme] = useState<Theme | null>(null);
 
   const setScrollLock = (isLocked: boolean) => {
-    // document.documentElement.style.overflow = isLocked ? 'hidden' : '';
-    // document.documentElement.style.scrollbarGutter = isLocked ? 'stable' : '';
+    document.documentElement.style.overflow = isLocked ? 'hidden' : '';
+    document.documentElement.style.scrollbarGutter = isLocked ? 'stable' : '';
   };
 
   const handleAnimationComplete = useCallback(() => {
