@@ -1,12 +1,14 @@
 "use client";
 
-import Image from "next/image";
-import { motion, AnimatePresence, useTransform, type MotionValue } from "motion/react";
+// import Image from "next/image";
+// import { motion, AnimatePresence, useTransform, type MotionValue } from "motion/react";
+import { motion, useTransform, type MotionValue } from "motion/react";
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import type { WipeDirection } from "@/components/features/ThemeSwitcher/types";
 import { PortfolioIcon } from "@/components/ui/PortfolioIcon";
 
+/*
 const TimHoverEffect = () => (
   <AnimatePresence>
     <motion.div
@@ -39,10 +41,11 @@ const TigerHoverEffect = () => (
     exit={{ clipPath: 'inset(0% 0% 100% 0%)' }}
     transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
   >
-    {/* <PortfolioIcon className="size-12 text-orange-500" strokeClass="fill-white" /> */}
+    {/* <PortfolioIcon className="size-12 text-orange-500" strokeClass="fill-white" /> *./}
     <PortfolioIcon className="size-12 text-orange-500" />
   </motion.div>
 );
+*/
 
 type NavbarLogoProps = {
   variant: 'tim' | 'tiger';
@@ -51,11 +54,11 @@ type NavbarLogoProps = {
 };
 
 export function NavbarLogo({
-  variant,
+  // variant,
   wipeProgress,
   wipeDirection,
 }: NavbarLogoProps) {
-  const [isHovered, setIsHovered] = useState(false);
+  // const [isHovered, setIsHovered] = useState(false);
   const { resolvedTheme } = useTheme();
   
   const [mounted, setMounted] = useState(false);
@@ -75,8 +78,8 @@ export function NavbarLogo({
 
   return (
     <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      // onMouseEnter={() => setIsHovered(true)}
+      // onMouseLeave={() => setIsHovered(false)}
       className="relative pointer-events-auto text-black"
     >
       <motion.div style={{ filter: wipeDirection ? animatedFilter : idleFilter }}>
