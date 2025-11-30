@@ -54,8 +54,6 @@ type InfoCardProps = {
 };
 
 export function InfoCard({ project, className, style }: InfoCardProps) {
-  const isPrimaryExternal = !project.ctaPrimary?.url.startsWith('/');
-
   const [hasMounted, setHasMounted] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
@@ -78,6 +76,9 @@ export function InfoCard({ project, className, style }: InfoCardProps) {
   if (!hasMounted) {
     return null;
   }
+
+  const isPrimaryExternal = !project.ctaPrimary?.url.startsWith('/');
+  const isSecondaryExternal = !project.ctaSecondary?.url.startsWith('/');
 
   return (
     <motion.div
@@ -110,7 +111,7 @@ export function InfoCard({ project, className, style }: InfoCardProps) {
       <div className="flex flex-col items-center gap-3">
         <div className="flex gap-3">
           {project.ctaSecondary?.url && (
-            <CtaButton href={project.ctaSecondary.url} variant="secondary" isExternal>
+            <CtaButton href={project.ctaSecondary.url} variant="secondary" isExternal={isSecondaryExternal}>
               {project.ctaSecondary.label}
             </CtaButton>
           )}
