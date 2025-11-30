@@ -1,4 +1,3 @@
-// src/app/(portfolio)/[variant]/(home)/_components/FeaturedProjectsSection/SectionTitle.tsx
 "use client";
 
 import { motion, useTransform, useScroll, MotionValue } from "motion/react";
@@ -8,7 +7,6 @@ import { RefObject } from "react";
 const TEXT = "MOST RECENT PROJECTS";
 const WORDS = TEXT.split(" ");
 
-// STYLING
 const FONT_SIZE = "text-[clamp(2.5rem,5vw,5rem)]"; 
 const LETTER_SPACING = "tracking-[-0.05em]";
 
@@ -20,18 +18,16 @@ type AnimatedLetterProps = {
 };
 
 const AnimatedLetter = ({ char, index, totalChars, entryProgress }: AnimatedLetterProps) => {
-  // --- U-SHAPE LOGIC ---
-  // Calculates delay based on distance from center.
+  // Calculate delay based on distance from center to create a "U-shape" fall pattern.
+  // Edges animate first (lighter), center animates last (heavier).
   const centerIndex = (totalChars - 1) / 2;
   const distFromCenter = Math.abs(index - centerIndex);
   const maxDist = totalChars / 2;
-  const normalizedDist = distFromCenter / maxDist; // 0 (center) to 1 (edge)
+  const normalizedDist = distFromCenter / maxDist; 
   
-  // Edges start animating at 0.2, Center starts at 0.5 (Heavy center = falls later)
   const start = 0.2 + normalizedDist * 0.3; 
   const end = start + 0.2;
 
-  // FALLS IN: From -100% (Top/Cropped) to 0% (Natural).
   const y = useTransform(entryProgress, [start, end], ["-150%", "0%"], { clamp: true });
 
   return (
@@ -50,20 +46,14 @@ export function SectionTitle({ containerRef, stickyProgress }: SectionTitleProps
   let globalCharIndex = 0;
   const totalChars = TEXT.replace(/ /g, "").length;
 
-  // 1. ENTRY ANIMATION (Viewport Entry)
-  // Tracks the section as it scrolls UP into view.
   const { scrollYProgress: entryProgress } = useScroll({
     target: containerRef,
-    offset: ["start 0.9", "start 0.2"] // Starts when top enters bottom of screen, ends when near top
+    offset: ["start 0.9", "start 0.2"]
   });
 
-  // 2. SCROLL AWAY ANIMATION (Sticky Phase)
-  // Simulates natural scrolling while the parent is sticky.
-  // Moves text UP and AWAY as user scrolls down.
+  // Manually translate text up to simulate scrolling away while the parent container remains sticky
   const yExit = useTransform(stickyProgress, [0, 0.1], ["0%", "-200%"]);
-
-  // 3. UNDERLINE ANIMATION
-  // Slides in near the end of the entry phase
+  
   const underlineScaleX = useTransform(entryProgress, [0.75, 1], [0, 1], { clamp: true });
 
   return (

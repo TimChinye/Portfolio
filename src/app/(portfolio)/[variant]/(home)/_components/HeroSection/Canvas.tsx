@@ -1,31 +1,18 @@
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
-import Image from 'next/image';
-import { motion, useSpring, useTransform } from 'motion/react';
+import { motion, MotionStyle, useSpring, useTransform } from 'motion/react';
 import { useMousePosition } from '@/hooks/useMousePosition';
 import type { HeroProject } from '@/sanity/lib/queries';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { PixelatedImage } from '@/components/ui/PixelatedImage';
 
-const CANVAS_SCALE = 2.5; // The canvas is 2x the viewport size
+const CANVAS_SCALE = 2.5; // x times the viewport size
 
-// 1. CARD SIZE (Controls the gap between cards)
-// < 1.0 = Smaller cards (MORE SPACE between them)
-// > 1.0 = Larger cards (LESS SPACE / more overlap)
-const CARD_SIZE_FACTOR = 1.25;
+const CARD_SIZE_FACTOR = 1.25; // Card Size & Card-to-card gap distance
+const JITTER_STRENGTH = 1.0; // Randomess
+const GRID_ASPECT_RATIO = 1.66; // 16:10
 
-// 2. RANDOMNESS (Controls how messy the grid is)
-// 0.0 = Perfectly rigid grid
-// 1.0 = Standard randomness
-const JITTER_STRENGTH = 1.0;
-
-// 3. SHAPE (Controls the overall shape of the cloud)
-// 1.0 = Square
-// 1.66 = Standard Landscape (16:10)
-// 2.5 = Wide Panoramic
-const GRID_ASPECT_RATIO = 1.66;
-
-// The "Magic 15" Pattern
 const PATTERN = [
     { x: -0.06, y: -0.09 },  // Top-Left bias
     { x: 0.15, y: 0.15 },    // Bottom-Right bias
@@ -44,18 +31,11 @@ const PATTERN = [
     { x: 0.03, y: -0.18 },   // Top
 ];
 
-// width: 17.5742rem; height: 17.5742rem; left: 58%; top: 80%; opacity: 1; transform: translateX(-50%) translateY(-50%);
-
-// Types
 type CardLayout = { left: string; top: string };
 
-/**
- * Generates a layout that looks random but maintains a structured distribution.
- */
 const generateLayouts = (count: number): CardLayout[] => {
     if (count === 0) return [];
 
-    // 1. Determine Grid Dimensions using Configured Aspect Ratio
     const cols = Math.ceil(Math.sqrt(count * GRID_ASPECT_RATIO));
     const rows = Math.ceil(count / cols);
 
@@ -65,20 +45,17 @@ const generateLayouts = (count: number): CardLayout[] => {
         const rowIndex = Math.floor(i / cols);
         const colIndex = i % cols;
 
-        // 2. Logic to Center the Last Row
+        // Center the last row if it's incomplete
         const isLastRow = rowIndex === rows - 1;
         const itemsInLastRow = count % cols === 0 ? cols : count % cols;
         const centeringOffset = isLastRow ? (cols - itemsInLastRow) / 2 : 0;
 
-        // 3. Get Pattern Modifiers
         const pattern = PATTERN[i % PATTERN.length];
 
-        // 4. Calculate Normalized Coordinates
-        // We apply the JITTER_STRENGTH here to control randomness
+        // Normalize coordinates (0-1) with jitter applied
         const xNorm = (colIndex + centeringOffset + 0.5 + (pattern.x * JITTER_STRENGTH)) / cols;
         const yNorm = (rowIndex + 0.5 + (pattern.y * JITTER_STRENGTH)) / rows;
 
-        // 5. Convert to Percentage
         const left = `${Math.max(2, Math.min(98, xNorm * 100))}%`;
         const top = `${Math.max(2, Math.min(98, yNorm * 100))}%`;
 
@@ -97,14 +74,14 @@ type CanvasProps = {
 export function Canvas({ projects, setActiveProject, setHoveredProject }: CanvasProps) {
     const isMobile = useMediaQuery('(max-width: 768px)');
     
-    // Base sizing constants
     const BASE_SIZE_REM = isMobile ? 24 : 32;
     const MIN_SIZE_REM = isMobile ? 6 : 8;
     
     const [hasMounted, setHasMounted] = useState(false);
     const [cardLayouts, setCardLayouts] = useState<CardLayout[]>([]);
 
-    // **Dynamic Sizing Logic**
+    // Calculate card size dynamically based on the total number of projects
+    // to ensure they fit within the canvas without excessive overlapping.
     const baseCardSizeRem = useMemo(() => {
         const count = projects.length;
         if (count <= 0) return BASE_SIZE_REM;
@@ -115,7 +92,6 @@ export function Canvas({ projects, setActiveProject, setHoveredProject }: Canvas
         return Math.max(MIN_SIZE_REM, Math.min(BASE_SIZE_REM, calculatedSize));
     }, [projects.length, BASE_SIZE_REM, MIN_SIZE_REM]);
 
-    // Generate layouts when projects change
     useEffect(() => {
         setCardLayouts(generateLayouts(projects.length));
         setHasMounted(true);
@@ -129,7 +105,6 @@ export function Canvas({ projects, setActiveProject, setHoveredProject }: Canvas
         const handleResize = () => setViewportSize({ width: window.innerWidth, height: window.innerHeight });
         handleResize();
         
-        // Initialize center pos
         if (typeof window !== 'undefined') {
             clientX.set(window.innerWidth / 2);
             clientY.set(window.innerHeight / 2);
@@ -146,7 +121,7 @@ export function Canvas({ projects, setActiveProject, setHoveredProject }: Canvas
     const smoothX = useSpring(translateX, springConfig);
     const smoothY = useSpring(translateY, springConfig);
     
-    // Parallax Math
+    // Calculate opposite translation for parallax effect
     const overhangX = `(var(--canvas-scale) - 1) / 2 * -100vw`;
     const overhangY = `(var(--canvas-scale) - 1) / 2 * -100vh`;
     const canvasX = useTransform(smoothX, (perc) => `calc(${perc} * ${overhangX})`);
@@ -160,7 +135,7 @@ export function Canvas({ projects, setActiveProject, setHoveredProject }: Canvas
                 inset: `calc(${overhangY}) calc(${overhangX})`,
                 x: canvasX,
                 y: canvasY,
-            } as React.CSSProperties}
+            } as MotionStyle}
         >
             {hasMounted && projects.map((project, index) => {
                 const layout = cardLayouts[index];
@@ -194,11 +169,18 @@ export function Canvas({ projects, setActiveProject, setHoveredProject }: Canvas
                             className="size-full cursor-pointer block rounded-2xl md:rounded-4xl p-4 overflow-hidden shadow-lg transition-transform duration-500 bg-[#F5F5EF] dark:bg-[#1A1A17]"
                             aria-label={`View details for ${project.title}`}
                         >
-                            <Image
+                            <PixelatedImage
                                 src={project.thumbnailUrl}
                                 alt={`Thumbnail for ${project.title}`}
                                 width={400}
                                 height={400}
+                                pixelationStart={1} 
+                                pixelationIn={1}
+                                pixelationOut={24}
+                                stepsOut={10}
+                                durationIn={500}
+                                durationOut={500}
+                                wrapperClassName="size-full rounded-[inherit]"
                                 className="size-full object-cover rounded-[inherit]"
                                 sizes={`${Math.ceil(baseCardSizeRem)}rem`}
                                 priority={index < 8}

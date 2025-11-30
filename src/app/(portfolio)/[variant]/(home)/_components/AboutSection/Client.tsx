@@ -1,16 +1,13 @@
-// app/about/Client.tsx
 "use client"
 
 import { CSSProperties, useRef } from 'react';
 import { motion, useTransform } from 'motion/react';
-import MuxPlayer, { MuxPlayerRefAttributes } from '@mux/mux-player-react';
+import MuxPlayer, { MuxCSSProperties, MuxPlayerRefAttributes } from '@mux/mux-player-react';
 
-// UI and Data
 import { useSectionScrollProgress } from '@/components/ui/Section';
 import { NoiseOverlay } from '@/components/ui/NoiseOverlay';
 import type { AboutPageData } from '@/sanity/lib/queries';
 
-// Modularized Components & Hooks
 import { ForwardedLink as Link } from '@/components/ui/ForwardedLink';
 import { useVideoAnimation } from '@/hooks/useVideoAnimation';
 import { useEnforceMuted } from '@/hooks/useEnforceMuted';
@@ -21,14 +18,12 @@ type ClientProps = {
 };
 
 export function Client({ data }: ClientProps) {
-	// 1. Setup refs
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const topParaRef = useRef<HTMLParagraphElement | null>(null);
 	const bottomParaRef = useRef<HTMLParagraphElement | null>(null);
 	const buttonRef = useRef<HTMLAnchorElement | null>(null);
 	const muxPlayerRef = useRef<MuxPlayerRefAttributes | null>(null);
 
-	// 2. Use custom hooks to manage logic and side-effects
 	const stickyProgress = useSectionScrollProgress();
 	
 	const { heightRange, radiusRange, isReady } = useVideoAnimation({
@@ -41,11 +36,9 @@ export function Client({ data }: ClientProps) {
 	useEnforceMuted(muxPlayerRef, data.playbackId);
 	usePersistentMuxPlayerControls(muxPlayerRef);
 
-	// 3. Prepare animations
 	const animatedHeight = useTransform(stickyProgress, [0, 0.75], heightRange);
 	const animatedBorderRadius = useTransform(stickyProgress, [0, 0.75], radiusRange);
 
-	// 4. Render the view
 	return (
 		<div className="px-[0.5em] py-[0.25em] md:px-[0.75em] md:py-[0.375em] leading-none flex h-screen w-full flex-col items-center justify-center overflow-hidden">
 			<NoiseOverlay className="-z-1 [mask:linear-gradient(to_bottom,black_70%,transparent)]" opacityClass="opacity-50" baseFrequency={0.25} />
@@ -74,7 +67,7 @@ export function Client({ data }: ClientProps) {
 							'--controls': 'none',
 							'--media-object-fit': 'cover',
 							'--media-background-color': '#2f2f2b'
-						} as CSSProperties}
+						} as MuxCSSProperties}
 					/>
 					<NoiseOverlay opacityClass="opacity-50" baseFrequency={0.25} />
 

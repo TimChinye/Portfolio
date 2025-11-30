@@ -31,22 +31,19 @@ export const ClingyButton = forwardRef<HTMLButtonElement, ClingyButtonProps>(
     const targetOffsetX = useMotionValue(0);
     const targetOffsetY = useMotionValue(0);
 
-    // This effect connects the smooth spring values to the CSS Custom Properties
+    // Update CSS variables for the shadow offset using a spring subscription
     useEffect(() => {
       const button = internalRef.current;
       if (!button) return;
 
-      // This function updates the CSS variables whenever the spring values change
       const updateCSSVariables = () => {
         button.style.setProperty('--offset-x', `${targetOffsetX.get()}px`);
         button.style.setProperty('--offset-y', `${targetOffsetY.get()}px`);
       };
 
-      // Subscribe to changes on both spring values
       const unsubX = targetOffsetX.on("change", updateCSSVariables);
       const unsubY = targetOffsetY.on("change", updateCSSVariables);
 
-      // Cleanup subscription on unmount
       return () => {
         unsubX();
         unsubY();
@@ -56,6 +53,7 @@ export const ClingyButton = forwardRef<HTMLButtonElement, ClingyButtonProps>(
     const gravityX = useMotionValue(0);
     const smoothGravityX = useSpring(gravityX, { stiffness: 400, damping: 25, mass: 0.5 });
 
+    // Handle magnetic tracking logic
     useEffect(() => {
       const handleWindowMouseMove = (e: MouseEvent) => {
         const button = internalRef.current;
@@ -68,18 +66,13 @@ export const ClingyButton = forwardRef<HTMLButtonElement, ClingyButtonProps>(
         // The "zone of influence" where gravity is active
         const gravityZone = rect.width * gravityFactor;
 
-        // Check if the cursor is within the horizontal gravity zone
         if (Math.abs(distanceX) < gravityZone) {
-          // Calculate how close the cursor is (0 at the edge, 1 at the center)
           const pullRatio = 1 - (Math.abs(distanceX) / gravityZone);
-          // Apply an ease-out curve so the pull is strongest when very close
           const easedPullRatio = 1 - Math.pow(1 - pullRatio, 3);
           
-          // The target position is a fraction of the distance, scaled by proximity
           const targetX = distanceX * easedPullRatio * pullFactor;
           gravityX.set(targetX);
         } else {
-          // If outside the zone, spring back to 0
           gravityX.set(0);
         }
       };
@@ -108,13 +101,11 @@ export const ClingyButton = forwardRef<HTMLButtonElement, ClingyButtonProps>(
       const targetX = deltaX * maxPixelOffset;
       const targetY = deltaY * maxPixelOffset;
 
-      // Animate to the target with HIGH damping (less bounce) for smooth tracking
       animate(targetOffsetX, targetX, { type: 'spring', stiffness: 400, damping: 30, mass: 0.5 });
       animate(targetOffsetY, targetY, { type: 'spring', stiffness: 400, damping: 30, mass: 0.5 });
     };
 
     const handleMouseLeave = () => {
-      // "Spring" back to the center (0, 0).
       animate(targetOffsetX, 0, { type: 'spring', stiffness: 400, damping: 6 });
       animate(targetOffsetY, 0, { type: 'spring', stiffness: 400, damping: 6 });
     };

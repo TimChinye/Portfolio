@@ -1,4 +1,3 @@
-// src/components/Navbar/index.tsx
 "use client";
 
 import { useParams } from "next/navigation";
@@ -31,20 +30,20 @@ export function Navbar() {
 
   const [isHovered, setIsHovered] = useState(false);
   const [isScrambling, setIsScrambling] = useState(false);
-  const [linkLayout, setLinkLayout] = useState<NavLayout>({
-    positions: [],
-    navCenterY: 0,
-  });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
   const wipeProgress = useMotionValue(0);
   const [wipeDirection, setWipeDirection] = useState<WipeDirection | null>(
     null
   );
+  
+  const [linkLayout, setLinkLayout] = useState<NavLayout>({
+    positions: [],
+    navCenterY: 0,
+  });
 
   const filteredNavLinks = useMemo(() => {
-    return variant === 'tiger'
-      ? navLinks.filter((link) => link.key !== "about")
-      : navLinks;
+    return variant === 'tiger' ? navLinks.filter((link) => link.key !== "about") : navLinks;
   }, [variant]);
 
   return (
@@ -73,7 +72,7 @@ export function Navbar() {
           >
             <HamburgerIcon
               isHovered={isHovered}
-              isScrambling={isScrambling} // Pass state down
+              isScrambling={isScrambling}
               links={filteredNavLinks}
               layout={linkLayout}
               isOpen={isMobileMenuOpen}
@@ -82,7 +81,7 @@ export function Navbar() {
             <NavLinks
               links={filteredNavLinks}
               onLayoutChange={setLinkLayout}
-              onScrambleChange={setIsScrambling} // Pass setter down
+              onScrambleChange={setIsScrambling}
             />
           </div>
           <ThemeSwitcher

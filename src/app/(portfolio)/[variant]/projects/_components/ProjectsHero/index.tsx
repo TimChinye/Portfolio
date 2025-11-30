@@ -1,4 +1,3 @@
-// src/app/(portfolio)/[variant]/projects/_components/ProjectsHero/index.tsx
 import { getHighlightedProjects } from '@/sanity/lib/queries';
 import { Client } from './Client';
 import { SectionProps } from '@/components/ui/Section';

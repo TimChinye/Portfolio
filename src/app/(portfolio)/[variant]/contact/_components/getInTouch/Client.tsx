@@ -4,10 +4,8 @@ import { motion, useTransform } from 'motion/react';
 import { useSectionScrollProgress } from '@/components/ui/Section';
 import { Graphic } from './Graphic';
 
-// --- CONFIGURATION ---
 const SHADOW_COUNT = 3;
-const SHADOW_OFFSET = 14; // The 44px offset from your Figma design
-// --- END CONFIGURATION ---
+const SHADOW_OFFSET = 14; 
 
 export function Client() {
   const scrollYProgress = useSectionScrollProgress();
@@ -21,7 +19,7 @@ export function Client() {
 
   return (
     <div className="relative w-full flex items-center justify-center p-8 -translate-y-16">
-      {/* Layer 1: Base Stroke (Static) */}
+      {/* Base Stroke (Static) */}
       <div className="absolute z-10 w-full">
         <Graphic
           fillClassName="fill-transparent"
@@ -29,14 +27,13 @@ export function Client() {
         />
       </div>
 
-      {/* Layer 2: Animated Shadows */}
+      {/* Animated Shadows */}
       {shadowTransforms.map((y, i) => (
         <motion.div
           key={i}
           className="absolute w-full"
           style={{
             y,
-            // CORRECTED: Reverse the z-index so the first shadow (i=0) is on top.
             zIndex: 20 + (SHADOW_COUNT - 1 - i),
           }}
         >
@@ -47,7 +44,7 @@ export function Client() {
         </motion.div>
       ))}
       
-      {/* Layer 3: Top Solid Text */}
+      {/* Top Solid Text */}
       <div className="absolute z-50 w-full">
         <Graphic
           fillClassName="fill-black dark:fill-white"

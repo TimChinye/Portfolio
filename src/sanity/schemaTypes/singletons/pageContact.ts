@@ -1,10 +1,7 @@
 import { defineField, defineType } from 'sanity';
 import { DocumentIcon } from '@sanity/icons';
 
-/* =========================================================================
-   1. REUSABLE FIELD DEFINITIONS
-   (We define these as arrays of fields, not types, to inline them safely)
-   ========================================================================= */
+// Re-usable field def
 
 const themeQrCodeFields = [
   defineField({ 
@@ -19,9 +16,7 @@ const themeQrCodeFields = [
   }),
 ];
 
-/* =========================================================================
-   2. HELPER FUNCTION
-   ========================================================================= */
+// Helpers
 
 const createVariantFields = (prefix: string, title: string) => [
   defineField({
@@ -33,7 +28,7 @@ const createVariantFields = (prefix: string, title: string) => [
       // Single Link Object
       {
         type: 'object',
-        name: 'singleLink', // Internal name for the array item
+        name: 'singleLink',
         title: 'Single Link Button',
         fields: [
           defineField({ name: 'label', type: 'string', title: 'Label' }),
@@ -99,9 +94,7 @@ const createVariantFields = (prefix: string, title: string) => [
   }),
 ];
 
-/* =========================================================================
-   3. MAIN DOCUMENT
-   ========================================================================= */
+// Main document
 
 export const pageContact = defineType({
   name: 'pageContact',
@@ -117,7 +110,7 @@ export const pageContact = defineType({
   ],
 
   fields: [
-    // === SHARED TITLES ===
+    // Shared
     defineField({
       name: 'directTitle',
       title: 'Direct Contact Title',
@@ -133,10 +126,10 @@ export const pageContact = defineType({
       validation: (Rule) => Rule.required(),
     }),
 
-    // === TIM VARIANT ===
+    // Tim variant only
     ...createVariantFields('tim', 'Tim'),
 
-    // === TIGER VARIANT ===
+    // Tiger variant only
     ...createVariantFields('tiger', 'Tiger'),
   ],
 });

@@ -1,4 +1,3 @@
-// src/app/(portfolio)/[variant]/(home)/_components/GetInTouchSection/Graphic.tsx
 import clsx from 'clsx';
 
 type GraphicProps = {
@@ -7,10 +6,6 @@ type GraphicProps = {
   className?: string;
 };
 
-/**
- * Renders the "GET IN TOUCH" SVG graphic.
- * Allows for separate styling of the fill and stroke paths for layering effects.
- */
 export const Graphic = ({ fillClassName, strokeClassName, className }: GraphicProps) => (
   <svg
     viewBox="0 0 1783 302"

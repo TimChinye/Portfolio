@@ -1,4 +1,3 @@
-// src/app/(portfolio)/[variant]/about/page.tsx
 import { Section } from '@/components/ui/Section';
 import { notFound } from 'next/navigation';
 import { getGlobalContent } from '@/sanity/lib/queries';

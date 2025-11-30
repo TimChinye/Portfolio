@@ -8,7 +8,6 @@ import { useWindowWidth } from '@/hooks/useWindowWidth';
 
 import clsx from 'clsx';
 
-// A helper function for clamping a value between a min and max
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(value, max));
 
 type PointingArrowProps = {
@@ -67,6 +66,7 @@ export const PointingArrow = ({
 
   const windowWidth = useWindowWidth();
 
+  // Dynamic sizing logic: scales properties based on window width
   const { dynamicStrokeWidth, dynamicHeadSize, dynamicLengthScale } = useMemo(() => {
     if (!hasMounted || windowWidth === 0) {
       return { dynamicStrokeWidth: strokeWidth, dynamicHeadSize: headSize, dynamicLengthScale: lengthScale };
@@ -90,10 +90,10 @@ export const PointingArrow = ({
     const distanceToCursor = Math.sqrt(dx * dx + dy * dy);
     const newShaftLength = distanceToCursor * lengthRatio;
 
+    // Handle smooth rotation logic to prevent flipping (jumping from 179 to -179 instead of 179 to 1)
     if (isFirstMoveAfterFocus.current) {
       const currentAngle = unwrappedAngle.current;
       
-      // Find the difference and normalize it to the shortest path (-180 to 180)
       let diff = rawAngle - currentAngle;
 
       if (diff > 180) diff -= 360;
@@ -128,9 +128,8 @@ export const PointingArrow = ({
     updateArrowTransform(e.clientX, e.clientY);
   }, [updateArrowTransform]);
 
-  // NEW: A handler for the scroll event
+  // Handle updates on scroll to keep arrow pointing correctly as position shifts
   const handleScroll = useCallback(() => {
-    // Don't do anything if we haven't moved the mouse yet
     if (cursorPositionRef.current.x === 0 && cursorPositionRef.current.y === 0) {
       return;
     }

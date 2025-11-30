@@ -1,5 +1,3 @@
-// src/components/Navbar/navLinkTexts.ts
-// Storing the provided JSON data in a separate file for cleanliness.
 export const navLinkTexts = [
     {
         "about": "About",

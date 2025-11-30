@@ -13,40 +13,31 @@ type StretchyGraphicSectionProps = {
   variant: 'tim' | 'tiger';
 } & SectionProps<'section'>;
 
-// Define the type for our dynamic radius range
 type RadiusRange = [string, string];
 
 export const StretchyGraphicSection = ({ variant, ...props }: StretchyGraphicSectionProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
   
-  // 1. State to hold the dynamically calculated radius range
   const [dynamicRadiusRange, setDynamicRadiusRange] = useState<RadiusRange | undefined>();
 
-  // 2. useEffect to calculate and update the radius on mount and resize
   useEffect(() => {
     const container = containerRef.current;
 
-    // If we're on mobile, we don't need a dynamic radius, so we set it to undefined.
     if (isMobile || !container) {
       setDynamicRadiusRange(undefined);
       return;
     }
 
-    // This function calculates the 'rem' values based on the container's width
     const calculateRadius = (width: number) => {
-      // Get the root font size (usually 16px) to convert pixels to rem
       const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-      if (!rootFontSize) return; // Guard against missing root font size
+      if (!rootFontSize) return;
 
-      // Calculate the 'rem' value for the vertical radius (100% of container width)
       const radiusRem = width / rootFontSize;
       setDynamicRadiusRange([`${radiusRem}rem ${radiusRem}rem 0 0`, '8rem 8rem 0 0']);
     };
 
-    // 3. Use ResizeObserver for performance. It only fires when the element's size changes.
     const observer = new ResizeObserver(entries => {
-      // We are only observing one element
       if (entries[0]) {
         calculateRadius(entries[0].contentRect.width);
       }
@@ -54,10 +45,9 @@ export const StretchyGraphicSection = ({ variant, ...props }: StretchyGraphicSec
 
     observer.observe(container);
 
-    // 4. Cleanup function to disconnect the observer when the component unmounts
     return () => observer.disconnect();
 
-  }, [isMobile]); // Re-run this effect if the screen size crosses the mobile breakpoint
+  }, [isMobile]);
 
   const number = 0.1;
   const contentAnimationRange = isMobile

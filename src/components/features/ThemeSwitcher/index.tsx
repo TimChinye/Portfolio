@@ -1,4 +1,3 @@
-// src/components/ThemeSwitcher/index.tsx
 "use client";
 
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
@@ -26,6 +25,7 @@ export function ThemeSwitcher({
   setWipeDirection,
 }: ThemeSwitcherProps) {
   const [mounted, setMounted] = useState(false);
+  
   const { resolvedTheme } = useTheme();
   const { toggleTheme, screenshot, animationStyles } = useThemeWipe({
     wipeProgress,

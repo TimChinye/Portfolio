@@ -15,20 +15,19 @@ export async function submitContactForm(
   formData: FormData
 ): Promise<ContactFormState> {
 
-  // 1. SECURITY: Anti-Bot / Honeypot Check
+  // Anti-Bot / Honeypot Check
   const honeypot = formData.get("business_url");
   if (honeypot) {
     return { success: true, message: "Message sent successfully!" };
   }
 
-  // 1b. SECURITY: Time-based check
+  // Time-based check
   const startTime = Number(formData.get("start_time"));
   const now = Date.now();
   if (!startTime || now - startTime < 2000) {
      return { success: false, message: "Please verify you are human (submission too fast)." };
   }
 
-  // 2. Extract Data
   const variant = formData.get("variant") as string;
   const rawData = {
     name: formData.get("name") as string,
@@ -45,13 +44,11 @@ export async function submitContactForm(
     email: formData.get("email") as string,
   };
 
-  // 3. Basic Server-Side Validation
   if (!rawData.email || !rawData.message || !rawData.reason || !rawData.name) {
     return { success: false, message: "Please fill in all required fields." };
   }
 
   try {
-    // 4. CONFIGURATION: Select Credentials based on Variant
     let apiKey = "";
     let senderEmail = "";
     
@@ -68,7 +65,6 @@ export async function submitContactForm(
         return { success: false, message: "System configuration error." };
     }
     
-    // 5. SECURITY: Fetch destination email from Sanity
     const emailField = variant === 'tim' ? 'timContactEmail' : 'tigerContactEmail';
     const query = groq`*[_type == "globalContent"][0]{ ${emailField} }`;
     const sanityData = await client.fetch(query);
@@ -80,7 +76,6 @@ export async function submitContactForm(
       return { success: false, message: "Configuration error. Please contact via social media." };
     }
 
-    // 6. Create Transporter
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT),
@@ -91,7 +86,6 @@ export async function submitContactForm(
       },
     });
 
-    // 7. Construct & Send NOTIFICATION TO YOU
     const subjectToYou = `[${variant === 'tim' ? "Tim" : "Tiger"}'s Portfolio] New Inquiry from ${rawData.name}`;
     const htmlBodyToYou = generateEmailHtml(rawData, variant);
     const textBodyToYou = generateEmailText(rawData, variant);
@@ -105,12 +99,10 @@ export async function submitContactForm(
       html: htmlBodyToYou,
     });
 
-    // 8. Construct & Send CONFIRMATION TO USER
     const senderName = variant === 'tim' ? 'Tim Chinye' : 'Tiger';
     const subjectToUser = `Message Received - Thanks for reaching out!`;
     const confirmationText = `Got it. Hi ${rawData.name}, This is an automated confirmation to let you know I've received your message. I'm looking forward to reading it and will get back to you as soon as possible. Best regards, ${senderName}`;
     
-    // Shared design tokens for both emails
     const colour = {
         bg: "#F5F5EF", text: "#2F2F2B", accent: "#D9D24D",
     };
@@ -176,8 +168,6 @@ export async function submitContactForm(
     return { success: false, message: "Something went wrong. Please try again later." };
   }
 }
-
-// --- Helpers --- (generateEmailText and generateEmailHtml remain unchanged)
 
 function getLabelForValue(value: string, type: 'reason' | 'opportunity') {
     const map: Record<string, string> = {

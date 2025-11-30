@@ -1,9 +1,7 @@
-// src/app/(portfolio)/[variant]/contact/_components/PaintCanvas.tsx
 "use client";
 
 import { useRef, useEffect } from 'react';
 import { useMousePosition } from '@/hooks/useMousePosition';
-import clsx from 'clsx';
 
 type PaintCanvasProps = {
     className?: string;
@@ -11,7 +9,7 @@ type PaintCanvasProps = {
     color: string;
 };
 
-// Linear Interpolation: Smoothing factor for the brush "physics"
+// Good old lerp
 const lerp = (start: number, end: number, factor: number) => {
   return start + (end - start) * factor;
 };
@@ -21,7 +19,6 @@ export function PaintCanvas({ className, brushSize, color }: PaintCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { clientX, clientY } = useMousePosition();
   
-  // Physics state: tracks the brush "tip" in LOCAL CANVAS coordinates
   const brushPos = useRef<{ x: number; y: number } | null>(null);
   const lastRenderPos = useRef<{ x: number; y: number } | null>(null);
 
@@ -34,10 +31,8 @@ export function PaintCanvas({ className, brushSize, color }: PaintCanvasProps) {
     if (!ctx) return;
 
     const handleResize = () => {
-      // Get exact container dimensions (handles min-height and layout changes)
       const rect = container.getBoundingClientRect();
       
-      // Set canvas internal bitmap size to match display size 1:1
       canvas.width = rect.width;
       canvas.height = rect.height;
       
@@ -54,30 +49,27 @@ export function PaintCanvas({ className, brushSize, color }: PaintCanvasProps) {
       const rawX = clientX.get();
       const rawY = clientY.get();
 
-      // Wait for mouse init
+      // Wait for mouse to appear on screen
       if (rawX === 0 && rawY === 0) {
         requestAnimationFrame(render);
         return;
       }
 
-      // CRITICAL FIX: Convert Screen Coordinates (Viewport) to Local Coordinates (Canvas)
-      // This accounts for scrolling offsets and container positioning.
+      // Accounts for scrolling offsets.
       const rect = canvas.getBoundingClientRect();
       const targetX = rawX - rect.left;
       const targetY = rawY - rect.top;
 
-      // Initialize on first interaction
+      // Init
       if (!brushPos.current) {
         brushPos.current = { x: targetX, y: targetY };
         lastRenderPos.current = { x: targetX, y: targetY };
       }
 
-      // 1. Physics (Lerp) in Local Space
-      const smoothness = 0.12;
+      const smoothness = 0.125;
       const newBrushX = lerp(brushPos.current.x, targetX, smoothness);
       const newBrushY = lerp(brushPos.current.y, targetY, smoothness);
 
-      // 2. Geometry (Midpoints)
       const midPointX = (brushPos.current.x + newBrushX) / 2;
       const midPointY = (brushPos.current.y + newBrushY) / 2;
 
@@ -87,7 +79,7 @@ export function PaintCanvas({ className, brushSize, color }: PaintCanvasProps) {
         ctx.beginPath();
         ctx.moveTo(lastRenderPos.current.x, lastRenderPos.current.y);
         
-        // Curve through the old brush position to the new midpoint
+        // Always curve from the last position, to always make the lines smooth.
         ctx.quadraticCurveTo(
           brushPos.current.x, 
           brushPos.current.y, 

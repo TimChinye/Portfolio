@@ -43,8 +43,6 @@ const HeroSectionComponent = forwardRef<HTMLDivElement, HeroSectionProps>(
     );
   };
 
-  console.log(projects);
-
   return (
     <Section {...props} ref={ref}>
       <Client 

@@ -1,4 +1,3 @@
-// src/app/(portfolio)/[variant]/(home)/_components/FeaturedProjectsSection/FeaturedProjectContent.tsx
 "use client";
 
 import { useState, useRef, useLayoutEffect, useEffect } from 'react';
@@ -6,22 +5,18 @@ import type { FeaturedProject } from '@/sanity/lib/queries';
 import { motion, useTransform, type MotionValue } from 'motion/react';
 import Image from 'next/image';
 
-// --- CONFIGURATION ---
 const BG_CONFIG = {
   SCALE: 0.5,           // Image size (0.5 = 50% of original size)
   DRIFT_DISTANCE: 10,   // Constant distance the image moves (in % of container)
   CURVE_MIN: -10,       // Minimum arc strength (Negative for one direction)
   CURVE_MAX: 10,        // Maximum arc strength (Positive for the other)
 };
-// --- END CONFIGURATION ---
 
-// Represents the measured properties of a single line of text
 type LineMetrics = {
   offsetTop: number;
   offsetHeight: number;
 };
 
-// Component for a single animated word
 type AnimatedWordProps = {
   word: string;
   wordIndex: number;
@@ -69,27 +64,24 @@ export function FeaturedProjectContent({
   } | null>(null);
 
   useEffect(() => {
-    // 1. Random Start Position (Keep within 20-80% to avoid edge clipping)
-    const startX = 20 + Math.random() * 60;
-    const startY = 20 + Math.random() * 60;
+    // Random Start Position (with 20% padding to avoid edge clipping)
+    const padding = 20;
+    const startX = padding + Math.random() * (100 - (padding * 2));
+    const startY = padding + Math.random() * (100 - (padding * 2));
 
-    // 2. End Position (Based on constant DRIFT_DISTANCE)
+    // Define End Position
     const angle = Math.random() * 2 * Math.PI; // Random direction
     const endX = startX + (Math.cos(angle) * BG_CONFIG.DRIFT_DISTANCE);
     const endY = startY + (Math.sin(angle) * BG_CONFIG.DRIFT_DISTANCE);
 
-    // 3. Curve Control Point (Quadratic Bezier)
-    // Find midpoint
+    // Create curve
     const midX = (startX + endX) / 2;
     const midY = (startY + endY) / 2;
 
-    // Determine curve strength randomly between MIN and MAX
     const strength = BG_CONFIG.CURVE_MIN + Math.random() * (BG_CONFIG.CURVE_MAX - BG_CONFIG.CURVE_MIN);
     
-    // Calculate perpendicular angle to the drift direction
-    const perpAngle = angle + (Math.PI / 2);
-
     // Offset midpoint by strength in the perpendicular direction
+    const perpAngle = angle + (Math.PI / 2);
     const controlX = midX + Math.cos(perpAngle) * strength;
     const controlY = midY + Math.sin(perpAngle) * strength;
 
@@ -98,23 +90,28 @@ export function FeaturedProjectContent({
       end: { x: endX, y: endY },
       control: { x: controlX, y: controlY }
     });
-  }, []); // Runs once on mount
+  }, []);
 
-  // Quadratic Bezier Interpolation: B(t) = (1-t)^2 P0 + 2(1-t)t P1 + t^2 P2
+  // Quadratic Bezier Interpolation (to make it smooth, curved and 'natural'):
+  // https://stackoverflow.com/questions/1074395/quadratic-bezier-interpolation -> P(t) = P0*(1-t)^2 + P1*2*(1-t)*t + P2*t^2
   const bgLeft = useTransform(scrollYProgress, (t) => {
     if (!coords) return "50%";
+ 
     const p0 = coords.start.x;
     const p1 = coords.control.x;
     const p2 = coords.end.x;
-    const val = (1 - t) * (1 - t) * p0 + 2 * (1 - t) * t * p1 + t * t * p2;
+
+    const val = (p0 * Math.pow((1 - t), 2)) + (p1 * 2 * (1 - t) * t) + (p2 * Math.pow(t, 2));
     return `${val}%`;
   });
 
   const bgTop = useTransform(scrollYProgress, (t) => {
     if (!coords) return "50%";
+
     const p0 = coords.start.y;
     const p1 = coords.control.y;
     const p2 = coords.end.y;
+
     const val = (1 - t) * (1 - t) * p0 + 2 * (1 - t) * t * p1 + t * t * p2;
     return `${val}%`;
   });
@@ -124,6 +121,7 @@ export function FeaturedProjectContent({
     ...activeProject.featuredDescription.split(/\s+/).map(word => ({ word, type: 'description' as const })),
   ];
 
+  // Measure DOM elements in the hidden ghost layer to group words into lines
   const measureLayout = () => {
     const container = containerRef.current;
     if (!container) return;
@@ -144,6 +142,7 @@ export function FeaturedProjectContent({
       const relativeTop = wordRect.top - containerTop;
       const { offsetHeight } = span;
 
+      // Detect line break via change in vertical position
       if (Math.abs(relativeTop - lastRelativeTop) > 1) {
         currentLineIndex++;
         lastRelativeTop = relativeTop;
@@ -178,11 +177,13 @@ export function FeaturedProjectContent({
   const firstLine = lineMetrics.current[0];
   const lastLine = lineMetrics.current[lineMetrics.current.length - 1];
 
+  // Calculate translation range to keep text vertically centered at start/end of scroll
   const startTranslateY = firstLine ? (containerHeight / 2) - (firstLine.offsetTop + firstLine.offsetHeight / 2) : 0;
   const endTranslateY = lastLine ? (containerHeight / 2) - (lastLine.offsetTop + lastLine.offsetHeight / 2) : 0;
 
   const textTranslateY = useTransform(scrollYProgress, [0, 1], [startTranslateY, endTranslateY]);
 
+  // Determine active line index based on intersection with the center "highlight zone"
   const highlightedLineIndex = useTransform(textTranslateY, (y) => {
     if (!isMeasured || lineMetrics.current.length === 0) return lastHighlightedIndexRef.current;
 
@@ -240,6 +241,7 @@ export function FeaturedProjectContent({
         </p>
       </motion.div>
 
+      {/* Hidden "ghost" layer strictly for layout measurement */}
       <div style={{ opacity: 0, pointerEvents: 'none', visibility: isMeasured ? 'hidden' : 'visible' }}>
         <h1 className="text-[#948D00FF] text-[1.5em] leading-[inherit] m-0">
           {allWords.filter(w => w.type === 'title').map(({ word }, i) => (

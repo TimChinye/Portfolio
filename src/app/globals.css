@@ -20,14 +20,12 @@
     }
   }
 
-  /* CORRECT V4.0 ANIMATION DEFINITION */
   @keyframes marquee {
     from { transform: translateX(0%); }
     to { transform: translateX(-100%); }
   }
 }
 
-/* CORRECT V4.0 UTILITY DEFINITION */
 @layer utilities {
   .container-inline-size {
     container-type: inline-size;
@@ -39,11 +37,9 @@
   
   .animate-marquee {
     animation: marquee var(--marquee-duration, 25s) linear infinite;
-    /* Smoothly transition the animation-duration property itself */
     transition: animation-duration 1s cubic-bezier(0.22, 1, 0.36, 1);
   }
   
-  /* On hover of the parent .group, change the CSS variable the animation uses */
   .group:hover .animate-marquee {
     animation-duration: var(--marquee-slowed-duration, 90s);
   }

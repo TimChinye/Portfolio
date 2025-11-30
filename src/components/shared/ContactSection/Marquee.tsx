@@ -1,4 +1,3 @@
-// src/components/ContactSection/Marquee.tsx
 "use client";
 
 import React, { useRef, useState, useLayoutEffect } from "react";
@@ -51,7 +50,7 @@ export function Marquee({
   const [repetitions, setRepetitions] = useState(1);
   const loopWidth = useRef(0);
 
-  // This is the core logic: measure everything to calculate the loop width
+  // Measure content to determine loop width and repetitions
   useLayoutEffect(() => {
     const calculateMetrics = () => {
       if (!containerRef.current || !translationRef.current || !textRef.current || !separatorRef.current) return;
@@ -63,7 +62,6 @@ export function Marquee({
       const textWidth = textRef.current.offsetWidth;
       const separatorWidth = separatorRef.current.offsetWidth;
 
-      // The width of a single, complete loop is the text, the separator, and the two gaps around them.
       const singleLoopWidth = textWidth + separatorWidth + (gapWidth * 2);
       loopWidth.current = singleLoopWidth;
 
@@ -97,7 +95,7 @@ export function Marquee({
       ref={containerRef}
       className={clsx(
         "marquee group w-full cursor-pointer overflow-hidden whitespace-nowrap text-[8rem] leading-0",
-        "[mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]",
+        "mask-[linear-gradient(to_right,transparent_0,black_128px,black_calc(100%-128px),transparent_100%)]",
         className
       )}
       onMouseEnter={handleMouseEnter}
@@ -108,7 +106,6 @@ export function Marquee({
         className="inline-flex flex-nowrap items-center font-bold uppercase gap-[0.75ch]"
         style={{ x: baseX }}
       >
-        {/* Your original HTML structure is preserved here, rendered dynamically */}
         {Array.from({ length: repetitions }).map((_, i) => (
           <React.Fragment key={i}>
             <span

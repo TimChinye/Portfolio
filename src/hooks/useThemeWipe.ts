@@ -1,4 +1,3 @@
-// src/components/ThemeSwitcher/hooks/useThemeWipe.ts
 "use client";
 
 import { useState, useCallback, Dispatch, SetStateAction } from "react";
@@ -57,13 +56,13 @@ export function useThemeWipe({
   });
 
   const toggleTheme = useCallback(() => {
-    // If an animation is already in progress, this click is to "change mind" and reverse it.
+    // Reverse animation if already in progress
     if (screenshot) {
       setAnimationTargetTheme((prev) => (prev === "dark" ? "light" : "dark"));
       return;
     }
 
-    // This is the first click, starting the theme change process.
+    // Capture screenshot and start animation
     html2canvas(document.documentElement, {
       useCORS: true,
       y: window.scrollY,
@@ -83,12 +82,12 @@ export function useThemeWipe({
       setWipeDirection(direction);
       setAnimationTargetTheme(newTheme);
       setScreenshot(canvas.toDataURL());
-      setTheme(newTheme); // Optimistically set the new theme.
+      setTheme(newTheme);
     })
     .catch((error) => {
       console.error("html2canvas failed:", error);
 
-      // Fallback: just switch the theme without the animation.
+      // Fallback: switch theme without animation
       setTheme(resolvedTheme === "dark" ? "light" : "dark");
       setScreenshot(null);
       setScrollLock(false);

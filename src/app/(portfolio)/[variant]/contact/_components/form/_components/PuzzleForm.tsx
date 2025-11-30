@@ -5,8 +5,6 @@ import { motion, AnimatePresence } from "motion/react";
 import clsx from "clsx";
 import { submitContactForm } from "../../../actions";
 
-// --- Types & Constants ---
-
 const REASONS = [
     { value: "project", label: "Hire you for a project" },
     { value: "full-time", label: "Discuss a full-time role" },
@@ -48,8 +46,6 @@ const ChevronDown = () => (
         <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
 );
-
-// --- Custom Logic Hook ---
 
 function useClickOutside(ref: RefObject<HTMLElement | null>, handler: () => void) {
     useEffect(() => {
@@ -163,7 +159,7 @@ const CustomSelect = ({
             ref={containerRef}
             className="relative inline-block align-middle ml-[0.25em] mr-[0.125em]"
         >
-            {/* TRIGGER */}
+            {/* Dropdown Button */}
             <button
                 type="button"
                 onClick={toggleOpen}
@@ -186,7 +182,7 @@ const CustomSelect = ({
                 </span>
             </button>
 
-            {/* DROPDOWN MENU */}
+            {/* Dropdown List */}
             <AnimatePresence>
                 {isOpen && !disabled && (
                     <motion.ul
@@ -229,7 +225,6 @@ type PuzzleFormProps = {
 };
 
 export function PuzzleForm({ variant }: PuzzleFormProps) {
-    // --- State ---
     const [name, setName] = useState("");
     const [company, setCompany] = useState("");
     const [reason, setReason] = useState("");
@@ -255,13 +250,11 @@ export function PuzzleForm({ variant }: PuzzleFormProps) {
         setTimestamp(Date.now());
     }, []);
 
-    // --- Logic ---
     const showOpportunityLine = ["project", "full-time", "collaborate"].includes(reason);
     const isOpportunityLocked = ["project", "collaborate"].includes(reason);
     const isFullTime = reason === "full-time";
     const showLocation = ["on-site", "hybrid"].includes(opportunity);
 
-    // Dynamic Placeholder Logic
     const getSalaryPlaceholder = () => {
         switch (compensationPeriod) {
             case "hour": return "£30";
@@ -280,7 +273,6 @@ export function PuzzleForm({ variant }: PuzzleFormProps) {
     }, [reason, isOpportunityLocked]);
 
 
-    // Reset other location if user switches back to a standard location
     useEffect(() => {
         if (location !== "Other") {
             setOtherLocation("");
@@ -291,30 +283,24 @@ export function PuzzleForm({ variant }: PuzzleFormProps) {
     useEffect(() => {
         const textarea = textareaRef.current;
         if (textarea) {
-            textarea.style.height = "auto"; // Reset height to recalculate
-            textarea.style.height = `${textarea.scrollHeight}px`; // Set to content height
+            textarea.style.height = "auto";
+            textarea.style.height = `${textarea.scrollHeight}px`;
         }
     }, [message]);
 
-    // --- Client-Side Validation ---
     const isFormValid = (() => {
-        // Base fields that are always visible and required
         if (!name || !company || !reason || !message || !email) {
             return false;
         }
     
-        // Conditional fields based on 'reason'
         if (showOpportunityLine) {
             if (!opportunity) return false;
-            
-            // Conditional fields based on 'opportunity'
             if (showLocation) {
                 if (!location) return false;
                 if (location === 'Other' && !otherLocation) return false;
             }
         }
     
-        // Fields specific to 'full-time' reason
         if (isFullTime) {
             if (!compensationAmount || !weeklyHours || !schedule) {
                 return false;
@@ -324,7 +310,6 @@ export function PuzzleForm({ variant }: PuzzleFormProps) {
         return true;
     })();
 
-  // --- Success View ---
   if (state.success) {
     return (
         <motion.div 
@@ -346,11 +331,10 @@ export function PuzzleForm({ variant }: PuzzleFormProps) {
     )
   }
 
-    // --- Styles ---
     const styleVars = {
-        "--fs-main": "clamp(1.5rem, 2.5vw, 2.5rem)", // ~40px target
-        "--fs-label": "clamp(0.875rem, 1.25vw, 1.25rem)", // ~20px target
-        "--fs-dropdown": "clamp(1.2rem, 2vw, 2rem)", // ~24px target
+        "--fs-main": "clamp(1.5rem, 2.5vw, 2.5rem)", // ~40px
+        "--fs-label": "clamp(0.875rem, 1.25vw, 1.25rem)", // ~20px
+        "--fs-dropdown": "clamp(1.2rem, 2vw, 2rem)", // ~24px
     } as React.CSSProperties;
 
     return (
@@ -359,7 +343,7 @@ export function PuzzleForm({ variant }: PuzzleFormProps) {
             className="w-full flex flex-col gap-4 font-figtree text-[#2F2F2BBF] dark:text-[#F5F5EFBF]"
             style={styleVars}
         >
-            {/* --- HIDDEN FIELDS FOR FORM SUBMISSION --- */}
+            {/* Secret Fields to prevent bot spam */}
 
             <input type="hidden" name="variant" value={variant} /> 
             <input type="hidden" name="name" value={name} />
@@ -373,9 +357,7 @@ export function PuzzleForm({ variant }: PuzzleFormProps) {
             <input type="hidden" name="hours" value={weeklyHours} />
             <input type="hidden" name="schedule" value={schedule} />
             <input type="hidden" name="email" value={email} />
-            <input type="hidden" name="message" value={message} />
-            
-            {/* SECURITY FIELDS */}
+            <input type="hidden" name="message" value={message} />            
 
             <div className="opacity-0 absolute top-0 left-0 h-0 w-0 overflow-hidden z-[-1]">
                 <label htmlFor="business_url">Business URL</label>
@@ -384,9 +366,8 @@ export function PuzzleForm({ variant }: PuzzleFormProps) {
             
             {timestamp && <input type="hidden" name="start_time" value={timestamp} />}
 
-            {/* --- VISIBLE FORM UI --- */}
+            {/* --- Visible UI Elements --- */}
 
-            {/* 1. Greeting */}
             <div className="text-(length:--fs-main) leading-normal">
                 <span>Hi! I&rsquo;m </span>
                 <InputBlank
@@ -405,7 +386,6 @@ export function PuzzleForm({ variant }: PuzzleFormProps) {
                 <span>.</span>
             </div>
 
-            {/* 2. Reason */}
             <div className="text-(length:--fs-main) leading-normal">
                 <span>I am reaching out to </span>
                 <CustomSelect
@@ -417,7 +397,6 @@ export function PuzzleForm({ variant }: PuzzleFormProps) {
                 <span>.</span>
             </div>
 
-            {/* 3. Opportunity (Conditional) */}
             <AnimatePresence>
                 {showOpportunityLine && (
                     <motion.div
@@ -455,7 +434,6 @@ export function PuzzleForm({ variant }: PuzzleFormProps) {
                 )}
             </AnimatePresence>
 
-            {/* 3b. Specific Location (Other) */}
             <AnimatePresence>
                 {showLocation && location === "Other" && (
                     <motion.div
@@ -476,7 +454,6 @@ export function PuzzleForm({ variant }: PuzzleFormProps) {
                 )}
             </AnimatePresence>
 
-            {/* 3c. Full Time Details (Salary/Hours) */}
             <AnimatePresence>
                 {isFullTime && (
                     <motion.div
@@ -524,7 +501,6 @@ export function PuzzleForm({ variant }: PuzzleFormProps) {
                 )}
             </AnimatePresence>
 
-            {/* 4. Details / Body */}
             <div className="flex flex-col gap-0 mt-4">
                 <h3 className="text-(length:--fs-main) font-normal">
                     {isFullTime ? "Here are more specifics:" : "Here are the details:"}
@@ -549,7 +525,6 @@ export function PuzzleForm({ variant }: PuzzleFormProps) {
                 </div>
             </div>
 
-            {/* 5. Email & Submit */}
             <div className="flex flex-col gap-12">
                 <div className="text-(length:--fs-main) leading-normal">
                     <span>Please reply to </span>

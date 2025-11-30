@@ -85,11 +85,8 @@ export const projectContent = defineType({
         dateFormat: 'MMMM-YYYY',
       },
       validation: (Rule) => Rule.required().custom((dateString: string | undefined) => {
-        if (typeof dateString === 'undefined') {
-          return true; // Let the .required() rule handle this.
-        }
+        if (typeof dateString === 'undefined') return true;
         
-        // The dateString is in "YYYY-MM-DD" format.
         const day = dateString.substring(8, 10);
 
         if (day !== '01') {

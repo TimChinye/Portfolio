@@ -8,7 +8,6 @@ import type { ContactMethod } from '@/sanity/lib/queries';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Section } from '@/components/ui/Section';
 
-// --- Types ---
 type ThemeImage = {
     light?: string;
     dark?: string;
@@ -24,14 +23,10 @@ type ContactOptionsProps = {
     };
 };
 
-// --- Sub-Component: QR Tooltip (Custom SVG Version) ---
-// Added 'scale' prop to easily resize the entire bubble while keeping the QR aligned
 const QrTooltip = ({ codes, scale = 2 }: { codes: ThemeImage; scale?: number }) => {
-    // Helper to determine if we have any code to show
     const hasCode = codes.light || codes.dark;
     if (!hasCode) return null;
 
-    // Base dimensions (in rem) derived from the original Tailwind classes
     const width = `${7 * scale}rem`;
     const height = `${8.8125 * scale}rem`;
     const qrSize = `${4.5 * scale}rem`;
@@ -108,7 +103,6 @@ const QrTooltip = ({ codes, scale = 2 }: { codes: ThemeImage; scale?: number }) 
     );
 }
 
-// --- Sub-Component: Contact Pill (Single or Split) ---
 const ContactPill = ({ method }: { method: ContactMethod }) => {
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [hoveredSide, setHoveredSide] = useState<'single' | 'left' | 'right' | null>(null);
@@ -119,7 +113,7 @@ const ContactPill = ({ method }: { method: ContactMethod }) => {
         "transition-colors duration-300"
     );
 
-    // --- SPLIT LINK RENDER ---
+    // --- Split Link ---
     if (method._type === 'splitLink') {
         return (
             <div className={clsx(basePillStyles, "rounded-full")}>
@@ -164,7 +158,7 @@ const ContactPill = ({ method }: { method: ContactMethod }) => {
         );
     }
 
-    // --- SINGLE LINK RENDER ---
+    // --- Single Link ---
     return (
         <div className="relative">
             <a
@@ -184,7 +178,6 @@ const ContactPill = ({ method }: { method: ContactMethod }) => {
     );
 };
 
-// --- Main Component ---
 export function ContactOptions({ data }: ContactOptionsProps) {
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [isEmailHovered, setIsEmailHovered] = useState(false);
@@ -196,7 +189,7 @@ export function ContactOptions({ data }: ContactOptionsProps) {
             wrapperClassName="m-0 mt-64 z-10 relative"
             fillScreen={false}
         >
-            {/* Group 1: Direct Contact */}
+            {/* Direct Contact */}
             <div className="flex flex-col items-center gap-4">
                 {data.contactMethods?.length > 0 && (
                     <>
@@ -213,7 +206,7 @@ export function ContactOptions({ data }: ContactOptionsProps) {
                 )}
             </div>
 
-            {/* Group 2: Email */}
+            {/* Email */}
             <div className="flex flex-col items-center gap-8">
                 <h2 className="font-newsreader tracking-tighter text-[#2F2F2B] dark:text-[#F5F5EF] text-[clamp(5rem,10vw,12.5rem)] leading-none">
                     {data.emailTitle}

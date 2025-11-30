@@ -1,4 +1,3 @@
-// src/components/CursorTrail.tsx
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
@@ -16,7 +15,6 @@ type TrailCircle = {
 
 const SPACING = 4;
 
-// A pool of random properties for the follower circles
 const FOLLOWER_CONFIG = {
   minSize: 6 * SPACING,
   maxSize: 9 * SPACING,
@@ -35,11 +33,9 @@ export function CursorTrail() {
   const idleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastPos = useRef({ x: 0, y: 0 });
 
-  // Core motion values for the cursor position
   const mouseX = useMotionValue(-200);
   const mouseY = useMotionValue(-200);
 
-  // Main circle is more responsive (less lag)
   const mainCircleSpring = { damping: 50, stiffness: 800, mass: 0.1 };
   const smoothMouseX = useSpring(mouseX, mainCircleSpring);
   const smoothMouseY = useSpring(mouseY, mainCircleSpring);
@@ -48,8 +44,6 @@ export function CursorTrail() {
     setTrail((prev) => prev.filter((c) => c.id !== id));
   }, []);
 
-  // This function generates a random number skewed towards one end of the range.
-  // 'strength' > 1 skews towards the max, < 1 skews towards the min.
   const randomSkewedNum = (strength: number, min: number, max: number) => {
     const rand = Math.pow(Math.random(), strength);
     return rand * (max - min) + min;
@@ -61,26 +55,21 @@ export function CursorTrail() {
 
     const { clientX, clientY } = point;
 
-    // Update motion values for the main circle to follow
     mouseX.set(clientX);
     mouseY.set(clientY);
 
-    // Reset idle timer on every move
+    // Idle logic
     setIsIdle(false);
     if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
     idleTimeoutRef.current = setTimeout(() => setIsIdle(true), 200);
 
-    // Calculate speed based on distance from the last known position
     const dx = clientX - lastPos.current.x;
     const dy = clientY - lastPos.current.y;
     const speed = Math.sqrt(dx * dx + dy * dy);
 
-    // Update the last position for the next event
     lastPos.current = { x: clientX, y: clientY };
 
-    // Core Fix: Generate a circle based on speed, only on move
-    // The faster the move, the more likely a circle is to spawn.
-    // A speed threshold prevents circles from spawning on tiny jitters.
+    // Only spawn a trail circle if mouse is moving fast enough
     if (speed > 5) {
       const { minSize, maxSize, minOpacity, maxOpacity, spawnRadius } = FOLLOWER_CONFIG;
 
@@ -88,7 +77,7 @@ export function CursorTrail() {
       const initialOpacity = Math.random() * (maxOpacity - minOpacity) + minOpacity;
 
       const angle = Math.random() * 2 * Math.PI;
-      // Use the skewed random function to make circles more likely to spawn closer to the cursor
+      // Skew randomness to produce circles more likely to spawn closer to the cursor
       const radius = randomSkewedNum(2, 0, spawnRadius); 
       const x = clientX + radius * Math.cos(angle) - size / 2;
       const y = clientY + radius * Math.sin(angle) - size / 2;
@@ -102,7 +91,6 @@ export function CursorTrail() {
   useEffect(() => {
     setMounted(true);
     
-    // Set initial position to avoid a flash from the corner on load
     const setInitialPosition = (e: MouseEvent) => {
         lastPos.current = { x: e.clientX, y: e.clientY };
         mouseX.set(e.clientX);
@@ -165,7 +153,6 @@ export function CursorTrail() {
             ease: "easeOut",
             times: [0, 0.1, 0.75],
           }}
-          // Removes itself from the state array once faded
           onAnimationComplete={() => removeCircle(circle.id)}
         />
       ))}

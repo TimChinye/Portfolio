@@ -5,7 +5,6 @@ import { motion, useMotionValue, useSpring, useScroll, useTransform, AnimatePres
 import { Filter } from "./Filter";
 import type { HeroProject } from "@/sanity/lib/queries";
 
-// Settings derived from the prompt
 const settings = {
   '--shadow-color' : 'hsl(0deg 0% 95%)',
   '--shadow-blur' : '15px',
@@ -20,7 +19,6 @@ const settings = {
   '--rotate' : '0deg',
 };
 
-// Function to check for support
 const supportsSvgBackdropFilter = () => {
     if (window.CSS.supports('-webkit-app-region', 'drag')) return true;
 
@@ -46,7 +44,6 @@ export function BubbleCursor({ hoveredProject }: BubbleCursorProps) {
   const mouseX = useMotionValue(typeof window !== 'undefined' ? window.innerWidth / 2 : 0);
   const mouseY = useMotionValue(typeof window !== 'undefined' ? window.innerHeight * (7/8) : 0);
 
-  // Effect to run on the client-side only
   useEffect(() => {
     setIsMounted(true);
 
@@ -54,7 +51,6 @@ export function BubbleCursor({ hoveredProject }: BubbleCursorProps) {
     mouseX.set(window.innerWidth / 2);
     mouseY.set(window.innerHeight / 8);
 
-    // Get the viewport height and set up a listener for window resize
     setViewportHeight(window.innerHeight);
     const handleResize = () => setViewportHeight(window.innerHeight);
     window.addEventListener('resize', handleResize);
@@ -74,11 +70,9 @@ export function BubbleCursor({ hoveredProject }: BubbleCursorProps) {
     [1, 0.5, 0]
   );
   
-  // Spring for the hover scale effect
   const hoverSpringConfig = { damping: 20, stiffness: 250, mass: 0.5 };
   const hoverScale = useSpring(1, hoverSpringConfig);
 
-  // Update hoverScale when hoveredProject changes
   useEffect(() => {
     hoverScale.set(hoveredProject ? 2 : 1);
   }, [hoveredProject, hoverScale]);
@@ -89,7 +83,6 @@ export function BubbleCursor({ hoveredProject }: BubbleCursorProps) {
     ([z, h]: number[]) => z * h
   );
 
-  // Wrap handleMouseMove in useCallback to ensure its reference is stable.
   const handleMouseMove = useCallback((e: MouseEvent) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);

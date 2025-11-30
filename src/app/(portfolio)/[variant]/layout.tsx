@@ -61,26 +61,20 @@ export async function generateMetadata({ params }: {
   const resolvedParams = await params;
   const variant = resolvedParams.variant as 'tim' | 'tiger';
   
-  // Fetch global content to determine Site Name and Base URL
   const globalData = await getGlobalContent();
 
-  // 1. Determine Site Name based on Variant
   const timName = globalData?.timFullName || "Tim Chinye";
   const tigerName = globalData?.tigerFullName || "Tiger";
   const siteName = variant === 'tim' ? timName : tigerName;
 
-  // 2. Determine Description based on Variant
   const defaultDescription = globalData?.defaultSeoDescription || "The professional portfolio of Tim Chinye.";
   const description = variant === 'tim' 
     ? defaultDescription 
     : "Welcome to the digital playground of Tiger. Explore interactive projects, creative coding experiments, and unique web artistry.";
 
-  // 3. Define the Title Template
-  // format: "Site Name | Page Name"
   const titleTemplate = `${siteName} | %s`;
   const defaultTitle = `${siteName} | Home`;
 
-  // 4. Canonical URL logic
   let metadataBase: URL | undefined = undefined;
   if (globalData?.siteUrl) {
     try {
@@ -89,15 +83,14 @@ export async function generateMetadata({ params }: {
       console.error("Invalid siteUrl in Sanity", e);
     }
   } else {
-    // Fallback if CMS data is missing
     metadataBase = new URL('https://timchinye.com');
   }
 
   return {
     metadataBase,
     title: {
-      default: defaultTitle, // Used when a child page doesn't specify a title (e.g. Home)
-      template: titleTemplate, // Used when a child page specifies a title (e.g. Contact -> "Tim Chinye | Contact")
+      default: defaultTitle, 
+      template: titleTemplate,
     },
     description: description,
     openGraph: {

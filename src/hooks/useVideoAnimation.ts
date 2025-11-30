@@ -18,12 +18,10 @@ export function useVideoAnimation({ containerRef, topParaRef, bottomParaRef, but
 
 			const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
-			// 1. Calculate START Height
 			const buttonHeight = buttonRef.current.parentElement.offsetHeight;
 			const buttonMargin = 2 * rootFontSize;
 			const startHeightPx = buttonHeight + buttonMargin;
 
-			// 2. Calculate END Height
 			const containerHeight = containerRef.current.offsetHeight;
 			const topParaHeight = topParaRef.current.offsetHeight;
 			const bottomParaHeight = bottomParaRef.current.offsetHeight;
@@ -33,7 +31,6 @@ export function useVideoAnimation({ containerRef, topParaRef, bottomParaRef, but
 			if (startHeightPx > 0 && endHeightPx > 0) {
 				setHeightRange([startHeightPx, endHeightPx]);
 
-				// 3. Calculate Border Radius Range
 				const startRadiusPx = startHeightPx / 2;
 				const endRadiusPx = rootFontSize / 2;
 				setRadiusRange([startRadiusPx, endRadiusPx]);
@@ -48,7 +45,7 @@ export function useVideoAnimation({ containerRef, topParaRef, bottomParaRef, but
 		if (containerRef.current) observer.observe(containerRef.current);
 
 		return () => observer.disconnect();
-	}, [containerRef, topParaRef, bottomParaRef, buttonRef]); // Added refs to dependency array for correctness
+	}, [containerRef, topParaRef, bottomParaRef, buttonRef]);
 
 	return { heightRange, radiusRange, isReady };
 }

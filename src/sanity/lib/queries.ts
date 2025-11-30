@@ -103,9 +103,6 @@ interface CombinedSeoData {
   page: PageSeoData;
 }
 
-/**
- * Fetches SEO data for a specific page using the reliable base client.
- */
 export async function getPageSeo(page: 'home' | 'about' | 'projects' | 'contact'): Promise<CombinedSeoData | null> {
   const documentType = `page${page.charAt(0).toUpperCase() + page.slice(1)}`;
 
@@ -254,8 +251,7 @@ export async function getContactPageData(variant: 'tim' | 'tiger'): Promise<Cont
   const emailAddrField = variant === 'tim' ? 'timEmailAddress' : 'tigerEmailAddress';
   const emailQrField = variant === 'tim' ? 'timEmailQrCode' : 'tigerEmailQrCode';
 
-  // Helper string to fetch both light and dark urls
-  const themeImageProj = `{ "light": light.asset->url, "dark": dark.asset->url }`;
+  const getBothQRThemes = `{ "light": light.asset->url, "dark": dark.asset->url }`;
 
   const query = groq`*[_type == "pageContact"][0]{
     directTitle,
@@ -265,18 +261,18 @@ export async function getContactPageData(variant: 'tim' | 'tiger'): Promise<Cont
       _type,
       label,
       url,
-      "qrCode": qrCode${themeImageProj},
+      "qrCode": qrCode${getBothQRThemes},
       
       leftLabel,
       leftUrl,
-      "leftQrCode": leftQrCode${themeImageProj},
+      "leftQrCode": leftQrCode${getBothQRThemes},
       
       rightLabel,
       rightUrl,
-      "rightQrCode": rightQrCode${themeImageProj}
+      "rightQrCode": rightQrCode${getBothQRThemes}
     },
     "emailAddress": ${emailAddrField},
-    "emailQrCode": ${emailQrField}${themeImageProj}
+    "emailQrCode": ${emailQrField}${getBothQRThemes}
   }`;
 
   const data = await sanityFetch({ query });

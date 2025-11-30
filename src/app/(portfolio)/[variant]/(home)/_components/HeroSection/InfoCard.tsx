@@ -8,7 +8,7 @@ import { ForwardedRef, forwardRef, useState, useEffect } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 const ExternalLinkIcon = () => (
-  <span className="font-figtree -mt-1 ml-[0.5ch]">
+  <span className="font-figtree -mt-1">
     ↗
   </span>
 );
@@ -40,13 +40,12 @@ const CtaButton = forwardRef(function CtaButton(
       {...(isExternal && { target: '_blank', rel: 'noopener noreferrer' })}
       {...props}
     >
-      {children}
+      {children}&nbsp;
       {isExternal && <ExternalLinkIcon />}
     </Component>
   );
 });
 
-// Main InfoCard Component
 type InfoCardProps = {
   project: HeroProject;
   onClose: () => void;
@@ -93,7 +92,6 @@ export function InfoCard({ project, onClose, className, style }: InfoCardProps) 
       style={style}
     >
 
-      {/* Title and Short Description */}
       <div className="">
         <h3 className="text-[4em] font-newsreader dark leading-none tracking-tight">
           {project.title}
@@ -103,14 +101,12 @@ export function InfoCard({ project, onClose, className, style }: InfoCardProps) 
         </p>
       </div>
 
-      {/* Tech Description */}
       {project.techDescription && (
         <p className="text-[1.25em] font-figtree leading-tight dark whitespace-pre-line">
           {project.techDescription}
         </p>
       )}
 
-      {/* CTAs */}
       <div className="flex flex-col items-center gap-3">
         <div className="flex gap-3">
           {project.ctaSecondary?.url && (
@@ -134,6 +130,7 @@ export function InfoCard({ project, onClose, className, style }: InfoCardProps) 
             className="underline text-[1em] font-newsreader transition-transform hover:translate-y-2 hover:scale-110"
           >
             {project.ctaTextLink.label}
+            &nbsp;
             <ExternalLinkIcon />
           </a>
         )}

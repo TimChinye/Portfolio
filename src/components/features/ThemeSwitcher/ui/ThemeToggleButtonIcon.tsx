@@ -1,4 +1,3 @@
-// src/components/ThemeSwitcher/ui/ThemeToggleButtonIcon.tsx
 "use client";
 
 import { motion, MotionValue, useTransform } from "motion/react";
@@ -10,8 +9,7 @@ type Props = {
   initialTheme: Theme;
 };
 
-// Helper function to generate the animation parameters for a single sun ray.
-// This function does NOT call any hooks itself.
+// Calculate transform ranges for sun rays based on theme direction
 const getRayTransformParams = (isGoingToDark: boolean, index: number): [number[], number[]] => {
   // Stagger the start of each ray's animation
   const darkRange: [number, number] = [50 + index * 5, 70 + index * 5];
@@ -33,8 +31,6 @@ export function ThemeToggleButtonIcon({ onClick, progress, initialTheme }: Props
   const sunCircleRotate = useTransform(progress, [0, 100], isGoingToDark ? [0, 90] : [90, 0]);
 
   // Sun Ray Hooks
-  // The six hook calls are still at the top level, satisfying the rules.
-  // But the logic is now centralized in the helper function, satisfying DRY.
   const sunRayScales = [
     useTransform(progress, ...getRayTransformParams(isGoingToDark, 0)),
     useTransform(progress, ...getRayTransformParams(isGoingToDark, 1)),

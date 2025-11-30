@@ -21,14 +21,14 @@ export function ContactFormSection({ variant }: ContactFormSectionProps) {
       md:grid md:grid-cols-5 md:gap-8 md:mx-auto
       ">
         
-        {/* LEFT COLUMN: Availability Widget */}
+        {/* Availability Widget */}
         <div className="block col-span-2 relative text-[1rem] md:text-[clamp(0.625rem,1.125vw,1rem)]">
           <div className="md:h-screen sticky top-0 flex items-center justify-center">
             <AvailabilityWidget />
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Contact Form Area */}
+        {/* Contact Form Area */}
         <div className="md:py-48 col-span-3 flex flex-col gap-8">
           <div className="min-h-[600px] flex items-center justify-center rounded-xl p-8">
              <PuzzleForm variant={variant} />

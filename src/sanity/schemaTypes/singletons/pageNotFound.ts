@@ -1,4 +1,3 @@
-// src/sanity/schemaTypes/singletons/pageNotFound.ts
 import {defineField, defineType} from 'sanity';
 import { DocumentIcon } from '@sanity/icons';
 

@@ -9,26 +9,20 @@ type ContentProgressBarProps = {
 };
 
 export function ContentProgressBar({ projectNumber, progress, className }: ContentProgressBarProps) {
-  // Clamp the value between 0 and 100
   const finalProgress = Math.max(Math.min(progress, 100), 0);
-
-  // 1. Create a MotionValue to hold the raw target value
   const targetProgress = useMotionValue(finalProgress);
 
-  // 2. Sync the MotionValue with the prop whenever it changes
-  // This bridges React State -> Framer Motion
+  // Sync React State -> Framer Motion
   useEffect(() => {
     targetProgress.set(finalProgress);
   }, [finalProgress, targetProgress]);
 
-  // 3. Create a spring that follows the targetProgress MotionValue
-    const smoothProgress = useSpring(targetProgress, {
+  const smoothProgress = useSpring(targetProgress, {
     stiffness: 500,
     damping: 50,
     restDelta: 0.001
   });
 
-  // 4. Transform the spring number (0-100) to a string ("0%"-"100%")
   const height = useTransform(smoothProgress, (val) => `${val}%`);
 
   return (

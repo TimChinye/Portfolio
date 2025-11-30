@@ -1,31 +1,9 @@
-// src/components/PortfolioIcon.tsx
 type PortfolioIconProps = {
-  /**
-   * For sizing and the main logo's fill color.
-   * Uses `currentColor` for the fill.
-   */
   className?: string;
-
-  /**
-   * Tailwind class for the optional circular background's fill color.
-   */
   bgClass?: string;
-
-  /**
-   * Tailwind class for the optional logo stroke's fill color.
-   */
   strokeClass?: string;
-  /**
-   * Scales the logo within the SVG viewbox. `1` is default, `0.7` is 70%.
-   */
   scale?: number;
-  /**
-   * Moves the logo horizontally within the SVG viewbox.
-   */
   translateX?: number;
-  /**
-   * Moves the logo vertically within the SVG viewbox.
-   */
   translateY?: number;
 };
 

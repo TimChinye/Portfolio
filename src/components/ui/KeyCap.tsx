@@ -2,24 +2,14 @@ import React, { useId } from 'react';
 import clsx from 'clsx';
 
 type KeyCapProps = {
-  /** The hex or Tailwind color for the text on the key. E.g., '#EFEFD0' or 'oklch(0.94 0.11 115.03)'. */
   textColor?: string;
-  /** The hex or Tailwind color for the top face of the key. */
   topColor?: string;
-  /** The color for the top of the right side's gradient. */
   sideGradientStart?: string;
-  /** The color for the bottom of the right side's gradient. */
   sideGradientEnd?: string;
-  /** The text or character(s) to display on the keycap. */
   children: string;
-  /** Optional additional classes for the container. */
   className?: string;
 };
 
-/**
- * Renders a dynamically-sized, 3D-styled SVG keycap.
- * The width of the keycap adjusts based on the length of the children string.
- */
 export const KeyCap = ({
   textColor = "#000000",
   topColor = "#EFEFD0",

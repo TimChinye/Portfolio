@@ -1,12 +1,8 @@
-// src/sanity/schemaTypes/objects/blockContent.ts
+// This is an AI-Generated placeholder code, will implement the case studies properly later.
 
 import { defineField, defineType, defineArrayMember } from 'sanity';
 import { PlayIcon, CodeIcon, ImageIcon } from '@sanity/icons';
 
-/**
- * This is the schema definition for the rich text fields used for
- * case study content. This has been enhanced to include custom components.
- */
 export const blockContentType = defineType({
   title: 'Block Content',
   name: 'blockContent',

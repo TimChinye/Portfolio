@@ -1,4 +1,3 @@
-// src/components/ProgressBar/index.tsx
 "use client";
 
 import { useEffect, useRef } from 'react';
@@ -13,9 +12,8 @@ export function ProgressBar() {
   const previousPathname = useRef(pathname);
 
   useEffect(() => {
-    // NProgress-like animation logic
+    // NProgress-like animation logic for route changes
     const handleStart = (direction: NavigationDirection = 'forward') => {
-      // Reset any running animations and set initial state
       controls.stop();
 
       const initialStyles =
@@ -49,18 +47,15 @@ export function ProgressBar() {
       });
     };
 
-    // Subscribe to custom events
     const unsubscribeStart = progressBarEvents.on('start', handleStart);
     const unsubscribeFinish = progressBarEvents.on('finish', handleFinish);
 
     // Detect route changes
-    // This is the key to handling back/forward navigation
     if (pathname !== previousPathname.current) {
       previousPathname.current = pathname;
       handleFinish();
     }
 
-    // Cleanup on unmount
     return () => {
       unsubscribeStart();
       unsubscribeFinish();

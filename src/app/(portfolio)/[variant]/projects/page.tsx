@@ -1,4 +1,3 @@
-// src/app/(portfolio)/[variant]/projects/page.tsx
 import Image from 'next/image';
 import Link from 'next/link';
 import { Section } from '@/components/ui/Section';
@@ -37,8 +36,7 @@ export default async function ProjectsPage({ params }: Props) {
       </div>
       
       {/* 
-        The "Discovery" Section: 
-        A continuous scroll of all projects. 
+        The "Discovery" Section: A continuous scroll of all projects (later: case studies). 
       */}
       <Section wrapperClassName='m-0 pb-32' className='rounded-none p-0'>
         <div className="flex flex-col">
@@ -60,7 +58,8 @@ export default async function ProjectsPage({ params }: Props) {
                 <span className="font-figtree font-bold text-xl opacity-50">
                   {(index + 1).toString().padStart(2, '0')}
                 </span>
-                {/* Mobile specific visual anchor */}
+
+                {/* Mobile specific T icon */}
                 <div className="md:hidden">
                   <PortfolioIcon className="w-6 h-6 opacity-20" />
                 </div>

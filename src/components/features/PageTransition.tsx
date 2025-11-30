@@ -1,4 +1,3 @@
-// src/components/PageTransition.tsx
 "use client";
 
 import { useRef, useEffect } from 'react';
@@ -19,10 +18,10 @@ export function PageTransition({ children, isNotFound = false }: PageTransitionP
   const prevPathnameRef = useRef<string | null>(null);
 
   useEffect(() => {
-    // This effect runs once on mount to disable the initial load flag for subsequent navigations.
     if (isInitialLoad.current) {
       isInitialLoad.current = false;
     }
+
     // We store the current path to be used as the 'previous' path on the *next* render.
     prevPathnameRef.current = pathname;
   }, [pathname]);
@@ -43,35 +42,34 @@ export function PageTransition({ children, isNotFound = false }: PageTransitionP
 
   // Animation Definitions
 
-  // Animation for the initial page load
+  // Initial page load animation
   const initialLoadAnimation = {
     initial: { y: "0%" },
     animate: { y: "-100%" },
     transition: { ...transition }
   };
 
-  // Animation for navigating FORWARD (e.g., Home -> About)
+  // Forward
   const navigationForwardAnimation = {
     initial: { x: "-100%" },
     animate: { x: ["-100%", "0%", "100%"] }, // Enters from left, exits to right
     transition: { ...transition, times: [0, 0.5, 1] }
   };
   
-  // Animation for navigating BACKWARD (e.g., Contact -> Home)
+  // Backward
   const navigationBackwardAnimation = {
     initial: { x: "100%" },
-    animate: { x: ["100%", "0%", "-100%"] }, // Enters from right, exits to left
+    animate: { x: ["100%", "0%", "-100%"] },
     transition: { ...transition, times: [0, 0.5, 1] }
   };
 
-  // Animation for the 404 page
+  // 404 page
   const notFoundAnimation = {
     initial: { y: "0%" },
     animate: { y: "100%" },
     transition: { ...transition }
   };
 
-  // Select the appropriate animation based on the context
   let overlayAnimation;
   
   if (isNotFound) overlayAnimation = notFoundAnimation;
@@ -82,14 +80,14 @@ export function PageTransition({ children, isNotFound = false }: PageTransitionP
   
   return (
     <div className="min-h-full">
-      {/* OVERLAY */}
+      {/* Overlay */}
       <motion.div
         key={`${pathname}-transition-overlay`}
         className="fixed top-0 left-0 w-full h-screen bg-[#D9D24D] z-1000"
         {...overlayAnimation}
       />
 
-      {/* PAGE CONTENT */}
+      {/* Page Content */}
       <AnimatePresence mode="wait">
         <motion.div
           key={pathname}

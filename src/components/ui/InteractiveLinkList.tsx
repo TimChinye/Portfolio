@@ -8,7 +8,7 @@ import { motion }from 'motion/react';
 type LinkItem = {
   label: string;
   href: string;
-  key?: string; // Optional key for more stable hover state
+  key?: string;
 };
 
 type InteractiveLinkListProps = {

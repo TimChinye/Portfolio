@@ -30,25 +30,24 @@ export function HamburgerIcon({ isHovered, isScrambling, links, layout, isOpen, 
 
   return (
     <>
-      {/* Mobile Version (Button) */}
+      {/* Mobile Version */}
       <button
         className="relative w-8 h-8 flex items-center justify-center cursor-pointer hover:text-[#948D00] hover:dark:text-[#D9D24D] md:hidden"
         onClick={onClick}
         aria-label="Toggle menu"
         aria-expanded={isOpen}
       >
-        {/* We map over links to dynamically get 2 or 3 lines */}
         {links.map((_, index) => {
           const defaultY = startY + index * compactSpacing;
           const isTop = index === 0;
-          // Middle line only exists if there are 3 links
           const isMiddle = index === 1 && lineCount === 3;
           const isBottom = index === lineCount - 1;
 
           let animateProps = { y: defaultY, rotate: 0, scale: 1 };
           if (isOpen) {
+            // Convert from Burger to X
             if (isTop) animateProps = { y: 0, rotate: 45, scale: 1 };
-            else if (isMiddle) animateProps = { y: 0, rotate: 0, scale: 0 }; // Middle line scales to 0
+            else if (isMiddle) animateProps = { y: 0, rotate: 0, scale: 0 };
             else if (isBottom) animateProps = { y: 0, rotate: -45, scale: 1 };
           }
 
@@ -64,7 +63,7 @@ export function HamburgerIcon({ isHovered, isScrambling, links, layout, isOpen, 
         })}
       </button>
 
-      {/* Desktop Version (Animated Links) */ }
+      {/* Desktop Version */ }
       <div className="relative w-8 h-full hidden md:flex items-center justify-center">
         {links.map((link, index) => {
           const currentPage = pathname.split('/').pop() || '';

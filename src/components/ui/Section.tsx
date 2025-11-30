@@ -1,6 +1,6 @@
 "use client";
 
-import { ElementType, ReactNode, useEffect, useRef, useMemo, useState, useLayoutEffect, forwardRef, ForwardedRef, createContext, useContext, RefObject } from 'react';
+import { ElementType, ReactNode, useEffect, useRef, useMemo, useState, useLayoutEffect, forwardRef, ForwardedRef, createContext, useContext } from 'react';
 import { motion, useScroll, useTransform, cubicBezier, type UseScrollOptions, type MotionStyle, type MotionValue } from 'motion/react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useTheme } from "next-themes";
@@ -16,19 +16,17 @@ export function useSectionScrollProgress() {
   return context;
 }
 
-// Helper function to parse color values from Tailwind class strings
-export const parseColorClasses = (classes: string) => {
+// Parses Tailwind bg color classes (bg-[#fff] and dark:bg-[...) to handle color transitions
+export const parsebackgroundColourClasses = (classes: string) => {
   // Regex to find the color inside bg-[...] and dark:bg-[...]
   const lightMatch = classes.match(/bg-\[([^\]]+)\]/)?.[1];
   const darkMatch = classes.match(/dark:bg-\[([^\]]+)\]/)?.[1];
 
-  // Use the found color, or fallback to the light color if no dark variant is specified
   const lightColor = lightMatch || '';
   const darkColor = darkMatch || lightColor;
   
   return { light: lightColor, dark: darkColor };
 };
-
 
 type Easing = readonly [number, number, number, number];
 
@@ -127,16 +125,15 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
       if (!contentRef.current) return;
       
       const style = window.getComputedStyle(contentRef.current);
-      const pt = parseFloat(style.paddingTop || '0');
-      const pb = parseFloat(style.paddingBottom || '0');
-      const vh = window.innerHeight;
+      const paddingTop = parseFloat(style.paddingTop || '0');
+      const paddingBottom = parseFloat(style.paddingBottom || '0');
+      const screenHeight = window.innerHeight;
 
-      // Formula: 1 + ((padding top + padding bottom) / window.innerHeight)
-      const ratio = (pt + pb) / vh;
+      // Calculate offset based on padding to ensure sticky behaviour covers full content
+      const ratio = (paddingTop + paddingBottom) / screenHeight;
       const endOffset = 1 + ratio;
       const endString = `end ${endOffset}`;
 
-      // Apply the calculated end offset to the second value of the ranges
       if (baseAnimationRange && baseAnimationRange.length >= 2) {
         setDynamicAnimationRange([baseAnimationRange[0], endString]);
       }
@@ -163,8 +160,9 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
   
   const { resolvedTheme } = useTheme();
 
-  const bgColors = useMemo(() => parseColorClasses(bgClasses), [bgClasses]);
+  const bgColors = useMemo(() => parsebackgroundColourClasses(bgClasses), [bgClasses]);
 
+  // Set up background colors for smooth transitions between sections
   useEffect(() => {
     if (wrapperRef && 'current' in wrapperRef && wrapperRef.current?.parentElement) {
       const parent = wrapperRef.current.parentElement;
@@ -204,14 +202,11 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
 
   const progressForChildren = stickyDuration ? stickyProgress : entryProgress;
 
-  // Create separate easing functions for each property
   const getEasingFunction = (property: keyof EasingObject) => {
-    if (!ease) return undefined; // No easing provided
+    if (!ease) return undefined;
 
-    // If 'ease' is an array, use it. Otherwise, look for the specific property in the object.
     const specificEase = (Array.isArray(ease) ? ease : (ease as EasingObject)[property]) as Easing;
 
-    // Return the cubic-bezier function if an ease is found
     return specificEase ? cubicBezier(...specificEase) : undefined;
   };
 
@@ -219,7 +214,6 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
   const scaleEase = useMemo(() => getEasingFunction('scale'), [ease]);
   const radiusEase = useMemo(() => getEasingFunction('radius'), [ease]);
 
-  // Updated: Use the specific easing function for each transform
   const y = useTransform(entryProgress, [0, 1], resolvedYRange ? [...resolvedYRange] : ['0rem', '0rem'], { ease: yEase });
   const scale = useTransform(entryProgress, [0, 1], resolvedScaleRange ? [...resolvedScaleRange] : [1, 1], { ease: scaleEase });
   const borderRadius = useTransform(entryProgress, [0, 1], resolvedRadiusRange ? [...resolvedRadiusRange] : ['8rem 8rem 0 0', '8rem 8rem 0 0'], { ease: radiusEase });

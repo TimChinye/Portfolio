@@ -17,8 +17,6 @@ export const metadata: Metadata = {
 
 export default async function ContactPage({ params }: Props) {
   const { variant } = await params;
-  
-  // Fetch data
   const data = await getContactPageData(variant);
 
   if (!data) {
@@ -36,10 +34,10 @@ export default async function ContactPage({ params }: Props) {
     <>
       <ContactHeroSection variant={variant} />
       
-      {/* 1. Contact Options (Pills) */}
+      {/* Contact Options (Pills) */}
       <ContactOptions data={data} />
 
-      {/* 2. Main Content Grid */}
+      {/* Main Content Grid */}
       <ContactFormSection variant={variant} />
       
       <GetInTouchSection

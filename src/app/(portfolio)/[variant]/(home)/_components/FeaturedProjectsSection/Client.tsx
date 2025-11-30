@@ -11,12 +11,10 @@ import { VerticalTrack } from './VerticalTrack';
 import { SectionTitle } from './SectionTitle';
 import { CustomLink as Link } from '@/components/ui/CustomLink';
 
-// --- CONFIGURATION ---
 const SCROLL_DISTANCE_MULTIPLIER = 2;
 const TRANSITION_GAP_MULTIPLIER = 15;
 const FADE_OUT_DURATION = 0.5;
 const FADE_IN_START = 0.5;
-// --- END CONFIGURATION ---
 
 type ScrollMapItem = {
   type: 'project' | 'gap';
@@ -36,13 +34,16 @@ type ProjectDisplayProps = {
 
 function ProjectDisplay({ project, localProgressMV, opacityMV, isLastProject, setContentProgress }: ProjectDisplayProps) {
   const finalOpacity = useMotionValue(opacityMV.get());
+  
   useEffect(() => {
     const updateFinalOpacity = () => {
       const isComplete = isLastProject && localProgressMV.get() >= 1;
       finalOpacity.set(isComplete ? 1 : opacityMV.get());
     };
+    
     const unsubOpacity = opacityMV.on("change", updateFinalOpacity);
     const unsubProgress = localProgressMV.on("change", updateFinalOpacity);
+    
     return () => {
       unsubOpacity();
       unsubProgress();
@@ -81,17 +82,19 @@ export function Client({ projects, onDurationCalculated }: ClientProps) {
     opacity: useMotionValue(0),
   }))).current;
 
-  // Access the master scroll progress for the section
   const masterScrollYProgress = useSectionScrollProgress();
 
   useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+    
     const wordSpans = Array.from(container.querySelectorAll<HTMLSpanElement>('[data-word-index]'));
     if (wordSpans.length === 0) return;
+    
     const containerTop = container.getBoundingClientRect().top;
     let avgLineHeight = 0, totalLines = 0;
     const projectsMetrics = projects.map(() => ({ lines: [] as { offsetTop: number, offsetHeight: number }[] }));
+    
     wordSpans.forEach(span => {
       const projectIndex = parseInt(span.dataset.projectIndex!, 10);
       const metrics = projectsMetrics[projectIndex];
@@ -105,10 +108,12 @@ export function Client({ projects, onDurationCalculated }: ClientProps) {
         }
       }
     });
+    
     if (totalLines > 0) avgLineHeight /= totalLines;
     
     let currentPos = 0;
     const newScrollMap: ScrollMapItem[] = [];
+    
     projectsMetrics.forEach((metrics, index) => {
       const projectHeight = metrics.lines.length * avgLineHeight * SCROLL_DISTANCE_MULTIPLIER;
       newScrollMap.push({ type: 'project', start: currentPos, end: currentPos + projectHeight, height: projectHeight, projectIndex: index });
@@ -119,6 +124,7 @@ export function Client({ projects, onDurationCalculated }: ClientProps) {
         currentPos += gapHeight;
       }
     });
+    
     scrollMapRef.current = newScrollMap;
     onDurationCalculated(currentPos);
     if (isInitialMeasurement) setIsInitialMeasurement(false);
@@ -137,10 +143,10 @@ export function Client({ projects, onDurationCalculated }: ClientProps) {
     const virtualScrollY = progress * totalDuration;
     let activeFound = false;
 
-    // 1. Start by setting all opacities to 0. This creates a clean slate.
+    // Reset opacities to clean slate
     projectMotionValues.forEach(mvs => mvs.opacity.set(0));
 
-    // 2. Find the active item(s) and set their properties.
+    // Determine active items/gaps and interpolate local progress
     for (const item of scrollMapRef.current) {
       if (virtualScrollY >= item.start && virtualScrollY <= item.end) {
         activeFound = true;
@@ -162,6 +168,7 @@ export function Client({ projects, onDurationCalculated }: ClientProps) {
 
           prevMVs.opacity.set(outgoingOpacity);
           nextMVs.opacity.set(incomingOpacity);
+          
           // Set progress for the transitioning elements so they don't jump
           prevMVs.localProgress.set(1);
           nextMVs.localProgress.set(0);
@@ -189,18 +196,14 @@ export function Client({ projects, onDurationCalculated }: ClientProps) {
     updateVisualsFromScroll(masterScrollYProgress.get());
   }, [masterScrollYProgress, updateVisualsFromScroll, isInitialMeasurement]); 
 
-  // Animations for the "View All Projects" button
   const buttonOpacity = useTransform(masterScrollYProgress, [0.9, 1], [0, 1]);
   const buttonY = useTransform(masterScrollYProgress, [0.9, 1], ['2rem', '0rem']);
   const buttonPointerEvents = useTransform(masterScrollYProgress, (v) => v >= 0.95 ? 'auto' : 'none');
 
   return (
     <div ref={containerRef} className="size-full relative">
-        {/* Absolute Positioning for the Title to allow overlay/flow-out */}
         <SectionTitle containerRef={containerRef} stickyProgress={masterScrollYProgress} />
 
-        {/* Padding adjustment to visually center content but allow full height usage */}
-        {/* <div className="size-full py-24 px-8 md:py-32 md:px-16 flex gap-4 md:gap-8"></div> */}
         <div className="size-full px-8 md:px-16 h-full flex flex-col">
             <div className="flex gap-4 md:gap-8 flex-1 min-h-0">
                 <ContentProgressBar

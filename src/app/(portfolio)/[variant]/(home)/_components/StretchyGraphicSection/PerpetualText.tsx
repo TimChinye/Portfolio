@@ -1,5 +1,3 @@
-// src/app/(portfolio)/[variant]/_components/StretchyGraphicSection/PerpetualText.tsx
-
 "use client";
 
 import { motion, useTransform, type MotionValue } from 'motion/react';

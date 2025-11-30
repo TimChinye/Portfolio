@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 
-// --- 1. Constants & Configuration (Exact copy from provided JS) ---
-
 const TIME_ZONE = "Europe/London";
 
 const SCHEDULE = [
@@ -53,7 +51,6 @@ const LABEL_POINTS = [
     { text: "Rest", hour: 22 }
 ];
 
-// --- 2. CSS Variable Mapping ---
 function getSegmentColor(type: string, theme?: string) {
     const isDark = theme === 'dark';
 
@@ -75,7 +72,7 @@ function getSegmentColor(type: string, theme?: string) {
 export function AvailabilityWidget() {
     const { resolvedTheme } = useTheme();
 
-    // State to hold all dynamic values calculated by updateWidget
+    // State to hold all dynamic values
     const [state, setState] = useState<{
         timeHtml: string; 
         pinLeft: number;
@@ -84,7 +81,6 @@ export function AvailabilityWidget() {
     } | null>(null);
 
     useEffect(() => {
-        // --- 3. Logic Implementation (Exact copy of updateWidget) ---
         const updateWidget = () => {
             const now = new Date();
 
@@ -112,7 +108,6 @@ export function AvailabilityWidget() {
             const tz = getVal("timeZoneName");
             const dateStr = `${getVal("day")}/${getVal("month")}/${getVal("year")}`;
 
-            // HTML Structure matching: <span class="time-numerals">...</span> <span class="punct">...</span>
             const timeHtml = `
                 <span class="tabular-nums">${timeStr}</span> 
                 <span class="text-[#2F2F2BBF] dark:text-[#F5F5EFBF]">[</span>${tz}<span class="text-[#2F2F2BBF] dark:text-[#F5F5EFBF]">] - (</span>${dateStr}<span class="text-[#2F2F2BBF] dark:text-[#F5F5EFBF]">)</span>
@@ -162,7 +157,7 @@ export function AvailabilityWidget() {
         };
 
         updateWidget();
-        const interval = setInterval(updateWidget, 250); // Matching the provided 2500ms interval
+        const interval = setInterval(updateWidget, 250);
         return () => clearInterval(interval);
     }, []);
 
@@ -170,51 +165,38 @@ export function AvailabilityWidget() {
     if (!state) return null;
 
     return (
-        /* .component-wrapper */
         <div className="relative -rotate-[7.5deg] opacity-75 m-[50px] h-fit w-min font-figtree text-[#2F2F2BBF] dark:text-[#F5F5EFBF]">
             
-            {/* .offset-border */}
             <div className="absolute inset-1/2 -translate-x-[calc(50%+1rem)] -translate-y-[calc(50%-1rem)] w-full h-full border-[0.25em] border-[#2F2F2B30] dark:border-[#F5F5EF30] rounded-xl pointer-events-none z-0 box-border" />
             
-            {/* .card */}
             <div className="relative bg-[#F5F5EF] dark:bg-[#1A1A17] border-[0.25em] border-[#2F2F2B30] dark:border-[#F5F5EF30] rounded-xl p-[2.5em] z-10 flex flex-col gap-[2em] box-border w-min">
                 
-                {/* .section-header */}
                 <div className="flex flex-col gap-[0.5em]">
-                    {/* h1 */}
                     <h1 className="text-[2.5em] font-bold m-0 leading-none whitespace-nowrap text-[#2F2F2BBF] dark:text-[#F5F5EFBF]">
                         My local time:
                     </h1>
-                    {/* .time-display (#clock-display) */}
                     <div 
                         className="text-[1.75em] font-bold whitespace-nowrap text-[#86800ebf] dark:text-[#d5d076bf]"
                         dangerouslySetInnerHTML={{ __html: state.timeHtml }} 
                     />
                 </div>
 
-                {/* .section-status */}
                 <div className="flex flex-col gap-0">
-                    {/* h2 */}
                     <h2 className="text-[1.75em] font-bold m-0 leading-[1.2] whitespace-nowrap text-[#2F2F2BBF] dark:text-[#F5F5EFBF]">
                         At This Time:
                     </h2>
-                    {/* .status-text (#status-header) */}
                     <div className="text-[1.25em] font-normal m-0 leading-normal whitespace-nowrap">
                         {state.headerText}
                     </div>
                 </div>
 
-                {/* .section-timeline */}
                 <div className="flex flex-col gap-[0.5em]">
-                    {/* h3 */}
                     <h3 className="text-[1.75em] font-bold m-0 mb-[0.5em] whitespace-nowrap text-[#2F2F2BBF] dark:text-[#F5F5EFBF]">
                         A Typical Day:
                     </h3>
                     
-                    {/* .timeline-bar-container (#bar-container) */}
                     <div className="relative h-6 w-full">
                         
-                        {/* .timeline-bar (#timeline-segments) */}
                         <div className="w-full h-full rounded-xl overflow-hidden flex">
                             {SCHEDULE.map((block, i) => (
                                 <div 
@@ -228,16 +210,13 @@ export function AvailabilityWidget() {
                             ))}
                         </div>
 
-                        {/* .timeline-pin (#pin) */}
                         <div 
                             className="absolute -inset-y-1.5 w-0.5 bg-[#6c692d] dark:bg-[#cbc996] z-10 transition-[left] duration-500"
                             style={{ left: `${state.pinLeft}%` }}
                         >
-                            {/* ::after pseudo-element for the dot */}
                             <div className="absolute -translate-y-1/2 -inset-x-1.5 aspect-square bg-[#6c692d] dark:bg-[#cbc996] rounded-full" />
                         </div>
 
-                        {/* .hour-tick (Generated 1-23) - Hidden per CSS var(--show-hours: hidden) but implemented for completeness */}
                         {Array.from({ length: 23 }).map((_, i) => (
                             <div 
                                 key={i}
@@ -247,7 +226,6 @@ export function AvailabilityWidget() {
                         ))}
                     </div>
 
-                    {/* .timeline-labels (#timeline-labels) */}
                     <div className="relative h-[1.5em] text-[0.75em] font-normal text-[#2F2F2BBF] dark:text-[#F5F5EFBF] opacity-80 mt-[5px] w-full">
                         {LABEL_POINTS.map((point, i) => (
                             <span 
@@ -261,7 +239,6 @@ export function AvailabilityWidget() {
                     </div>
                 </div>
 
-                {/* .summary-text (#status-message) */}
                 <div className="text-[1.25em] font-normal leading-[1.4] m-0 text-[#2F2F2BBF] dark:text-[#F5F5EFBF]">
                     {state.messageText}
                 </div>

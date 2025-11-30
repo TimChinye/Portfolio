@@ -10,7 +10,6 @@ import { AnimatePresence, cubicBezier, useScroll, useTransform } from 'motion/re
 import clsx from 'clsx';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
-// Types & Config
 type ClientProps = {
     variant: 'tim' | 'tiger';
     heroName: string;
@@ -18,7 +17,6 @@ type ClientProps = {
     projects: HeroProject[];
 };
 
-// Component
 export function Client({ variant, heroName, heroBio, projects }: ClientProps) {
     const processIntroText = (text: string): React.ReactNode => {
         if (!text) return '';
@@ -43,9 +41,9 @@ export function Client({ variant, heroName, heroBio, projects }: ClientProps) {
     const [activeProject, setActiveProject] = useState<HeroProject | null>(projects[0]);
     const [hoveredProject, setHoveredProject] = useState<HeroProject | null>(null);
 
-    // Mobile Scroll Animation Logic
     const heroRef = useRef<HTMLDivElement>(null); 
 
+    // Mobile scroll-based exit animation for the info card
     const { scrollYProgress: heroExitProgress } = useScroll({
         target: heroRef,
         offset: ["start end", "start 0.5"] 

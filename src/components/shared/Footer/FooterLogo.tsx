@@ -1,4 +1,3 @@
-// src/components/FooterLogo.tsx
 export const FooterLogo = ({ className }: { className?: string }) => (
   <svg
     width="100%"
