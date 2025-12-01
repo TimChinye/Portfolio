@@ -16,15 +16,15 @@ const ProjectStrip = ({ project }: { project: HighlightedProject }) => {
       href={`/project/${project.slug.current}`}
       className={clsx(
         "group relative flex gap-4 border-black transition-colors duration-300 hover:bg-[#E4E191]",
-        "max-md:w-full max-md:h-24 max-md:items-center max-md:justify-between max-md:border-t-[3px] max-md:px-6",
-        "md:h-full md:w-32 md:flex-col md:items-center md:border-l-[3px] md:py-12"
+        "max-md:text-[2rem] max-md:w-full max-md:items-center max-md:justify-between max-md:border-t-[3px] max-md:py-[0.45em] max-md:px-[0.375em]",
+        "md:text-[min(4rem,4.5vw)] md:h-full md:flex-col md:items-center md:border-l-[3px] md:py-[0.75em] md:px-[0.625em]"
       )}
     >
       {/* Title */}
       <h3 className={clsx(
         "font-black text-[#2F2F2B] leading-none uppercase whitespace-nowrap font-figtree shrink overflow-hidden text-ellipsis",
-        "max-md:text-[2rem]", 
-        "md:text-[4rem] md:[writing-mode:sideways-lr] md:rotate-180"
+        "max-md:text-[0.5em]", 
+        "md:text-[1em] md:[writing-mode:sideways-lr] md:rotate-180"
       )}>
         {project.title}
       </h3>
@@ -35,12 +35,12 @@ const ProjectStrip = ({ project }: { project: HighlightedProject }) => {
         "max-md:items-center",
         "md:flex-col-reverse md:mt-auto md:items-center"
       )}>
-        <span className="font-newsreader text-[1.5rem] text-[#3D3B0D]">
+        <span className="font-newsreader text-[0.375em] text-[#3D3B0D]">
           {project.dateCompleted.substring(0, 4)}
         </span>
 
         {project.isNew && (
-          <span className="bg-[#DEDA71] text-[#3D3B0D] font-figtree font-bold uppercase text-[1rem] px-2 py-3 leading-none rounded-sm">
+          <span className="bg-[#DEDA71] text-[#3D3B0D] font-figtree font-bold uppercase text-[0.25em] px-[0.75em] py-[0.5em] leading-none rounded-sm">
             NEW
           </span>
         )}
@@ -67,7 +67,7 @@ export function Client({ projects, ...props }: ProjectsHeroClientProps) {
         md:h-screen md:flex-1 md:flex-row md:rounded-tl-[4rem]
       ">
         {/* Hero Text & Description */}
-        <div className="flex flex-col justify-center p-8 md:p-16 lg:p-20 flex-1">
+        <div className="contain-inline-size flex flex-col justify-center p-8 md:p-16 lg:p-20 flex-1">
           
           {/* Featured Work Title */}
           <div className="flex flex-col items-start gap-3">
