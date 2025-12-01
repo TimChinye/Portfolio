@@ -4,6 +4,7 @@ import { Section } from "@/components/ui/Section";
 import { getProjectBySlug } from '@/sanity/lib/queries';
 import { CustomLink } from '@/components/ui/CustomLink';
 import { Metadata } from 'next';
+import { WavyText } from '@/components/ui/WavyText';
 
 type Props = {
   params: Promise<{
@@ -46,6 +47,8 @@ export default async function ProjectPage({ params }: Props) {
     month: 'long',
     timeZone: 'UTC'
   });
+  
+  const isExternal = (url: string) => !url.startsWith('/');
 
   return (
     <Section 
@@ -116,28 +119,44 @@ export default async function ProjectPage({ params }: Props) {
         </div>
 
         {/* CTAs */}
-        <div className="flex flex-wrap justify-center gap-4 pt-12">
-          {project.ctaPrimary && (
-            <a 
-              href={project.ctaPrimary.url} 
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-8 py-4 bg-[#2F2F2B] dark:bg-[#F5F5EF] text-[#F5F5EF] dark:text-[#2F2F2B] rounded-full font-bold uppercase tracking-wide hover:scale-105 transition-transform"
-            >
-              {project.ctaPrimary.label} ↗
-            </a>
-          )}
-          
-          {project.ctaSecondary && (
-            <a 
-              href={project.ctaSecondary.url} 
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-8 py-4 border-2 border-[#2F2F2B] dark:border-[#F5F5EF] text-[#2F2F2B] dark:text-[#F5F5EF] rounded-full font-bold uppercase tracking-wide hover:bg-[#2F2F2B]/5 dark:hover:bg-[#F5F5EF]/10 transition-colors"
-            >
-              {project.ctaSecondary.label}
-            </a>
-          )}
+        <div className="flex justify-center flex-wrap gap-4 pt-12">
+          <div className="flex items-center flex-col gap-4">
+            <div className="flex gap-4">
+              {project.ctaPrimary && (
+                <a 
+                  href={project.ctaPrimary.url} 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-8 py-4 bg-[#2F2F2B] dark:bg-[#F5F5EF] text-[#F5F5EF] dark:text-[#2F2F2B] rounded-full font-bold uppercase tracking-wide hover:scale-105 transition-transform"
+                >
+                  {project.ctaPrimary.label}{isExternal(project.ctaPrimary.url) && " ↗"}
+                </a>
+              )}
+              
+              {project.ctaSecondary && (
+                <a 
+                  href={project.ctaSecondary.url} 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-8 py-4 border-2 border-[#2F2F2B] dark:border-[#F5F5EF] text-[#2F2F2B] dark:text-[#F5F5EF] rounded-full font-bold uppercase tracking-wide hover:bg-[#2F2F2B]/5 dark:hover:bg-[#F5F5EF]/10 transition-colors"
+                >
+                  {project.ctaSecondary.label}{isExternal(project.ctaSecondary.url) && " ↗"}
+                </a>
+              )}
+            </div>
+              
+              {project.ctaTextLink && (
+                <WavyText 
+                  as="a"
+                  href={project.ctaTextLink.url} 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline text-[#2F2F2B] text-[1em] font-newsreader transition-transform hover:translate-y-2 hover:scale-110"
+                >
+                  {project.ctaTextLink.label}
+                </WavyText>
+              )}
+          </div>
 
           <CustomLink
             href="/projects"

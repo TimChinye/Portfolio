@@ -57,16 +57,16 @@
   background-repeat: no-repeat;
   background-size: 0% 2px;
 
-  font-variation-settings: 'wght' 300;
+  font-variation-settings: 'wght' 400;
   
   transition: 
-    font-variation-settings 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-    background-size 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    font-variation-settings 0.6s cubic-bezier(0.22, 1, 0.36, 2),
+    background-size 0.6s cubic-bezier(0.22, 1, 0.36, 2),
     color 0.3s ease-in-out;
-  transition-delay: calc(var(--index) * 0.04s);
+  transition-delay: calc(var(--index) * 0.025s);
 }
 
 .wavy-text-container:hover .wavy-letter {
-  font-variation-settings: 'wght' 900;
+  font-variation-settings: 'wght' 700;
   background-size: 100% 2px;
 }

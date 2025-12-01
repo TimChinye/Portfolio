@@ -77,8 +77,7 @@ export function InfoCard({ project, className, style }: InfoCardProps) {
     return null;
   }
 
-  const isPrimaryExternal = !project.ctaPrimary?.url.startsWith('/');
-  const isSecondaryExternal = !project.ctaSecondary?.url.startsWith('/');
+  const isExternal = (url: string) => !url.startsWith('/');
 
   return (
     <motion.div
@@ -111,13 +110,13 @@ export function InfoCard({ project, className, style }: InfoCardProps) {
       <div className="flex flex-col items-center gap-3">
         <div className="flex gap-3">
           {project.ctaSecondary?.url && (
-            <CtaButton href={project.ctaSecondary.url} variant="secondary" isExternal={isSecondaryExternal}>
+            <CtaButton href={project.ctaSecondary.url} variant="secondary" isExternal={isExternal(project.ctaSecondary?.url)}>
               {project.ctaSecondary.label}
             </CtaButton>
           )}
 
           {project.ctaPrimary && (
-            <CtaButton href={isPrimaryExternal ? project.ctaPrimary.url : `/project/${project.slug.current}`} variant="primary" isExternal={isPrimaryExternal}>
+            <CtaButton href={isExternal(project.ctaPrimary?.url) ? project.ctaPrimary.url : `/project/${project.slug.current}`} variant="primary" isExternal={isExternal(project.ctaPrimary?.url)}>
               {project.ctaPrimary.label}
             </CtaButton>
           )}
