@@ -20,7 +20,7 @@
     "clsx": "^2.1.1",
     "html2canvas-pro": "^1.5.12",
     "motion": "^12.23.24",
-    "next": "~16.0.1",
+    "next": "16.0.7",
     "next-mdx-remote": "^5.0.0",
     "next-sanity": "^11.4.2",
     "next-themes": "^0.4.6",
@@ -40,7 +40,7 @@
     "@types/react-dom": "19.2.2",
     "dotenv-cli": "^10.0.0",
     "eslint": "^9",
-    "eslint-config-next": "16.0.1",
+    "eslint-config-next": "16.0.7",
     "typescript": "^5"
   },
   "overrides": {
