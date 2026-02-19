@@ -15,28 +15,33 @@ interface WipeAnimationOverlayProps {
 
 export function WipeAnimationOverlay({
   screenshot,
+  wipeDirection,
   animationStyles: { clipPath, dividerTop, dividerTranslate },
 }: WipeAnimationOverlayProps) {
   return (
     <AnimatePresence>
-      {screenshot && (
+      {wipeDirection && (
         <>
-          <motion.div
-            key="theme-switcher-overlay"
-            data-html2canvas-ignore="true"
-            className={`fixed top-0 left-0 z-10000 h-screen w-full pointer-events-none bg-size-[100%_100%]`}
-            style={{
-              backgroundImage: `url(${screenshot})`,
-              clipPath,
-            }}
-          />
+          {screenshot && (
+            <motion.div
+              key="theme-switcher-overlay"
+              data-html2canvas-ignore="true"
+              className="fixed top-0 left-0 z-10000 h-screen w-full pointer-events-none bg-size-[100%_100%]"
+              style={{
+                backgroundImage: `url(${screenshot})`,
+                clipPath,
+              }}
+            />
+          )}
           <motion.div
             key="theme-switcher-divider"
             data-html2canvas-ignore="true"
-            className="fixed top-0 left-0 z-10000 h-1 w-full pointer-events-none bg-[#D9D24D]"
+            className="fixed top-0 left-0 z-20000 h-1 w-full pointer-events-none bg-[#D9D24D]"
             style={{
               top: dividerTop,
               translate: dividerTranslate,
+              // @ts-ignore - viewTransitionName is not in the types yet
+              viewTransitionName: "theme-divider",
             }}
           />
         </>
