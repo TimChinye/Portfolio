@@ -38,7 +38,9 @@ export function Client({ variant, heroName, heroBio, projects }: ClientProps) {
     const introClassName = 'text-[5.806cqw] md:text-[3.082cqw]';
 
     const isMobile = useMediaQuery('(max-width: 768px)');
-    const [activeProject, setActiveProject] = useState<HeroProject | null>(projects[0]);
+    const [activeProject, setActiveProject] = useState<HeroProject | null>(() => {
+        return projects.find(p => p.slug.current === 'dual-identity-portfolio') || projects[0] || null;
+    });
     const [hoveredProject, setHoveredProject] = useState<HeroProject | null>(null);
 
     const heroRef = useRef<HTMLDivElement>(null); 
