@@ -116,9 +116,14 @@ export function FeaturedProjectContent({
     return `${val}%`;
   });
 
+  const titleWords = activeProject.title.split(' ').map(word => ({ word, type: 'title' as const }));
+  const descriptionLines = activeProject.featuredDescription.split('\n').map(line =>
+    line.split(/\s+/).filter(Boolean)
+  );
+
   const allWords = [
-    ...activeProject.title.split(' ').map(word => ({ word, type: 'title' as const })),
-    ...activeProject.featuredDescription.split(/\s+/).map(word => ({ word, type: 'description' as const })),
+    ...titleWords,
+    ...descriptionLines.flat().map(word => ({ word, type: 'description' as const })),
   ];
 
   // Measure DOM elements in the hidden ghost layer to group words into lines
@@ -207,7 +212,7 @@ export function FeaturedProjectContent({
   });
 
   return (
-    <div ref={containerRef} className="flex-1 flex flex-col gap-8 text-[5vw] font-bold leading-none container-size relative">
+    <div ref={containerRef} className="flex-1 flex flex-col gap-8 text-[4vw] font-bold leading-none container-size relative">
       <motion.div
         className="absolute top-0 left-0 w-full"
         style={{ y: isMeasured ? textTranslateY : 0, opacity: isMeasured ? 1 : 0 }}
@@ -226,35 +231,45 @@ export function FeaturedProjectContent({
         </h1>
 
         <p className="text-[#3D3B0D] dark:text-[#EFEFD0] leading-[inherit] m-0">
-          {allWords.filter(w => w.type === 'description').map(({ word }, i) => {
-            const titleWordCount = allWords.filter(w => w.type === 'title').length;
-            return (
-              <AnimatedWord
-                key={`desc-${i}`}
-                word={word}
-                wordIndex={titleWordCount + i}
-                wordToLineMap={wordToLineMap}
-                highlightedLineIndex={highlightedLineIndex}
-              />
-            );
-          })}
+          {descriptionLines.map((line, lineIdx) => (
+            <span key={lineIdx} className="block">
+              {line.map((word, i) => {
+                const titleWordCount = titleWords.length;
+                const prevLinesWordCount = descriptionLines.slice(0, lineIdx).flat().length;
+                return (
+                  <AnimatedWord
+                    key={`desc-${lineIdx}-${i}`}
+                    word={word}
+                    wordIndex={titleWordCount + prevLinesWordCount + i}
+                    wordToLineMap={wordToLineMap}
+                    highlightedLineIndex={highlightedLineIndex}
+                  />
+                );
+              })}
+            </span>
+          ))}
         </p>
       </motion.div>
 
       {/* Hidden "ghost" layer strictly for layout measurement */}
       <div style={{ opacity: 0, pointerEvents: 'none', visibility: isMeasured ? 'hidden' : 'visible' }}>
         <h1 className="text-[#948D00FF] text-[1.5em] leading-[inherit] m-0">
-          {allWords.filter(w => w.type === 'title').map(({ word }, i) => (
+          {titleWords.map(({ word }, i) => (
             <span key={i} data-word-index={i} className="inline-block">{word}&nbsp;</span>
           ))}
         </h1>
         <p className="text-[#3D3B0D80] leading-[inherit] m-0">
-          {allWords.filter(w => w.type === 'description').map(({ word }, i) => {
-            const titleWordCount = allWords.filter(w => w.type === 'title').length;
-            return (
-              <span key={i} data-word-index={titleWordCount + i} className="inline-block">{word}&nbsp;</span>
-            );
-          })}
+          {descriptionLines.map((line, lineIdx) => (
+            <span key={lineIdx} className="block">
+              {line.map((word, i) => {
+                const titleWordCount = titleWords.length;
+                const prevLinesWordCount = descriptionLines.slice(0, lineIdx).flat().length;
+                return (
+                  <span key={`${lineIdx}-${i}`} data-word-index={titleWordCount + prevLinesWordCount + i} className="inline-block">{word}&nbsp;</span>
+                );
+              })}
+            </span>
+          ))}
         </p>
       </div>
 
