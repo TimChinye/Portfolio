@@ -117,9 +117,10 @@ export function FeaturedProjectContent({
   });
 
   const titleWords = activeProject.title.split(' ').map(word => ({ word, type: 'title' as const }));
-  const descriptionLines = activeProject.featuredDescription.split('\n').map(line =>
-    line.split(/\s+/).filter(Boolean)
-  );
+  const descriptionLines = activeProject.featuredDescription.split('\n').map(line => {
+    const words = line.split(/\s+/).filter(Boolean);
+    return words.length === 0 ? [""] : words;
+  });
 
   const allWords = [
     ...titleWords,
@@ -265,7 +266,7 @@ export function FeaturedProjectContent({
                 const titleWordCount = titleWords.length;
                 const prevLinesWordCount = descriptionLines.slice(0, lineIdx).flat().length;
                 return (
-                  <span key={`${lineIdx}-${i}`} data-word-index={titleWordCount + prevLinesWordCount + i} className="inline-block">{word}&nbsp;</span>
+                  <span key={`${lineIdx}-${i}`} data-word-index={titleWordCount + prevLinesWordCount + i} className="inline-block">{word || "\u00A0"}&nbsp;</span>
                 );
               })}
             </span>

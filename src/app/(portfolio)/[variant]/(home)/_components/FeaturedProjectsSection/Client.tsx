@@ -220,13 +220,18 @@ export function Client({ projects, onDurationCalculated }: ClientProps) {
                             <div key={project._id}>
                                 <h1 className="text-[#948D00FF] dark:text-[#948D00FF] text-[1.5em] leading-[inherit] m-0">{project.title.split(' ').map((word, i) => <span key={i} data-project-index={projectIndex} data-word-index className="inline-block">{word}&nbsp;</span>)}</h1>
                                 <p className="text-[#3D3B0D80] dark:text-[#3D3B0D80] leading-[inherit] m-0">
-                                  {project.featuredDescription.split('\n').map((line, lineIdx) => (
-                                    <span key={lineIdx} className="block">
-                                      {line.split(/\s+/).map((word, i) => word ? (
-                                        <span key={i} data-project-index={projectIndex} data-word-index className="inline-block">{word}&nbsp;</span>
-                                      ) : null)}
-                                    </span>
-                                  ))}
+                                  {project.featuredDescription.split('\n').map((line, lineIdx) => {
+                                    const words = line.split(/\s+/).filter(Boolean);
+                                    return (
+                                      <span key={lineIdx} className="block">
+                                        {words.length === 0 ? (
+                                          <span data-project-index={projectIndex} data-word-index className="inline-block">&nbsp;</span>
+                                        ) : words.map((word, i) => (
+                                          <span key={i} data-project-index={projectIndex} data-word-index className="inline-block">{word}&nbsp;</span>
+                                        ))}
+                                      </span>
+                                    );
+                                  })}
                                 </p>
                             </div>
                             ))}
