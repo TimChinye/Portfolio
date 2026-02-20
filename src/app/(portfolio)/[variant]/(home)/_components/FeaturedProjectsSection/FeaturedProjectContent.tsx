@@ -117,7 +117,7 @@ export function FeaturedProjectContent({
   });
 
   const titleWords = activeProject.title.split(' ').map(word => ({ word, type: 'title' as const }));
-  const descriptionLines = activeProject.featuredDescription.split('\n').map(line => {
+  const descriptionLines = ("\n" + activeProject.featuredDescription).split('\n').map(line => {
     const words = line.split(/\s+/).filter(Boolean);
     return words.length === 0 ? [""] : words;
   });
