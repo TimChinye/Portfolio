@@ -75,7 +75,7 @@ export default async function ProjectsPage({ params }: Props) {
                       src={project.thumbnailUrl}
                       alt={project.title}
                       fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center opacity-10">

@@ -21,10 +21,25 @@ export function ScramblingText({ textOptions, onScrambleChange }: ScramblingText
   const measurementRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
+    const measure = () => {
+      if (measurementRef.current && !isAnimating) {
+        measurementRef.current.textContent = displayText;
+        const width = measurementRef.current.offsetWidth;
+        if (width > 0) {
+          setTargetWidth(width);
+        }
+      }
+    };
+
+    measure();
+
+    const observer = new ResizeObserver(measure);
     if (containerRef.current) {
-      setTargetWidth(containerRef.current.offsetWidth);
+      observer.observe(containerRef.current);
     }
-  }, []);
+
+    return () => observer.disconnect();
+  }, [isAnimating, displayText]);
 
   const scramble = () => {
     if (isAnimating) return;

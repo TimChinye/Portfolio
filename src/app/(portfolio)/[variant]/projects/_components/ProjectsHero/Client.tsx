@@ -58,10 +58,15 @@ export function Client({ projects, ...props }: ProjectsHeroClientProps) {
     <Section {...props}>
       
       {/* Sidebar Placeholder */}
-      <div className="shrink-0 bg-transparent max-md:fixed max-md:bottom-0 max-md:left-0 max-md:z-50 max-md:h-32 max-md:w-full md:h-screen md:w-56" />
+      <div
+        style={{ width: 0 }}
+        className="shrink-0 bg-transparent max-md:fixed max-md:bottom-0 max-md:left-0 max-md:z-50 max-md:h-32 max-md:w-full md:h-screen md:w-56"
+      />
 
       {/* Main Content Area */}
-      <main className="
+      <main
+        style={{ borderRadius: 0 }}
+        className="
         relative flex flex-col justify-between overflow-hidden bg-[#EFEFD0]
         max-md:min-h-[calc(100vh-(var(--spacing)*32))] max-md:w-full
         md:h-screen md:flex-1 md:flex-row md:rounded-tl-[4rem]
