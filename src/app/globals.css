@@ -92,6 +92,7 @@
 ::view-transition-old(root) {
   clip-path: var(--wipe-clip-path);
   z-index: 100; /* Force old snapshot to stay on top */
+  opacity: 1 !important;
 }
 
 ::view-transition-new(root) {

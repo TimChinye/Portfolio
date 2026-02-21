@@ -25,6 +25,7 @@ export function useThemeWipe({
   const [animationTargetTheme, setAnimationTargetTheme] = useState<Theme | null>(null);
   const [originalTheme, setOriginalTheme] = useState<Theme | null>(null);
   const activeTransition = useRef<any>(null);
+  const transitionResolver = useRef<(() => void) | null>(null);
 
   const setScrollLock = (isLocked: boolean) => {
     // For native transitions, we don't necessarily need to lock scroll,
@@ -41,8 +42,9 @@ export function useThemeWipe({
     setOriginalTheme(null);
     setScrollLock(false);
 
-    if (activeTransition.current && 'skipTransition' in activeTransition.current) {
-      activeTransition.current.skipTransition();
+    if (transitionResolver.current) {
+      transitionResolver.current();
+      transitionResolver.current = null;
     }
     activeTransition.current = null;
   }, [setWipeDirection]);
@@ -58,8 +60,9 @@ export function useThemeWipe({
     setOriginalTheme(null);
     setScrollLock(false);
 
-    if (activeTransition.current && 'skipTransition' in activeTransition.current) {
-      activeTransition.current.skipTransition();
+    if (transitionResolver.current) {
+      transitionResolver.current();
+      transitionResolver.current = null;
     }
     activeTransition.current = null;
   }, [originalTheme, setTheme, setWipeDirection]);
@@ -99,6 +102,12 @@ export function useThemeWipe({
       const transition = (document as any).startViewTransition(() => {
         flushSync(() => {
           setTheme(newTheme);
+        });
+
+        // Return a promise that resolves only when the animation is complete.
+        // This keeps the ::view-transition snapshots alive for the full wipe duration.
+        return new Promise<void>((resolve) => {
+          transitionResolver.current = resolve;
         });
       });
 
