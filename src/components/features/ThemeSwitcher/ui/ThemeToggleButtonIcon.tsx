@@ -7,6 +7,7 @@ type Props = {
   onClick: () => void;
   progress: MotionValue<number>;
   initialTheme: Theme;
+  isPreparing?: boolean;
 };
 
 // Calculate transform ranges for sun rays based on theme direction
@@ -21,7 +22,7 @@ const getRayTransformParams = (isGoingToDark: boolean, index: number): [number[]
   return [inputRange, outputRange];
 };
 
-export function ThemeToggleButtonIcon({ onClick, progress, initialTheme }: Props) {
+export function ThemeToggleButtonIcon({ onClick, progress, initialTheme, isPreparing }: Props) {
   const isGoingToDark = initialTheme === 'light';
 
   // Main hooks
@@ -50,6 +51,20 @@ export function ThemeToggleButtonIcon({ onClick, progress, initialTheme }: Props
         viewBox="0 0 18 18"
         className="size-full overflow-visible hover:text-[#948D00] hover:dark:text-[#D9D24D]"
         style={{ rotate: svgRotate }}
+        animate={isPreparing ? {
+          scale: [1, 1.15, 1],
+          opacity: [1, 0.6, 1],
+        } : {
+          scale: 1,
+          opacity: 1,
+        }}
+        transition={isPreparing ? {
+          duration: 0.8,
+          repeat: Infinity,
+          ease: "easeInOut",
+        } : {
+          duration: 0.2
+        }}
       >
         <mask id="moon-mask">
           <rect x="0" y="0" width="18" height="18" fill="white" />

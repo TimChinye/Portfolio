@@ -70,3 +70,33 @@
   font-variation-settings: 'wght' 700;
   background-size: 100% 2px;
 }
+
+/* View Transitions */
+@keyframes keep-alive {
+  from { opacity: 1; }
+  to { opacity: 1; }
+}
+
+.vt-wipe::view-transition-old(root) {
+  animation: keep-alive 300s;
+  mix-blend-mode: normal;
+  clip-path: var(--wipe-clip, inset(0 0 0 0));
+}
+
+.vt-wipe::view-transition-new(root) {
+  animation: keep-alive 300s;
+  mix-blend-mode: normal;
+}
+
+/* Ensure Navbar and Divider stay on top during transition */
+.vt-wipe::view-transition-group(navbar),
+.vt-wipe::view-transition-group(theme-divider) {
+  z-index: 2147483647; /* Max z-index */
+}
+
+/* Instant switch for navbar */
+.vt-wipe::view-transition-old(navbar),
+.vt-wipe::view-transition-new(navbar) {
+  animation: none;
+  mix-blend-mode: normal;
+}
