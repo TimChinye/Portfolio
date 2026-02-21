@@ -73,8 +73,9 @@
 
 /* View Transitions */
 ::view-transition-group(root) {
-  animation-duration: 0s;
+  animation-duration: 1.25s;
   pointer-events: none;
+  z-index: 0;
 }
 
 ::view-transition-old(root),
@@ -82,27 +83,23 @@
   animation: none;
   mix-blend-mode: normal;
   display: block;
+  height: 100dvh;
+  width: 100dvw;
+  position: fixed;
+  inset: 0;
 }
 
 ::view-transition-old(root) {
-  clip-path: var(--wipe-clip-path, none);
+  clip-path: var(--wipe-clip-path);
+  z-index: 100; /* Force old snapshot to stay on top */
 }
 
 ::view-transition-new(root) {
-  clip-path: none;
-}
-
-::view-transition-group(theme-divider) {
-  z-index: 1000; /* Ensure it's above the root snapshots */
-  pointer-events: none;
+  z-index: 0;
+  opacity: 0; /* Reveal the live DOM underneath, allowing moving elements to be seen */
 }
 
 ::view-transition-group(navbar) {
-  display: none;
-}
-
-::view-transition-old(theme-divider),
-::view-transition-new(theme-divider) {
   animation: none;
-  mix-blend-mode: normal;
+  z-index: 2000; /* Above everything */
 }

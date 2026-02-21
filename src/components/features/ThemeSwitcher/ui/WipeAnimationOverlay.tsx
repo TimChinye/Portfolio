@@ -40,7 +40,6 @@ export function WipeAnimationOverlay({
             style={{
               top: dividerTop,
               translate: dividerTranslate,
-              viewTransitionName: "theme-divider" as any,
             }}
           />
         </>
