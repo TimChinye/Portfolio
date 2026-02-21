@@ -2,7 +2,7 @@
 
 import { useState, useCallback, Dispatch, SetStateAction } from "react";
 import { useTheme } from "next-themes";
-import html2canvas from "html2canvas-pro";
+import { toPng } from "html-to-image";
 import { useWipeAnimation } from "@/hooks/useWipeAnimation";
 import { Theme, WipeDirection } from "@/components/features/ThemeSwitcher/types";
 import type { MotionValue } from "motion/react";
@@ -63,35 +63,47 @@ export function useThemeWipe({
     }
 
     // Capture screenshot and start animation
-    html2canvas(document.documentElement, {
-      useCORS: true,
-      y: window.scrollY,
+    toPng(document.documentElement, {
       width: window.innerWidth,
       height: window.innerHeight,
-      scale: Math.max(window.devicePixelRatio, 2)
+      style: {
+        transform: `translateY(-${window.scrollY}px)`,
+        transformOrigin: "top left",
+      },
+      filter: (node) => {
+        if (
+          node instanceof HTMLElement &&
+          node.dataset.html2canvasIgnore === "true"
+        ) {
+          return false;
+        }
+        return true;
+      },
+      pixelRatio: Math.max(window.devicePixelRatio, 2),
+      cacheBust: true,
     })
-    .then((canvas) => {
-      setScrollLock(true); // Disable scrolling
+      .then((dataUrl) => {
+        setScrollLock(true); // Disable scrolling
 
-      const currentTheme = resolvedTheme as Theme;
-      const newTheme: Theme = currentTheme === "dark" ? "light" : "dark";
-      const direction: WipeDirection =
-        currentTheme === "dark" ? "bottom-up" : "top-down";
+        const currentTheme = resolvedTheme as Theme;
+        const newTheme: Theme = currentTheme === "dark" ? "light" : "dark";
+        const direction: WipeDirection =
+          currentTheme === "dark" ? "bottom-up" : "top-down";
 
-      setOriginalTheme(currentTheme);
-      setWipeDirection(direction);
-      setAnimationTargetTheme(newTheme);
-      setScreenshot(canvas.toDataURL());
-      setTheme(newTheme);
-    })
-    .catch((error) => {
-      console.error("html2canvas failed:", error);
+        setOriginalTheme(currentTheme);
+        setWipeDirection(direction);
+        setAnimationTargetTheme(newTheme);
+        setScreenshot(dataUrl);
+        setTheme(newTheme);
+      })
+      .catch((error) => {
+        console.error("html-to-image failed:", error);
 
-      // Fallback: switch theme without animation
-      setTheme(resolvedTheme === "dark" ? "light" : "dark");
-      setScreenshot(null);
-      setScrollLock(false);
-    });
+        // Fallback: switch theme without animation
+        setTheme(resolvedTheme === "dark" ? "light" : "dark");
+        setScreenshot(null);
+        setScrollLock(false);
+      });
   }, [screenshot, resolvedTheme, setTheme, setWipeDirection]);
 
   return {
