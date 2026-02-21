@@ -27,7 +27,7 @@ export function ThemeSwitcher({
   const [mounted, setMounted] = useState(false);
   
   const { resolvedTheme } = useTheme();
-  const { toggleTheme, screenshot, animationStyles } = useThemeWipe({
+  const { toggleTheme, screenshot, newScreenshot, animationStyles } = useThemeWipe({
     wipeProgress,
     wipeDirection,
     setWipeDirection,
@@ -56,6 +56,7 @@ export function ThemeSwitcher({
       {createPortal(
         <WipeAnimationOverlay
           screenshot={screenshot}
+          newScreenshot={newScreenshot}
           animationStyles={animationStyles}
           wipeDirection={wipeDirection}
         />,

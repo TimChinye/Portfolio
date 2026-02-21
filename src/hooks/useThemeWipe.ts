@@ -20,8 +20,10 @@ export function useThemeWipe({
 }: UseThemeWipeProps) {
   const { setTheme, resolvedTheme } = useTheme();
   const [screenshot, setScreenshot] = useState<string | null>(null);
+  const [newScreenshot, setNewScreenshot] = useState<string | null>(null);
   const [animationTargetTheme, setAnimationTargetTheme] = useState<Theme | null>(null);
   const [originalTheme, setOriginalTheme] = useState<Theme | null>(null);
+  const [isCapturing, setIsCapturing] = useState(false);
 
   const setScrollLock = (isLocked: boolean) => {
     document.documentElement.style.overflow = isLocked ? 'hidden' : '';
@@ -29,26 +31,34 @@ export function useThemeWipe({
   };
 
   const handleAnimationComplete = useCallback(() => {
-    // Use requestAnimationFrame to ensure the theme has settled before removing overlay
+    // Wait two frames to ensure the new theme is fully painted before removing overlay
     requestAnimationFrame(() => {
-      setScreenshot(null);
-      setAnimationTargetTheme(null);
-      setWipeDirection(null);
-      setOriginalTheme(null);
-      setScrollLock(false);
+      requestAnimationFrame(() => {
+        setScreenshot(null);
+        setNewScreenshot(null);
+        setAnimationTargetTheme(null);
+        setWipeDirection(null);
+        setOriginalTheme(null);
+        setScrollLock(false);
+        setIsCapturing(false);
+        wipeProgress.set(0);
+      });
     });
-  }, [setWipeDirection]);
+  }, [setWipeDirection, wipeProgress]);
 
   const handleAnimationReturn = useCallback(() => {
     if (originalTheme) {
       setTheme(originalTheme);
     }
     setScreenshot(null);
+    setNewScreenshot(null);
     setAnimationTargetTheme(null);
     setWipeDirection(null);
     setOriginalTheme(null);
     setScrollLock(false);
-  }, [originalTheme, setTheme, setWipeDirection]);
+    setIsCapturing(false);
+    wipeProgress.set(0);
+  }, [originalTheme, setTheme, setWipeDirection, wipeProgress]);
 
   const { ...animationStyles } = useWipeAnimation({
     animationTargetTheme,
@@ -60,27 +70,30 @@ export function useThemeWipe({
 
   const toggleTheme = useCallback(() => {
     // Reverse animation if already in progress
-    if (screenshot) {
+    if (screenshot && !isCapturing) {
       setAnimationTargetTheme((prev) => (prev === "dark" ? "light" : "dark"));
       return;
     }
+
+    if (isCapturing) return;
+    setIsCapturing(true);
 
     // Capture screenshot and start animation
     const width = document.documentElement.clientWidth;
     const height = window.innerHeight;
     const scrollY = window.scrollY;
 
-    toCanvas(document.documentElement, {
+    const options = {
       width,
       height,
       style: {
         transform: `translateY(-${scrollY}px)`,
         transformOrigin: "top left",
         width: `${width}px`,
-        height: `${document.documentElement.scrollHeight}px`,
+        height: `${scrollY + height}px`,
         overflow: "hidden",
       },
-      filter: (node) => {
+      filter: (node: Node) => {
         if (
           node instanceof HTMLElement &&
           node.dataset.html2canvasIgnore === "true"
@@ -91,17 +104,19 @@ export function useThemeWipe({
       },
       pixelRatio: Math.max(window.devicePixelRatio, 2),
       cacheBust: true,
-    })
+    };
+
+    toCanvas(document.documentElement, options)
       .then(async (canvas) => {
-        const dataUrl = canvas.toDataURL("image/png");
+        const oldDataUrl = canvas.toDataURL("image/png");
 
         // Wait for the image to be fully decoded
         const img = new Image();
-        img.src = dataUrl;
+        img.src = oldDataUrl;
         try {
           await img.decode();
         } catch (e) {
-          console.warn("Screenshot decoding failed:", e);
+          console.warn("Old screenshot decoding failed:", e);
         }
 
         const currentTheme = resolvedTheme as Theme;
@@ -110,17 +125,37 @@ export function useThemeWipe({
           currentTheme === "dark" ? "bottom-up" : "top-down";
 
         setOriginalTheme(currentTheme);
+        setScreenshot(oldDataUrl);
+
+        // CRITICAL: Wait for the overlay to be painted with the old screenshot
+        await new Promise((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(resolve))
+        );
+
+        // Disable scrolling and switch theme in DOM (hidden behind overlay)
+        setScrollLock(true);
+        setTheme(newTheme);
+
+        // Wait for theme switch to settle and re-capture
+        await new Promise((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(resolve))
+        );
+
+        const newCanvas = await toCanvas(document.documentElement, options);
+        const newDataUrl = newCanvas.toDataURL("image/png");
+
+        const newImg = new Image();
+        newImg.src = newDataUrl;
+        try {
+          await newImg.decode();
+        } catch (e) {
+          console.warn("New screenshot decoding failed:", e);
+        }
+
+        setNewScreenshot(newDataUrl);
         setWipeDirection(direction);
         setAnimationTargetTheme(newTheme);
-        setScreenshot(dataUrl);
-
-        // CRITICAL: Wait for at least two frames to ensure the overlay is
-        // rendered and painted with the screenshot BEFORE switching the theme.
-        // This prevents the "flash" where the new theme shows before the overlay.
-        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-
-        setScrollLock(true); // Disable scrolling
-        setTheme(newTheme);
+        setIsCapturing(false);
       })
       .catch((error) => {
         console.error("html-to-image failed:", error);
@@ -128,13 +163,16 @@ export function useThemeWipe({
         // Fallback: switch theme without animation
         setTheme(resolvedTheme === "dark" ? "light" : "dark");
         setScreenshot(null);
+        setNewScreenshot(null);
         setScrollLock(false);
+        setIsCapturing(false);
       });
-  }, [screenshot, resolvedTheme, setTheme, setWipeDirection]);
+  }, [screenshot, isCapturing, resolvedTheme, setTheme, setWipeDirection]);
 
   return {
     toggleTheme,
     screenshot,
+    newScreenshot,
     animationStyles,
   };
 }

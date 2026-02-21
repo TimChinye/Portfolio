@@ -9,6 +9,8 @@ type GraphicProps = {
 export const Graphic = ({ fillClassName, strokeClassName, className }: GraphicProps) => (
   <svg
     viewBox="0 0 1783 302"
+    width="1783"
+    height="302"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     className={clsx("w-full h-auto", className)}
