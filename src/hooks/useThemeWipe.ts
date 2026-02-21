@@ -2,7 +2,7 @@
 
 import { useState, useCallback, Dispatch, SetStateAction } from "react";
 import { useTheme } from "next-themes";
-import { toPng } from "html-to-image";
+import { toCanvas } from "html-to-image";
 import { useWipeAnimation } from "@/hooks/useWipeAnimation";
 import { Theme, WipeDirection } from "@/components/features/ThemeSwitcher/types";
 import type { MotionValue } from "motion/react";
@@ -29,11 +29,14 @@ export function useThemeWipe({
   };
 
   const handleAnimationComplete = useCallback(() => {
-    setScreenshot(null);
-    setAnimationTargetTheme(null);
-    setWipeDirection(null);
-    setOriginalTheme(null);
-    setScrollLock(false);
+    // Use requestAnimationFrame to ensure the theme has settled before removing overlay
+    requestAnimationFrame(() => {
+      setScreenshot(null);
+      setAnimationTargetTheme(null);
+      setWipeDirection(null);
+      setOriginalTheme(null);
+      setScrollLock(false);
+    });
   }, [setWipeDirection]);
 
   const handleAnimationReturn = useCallback(() => {
@@ -63,12 +66,19 @@ export function useThemeWipe({
     }
 
     // Capture screenshot and start animation
-    toPng(document.documentElement, {
-      width: window.innerWidth,
-      height: window.innerHeight,
+    const width = document.documentElement.clientWidth;
+    const height = window.innerHeight;
+    const scrollY = window.scrollY;
+
+    toCanvas(document.documentElement, {
+      width,
+      height,
       style: {
-        transform: `translateY(-${window.scrollY}px)`,
+        transform: `translateY(-${scrollY}px)`,
         transformOrigin: "top left",
+        width: `${width}px`,
+        height: `${document.documentElement.scrollHeight}px`,
+        overflow: "hidden",
       },
       filter: (node) => {
         if (
@@ -82,8 +92,17 @@ export function useThemeWipe({
       pixelRatio: Math.max(window.devicePixelRatio, 2),
       cacheBust: true,
     })
-      .then((dataUrl) => {
-        setScrollLock(true); // Disable scrolling
+      .then(async (canvas) => {
+        const dataUrl = canvas.toDataURL("image/png");
+
+        // Wait for the image to be fully decoded
+        const img = new Image();
+        img.src = dataUrl;
+        try {
+          await img.decode();
+        } catch (e) {
+          console.warn("Screenshot decoding failed:", e);
+        }
 
         const currentTheme = resolvedTheme as Theme;
         const newTheme: Theme = currentTheme === "dark" ? "light" : "dark";
@@ -94,6 +113,13 @@ export function useThemeWipe({
         setWipeDirection(direction);
         setAnimationTargetTheme(newTheme);
         setScreenshot(dataUrl);
+
+        // CRITICAL: Wait for at least two frames to ensure the overlay is
+        // rendered and painted with the screenshot BEFORE switching the theme.
+        // This prevents the "flash" where the new theme shows before the overlay.
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+        setScrollLock(true); // Disable scrolling
         setTheme(newTheme);
       })
       .catch((error) => {

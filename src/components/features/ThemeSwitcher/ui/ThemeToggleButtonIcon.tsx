@@ -48,6 +48,8 @@ export function ThemeToggleButtonIcon({ onClick, progress, initialTheme }: Props
     >
       <motion.svg
         viewBox="0 0 18 18"
+        width="18"
+        height="18"
         className="size-full overflow-visible hover:text-[#948D00] hover:dark:text-[#D9D24D]"
         style={{ rotate: svgRotate }}
       >
