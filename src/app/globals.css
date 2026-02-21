@@ -70,3 +70,37 @@
   font-variation-settings: 'wght' 700;
   background-size: 100% 2px;
 }
+
+/* View Transitions */
+::view-transition-group(root) {
+  animation-duration: 1.25s;
+  pointer-events: none;
+  z-index: 0;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  display: block;
+  height: 100dvh;
+  width: 100dvw;
+  position: fixed;
+  inset: 0;
+}
+
+::view-transition-old(root) {
+  clip-path: var(--wipe-clip-path);
+  z-index: 100; /* Force old snapshot to stay on top */
+  opacity: 1 !important;
+}
+
+::view-transition-new(root) {
+  z-index: 0;
+  opacity: 0; /* Reveal the live DOM underneath, allowing moving elements to be seen */
+}
+
+::view-transition-group(navbar) {
+  animation: none;
+  z-index: 2000; /* Above everything */
+}

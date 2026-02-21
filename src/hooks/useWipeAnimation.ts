@@ -5,6 +5,7 @@ import {
   animate,
   MotionValue,
   useTransform,
+  useMotionValueEvent,
 } from "motion/react";
 import { Theme, WipeDirection } from "@/components/features/ThemeSwitcher/types";
 
@@ -57,6 +58,20 @@ export function useWipeAnimation({
       ? `inset(${p}% 0% 0% 0%)`
       : `inset(0% 0% ${p}% 0%)`
   );
+
+  // Sync the clip-path to a CSS variable for the View Transitions API.
+  // We use useMotionValueEvent to ensure the side-effect runs even if
+  // the clipPath motion value isn't directly rendered in the DOM.
+  useMotionValueEvent(wipeProgress, "change", (p) => {
+    if (typeof document === "undefined" || !wipeDirection) return;
+
+    const value =
+      wipeDirection === "top-down"
+        ? `inset(${p}% 0% 0% 0%)`
+        : `inset(0% 0% ${p}% 0%)`;
+
+    document.documentElement.style.setProperty("--wipe-clip-path", value);
+  });
 
   const dividerTop = useTransform(
     wipeProgress,
