@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback, Dispatch, SetStateAction } from "react";
+import { useState, useCallback, Dispatch, SetStateAction, useRef } from "react";
+import { flushSync } from "react-dom";
 import { useTheme } from "next-themes";
 import html2canvas from "html2canvas-pro";
 import { useWipeAnimation } from "@/hooks/useWipeAnimation";
@@ -20,20 +21,30 @@ export function useThemeWipe({
 }: UseThemeWipeProps) {
   const { setTheme, resolvedTheme } = useTheme();
   const [screenshot, setScreenshot] = useState<string | null>(null);
+  const [isNativeTransition, setIsNativeTransition] = useState(false);
   const [animationTargetTheme, setAnimationTargetTheme] = useState<Theme | null>(null);
   const [originalTheme, setOriginalTheme] = useState<Theme | null>(null);
+  const activeTransition = useRef<any>(null);
 
   const setScrollLock = (isLocked: boolean) => {
+    // For native transitions, we don't necessarily need to lock scroll,
+    // but we do for the fallback to avoid alignment issues.
     document.documentElement.style.overflow = isLocked ? 'hidden' : '';
     document.documentElement.style.scrollbarGutter = isLocked ? 'stable' : '';
   };
 
   const handleAnimationComplete = useCallback(() => {
     setScreenshot(null);
+    setIsNativeTransition(false);
     setAnimationTargetTheme(null);
     setWipeDirection(null);
     setOriginalTheme(null);
     setScrollLock(false);
+
+    if (activeTransition.current && 'skipTransition' in activeTransition.current) {
+      activeTransition.current.skipTransition();
+    }
+    activeTransition.current = null;
   }, [setWipeDirection]);
 
   const handleAnimationReturn = useCallback(() => {
@@ -41,10 +52,16 @@ export function useThemeWipe({
       setTheme(originalTheme);
     }
     setScreenshot(null);
+    setIsNativeTransition(false);
     setAnimationTargetTheme(null);
     setWipeDirection(null);
     setOriginalTheme(null);
     setScrollLock(false);
+
+    if (activeTransition.current && 'skipTransition' in activeTransition.current) {
+      activeTransition.current.skipTransition();
+    }
+    activeTransition.current = null;
   }, [originalTheme, setTheme, setWipeDirection]);
 
   const { ...animationStyles } = useWipeAnimation({
@@ -56,25 +73,57 @@ export function useThemeWipe({
   });
 
   const toggleTheme = useCallback(() => {
+    if (typeof document === "undefined") return;
+
+    const currentTheme = resolvedTheme as Theme;
+    const newTheme: Theme = currentTheme === "dark" ? "light" : "dark";
+
     // Reverse animation if already in progress
-    if (screenshot) {
+    if (screenshot || isNativeTransition) {
       setAnimationTargetTheme((prev) => (prev === "dark" ? "light" : "dark"));
       return;
     }
 
-    // Capture screenshot and start animation
+    // --- Primary Engine: View Transitions API ---
+    const isNativeSupported = "startViewTransition" in document;
+    if (isNativeSupported) {
+      const direction: WipeDirection =
+        currentTheme === "dark" ? "bottom-up" : "top-down";
+
+      setOriginalTheme(currentTheme);
+      setWipeDirection(direction);
+      // Wait for the transition to be "ready" before starting the animation
+      // We set the target theme to trigger the animate() in useWipeAnimation
+
+      setScrollLock(true);
+      const transition = (document as any).startViewTransition(() => {
+        flushSync(() => {
+          setTheme(newTheme);
+        });
+      });
+
+      activeTransition.current = transition;
+      setIsNativeTransition(true);
+      setAnimationTargetTheme(newTheme);
+
+      return;
+    }
+
+    // --- Fallback Engine: html2canvas ---
+    // Optimization: Capture only the viewport area and handle scale correctly
     html2canvas(document.documentElement, {
       useCORS: true,
       y: window.scrollY,
+      x: window.scrollX,
       width: window.innerWidth,
       height: window.innerHeight,
-      scale: Math.max(window.devicePixelRatio, 2)
+      scale: window.devicePixelRatio, // Match exact pixel ratio to avoid jumps
+      logging: false,
+      backgroundColor: null,
     })
     .then((canvas) => {
-      setScrollLock(true); // Disable scrolling
+      setScrollLock(true);
 
-      const currentTheme = resolvedTheme as Theme;
-      const newTheme: Theme = currentTheme === "dark" ? "light" : "dark";
       const direction: WipeDirection =
         currentTheme === "dark" ? "bottom-up" : "top-down";
 
@@ -85,14 +134,13 @@ export function useThemeWipe({
       setTheme(newTheme);
     })
     .catch((error) => {
-      console.error("html2canvas failed:", error);
-
-      // Fallback: switch theme without animation
-      setTheme(resolvedTheme === "dark" ? "light" : "dark");
+      console.error("Theme transition failed:", error);
+      setTheme(newTheme);
       setScreenshot(null);
+      setIsNativeTransition(false);
       setScrollLock(false);
     });
-  }, [screenshot, resolvedTheme, setTheme, setWipeDirection]);
+  }, [screenshot, isNativeTransition, resolvedTheme, setTheme, setWipeDirection]);
 
   return {
     toggleTheme,

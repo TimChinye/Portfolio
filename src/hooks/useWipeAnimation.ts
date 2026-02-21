@@ -52,11 +52,18 @@ export function useWipeAnimation({
   }, [animationTargetTheme, wipeDirection, wipeProgress, onAnimationComplete, onAnimationReturn]);
 
   // Transform the progress value into CSS properties.
-  const clipPath = useTransform(wipeProgress, (p) =>
-    wipeDirection === "top-down"
-      ? `inset(${p}% 0% 0% 0%)`
-      : `inset(0% 0% ${p}% 0%)`
-  );
+  const clipPath = useTransform(wipeProgress, (p) => {
+    const value =
+      wipeDirection === "top-down"
+        ? `inset(${p}% 0% 0% 0%)`
+        : `inset(0% 0% ${p}% 0%)`;
+
+    if (typeof document !== "undefined") {
+      document.documentElement.style.setProperty("--wipe-clip-path", value);
+    }
+
+    return value;
+  });
 
   const dividerTop = useTransform(
     wipeProgress,
