@@ -3,7 +3,7 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { createPortal } from "react-dom";
 import { useTheme } from "next-themes";
-import { useThemeWipe } from "../../../hooks/useThemeWipe";
+import { useThemeTransition } from "../../../hooks/useThemeTransition";
 import { ThemeToggleButtonIcon } from "./ui/ThemeToggleButtonIcon";
 import { WipeAnimationOverlay } from "./ui/WipeAnimationOverlay";
 import { Theme, WipeDirection } from "./types";
@@ -27,7 +27,7 @@ export function ThemeSwitcher({
   const [mounted, setMounted] = useState(false);
   
   const { resolvedTheme } = useTheme();
-  const { toggleTheme, screenshot, animationStyles } = useThemeWipe({
+  const { toggleTheme, screenshot, isPreparing, animationStyles, activeStrategy } = useThemeTransition({
     wipeProgress,
     wipeDirection,
     setWipeDirection,
@@ -51,6 +51,7 @@ export function ThemeSwitcher({
         onClick={toggleTheme}
         progress={wipeProgress}
         initialTheme={initialThemeForIcon}
+        isPreparing={isPreparing}
       />
 
       {createPortal(
