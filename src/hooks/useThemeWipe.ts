@@ -43,6 +43,7 @@ export function useThemeWipe({
       setOriginalTheme(null);
       setScrollLock(false);
       wipeProgress.set(0);
+      document.documentElement.removeAttribute('data-wipe-direction');
     }, 50);
   }, [setWipeDirection, wipeProgress]);
 
@@ -58,6 +59,7 @@ export function useThemeWipe({
       setOriginalTheme(null);
       setScrollLock(false);
       wipeProgress.set(0);
+      document.documentElement.removeAttribute('data-wipe-direction');
     }, 50);
   }, [originalTheme, setTheme, setWipeDirection, wipeProgress]);
 
@@ -70,27 +72,34 @@ export function useThemeWipe({
   });
 
   const toggleTheme = useCallback(async () => {
+    const currentTheme = resolvedTheme as Theme;
+    const newTheme: Theme = currentTheme === "dark" ? "light" : "dark";
+
     // Reverse animation if already in progress
     if (snapshots || isCapturing) {
       const nextTarget = animationTargetTheme === "dark" ? "light" : "dark";
       setAnimationTargetTheme(nextTarget);
-      // Note: We do NOT call setTheme here. The theme was changed optimistically
-      // and stays that way until the animation completes or returns.
+
+      // If we are in a View Transition, we might need a different approach to reverse it.
+      // But for now, let's keep the existing logic for snapshot-based reversal.
       return;
     }
 
     setIsCapturing(true);
     setScrollLock(true); // Freeze the screen immediately
 
-    const currentTheme = resolvedTheme as Theme;
-    const newTheme: Theme = currentTheme === "dark" ? "light" : "dark";
     setOriginalTheme(currentTheme);
     setAnimationTargetTheme(newTheme);
 
-    try {
-      const direction: WipeDirection =
-        currentTheme === "dark" ? "bottom-up" : "top-down";
+    const direction: WipeDirection =
+      currentTheme === "dark" ? "bottom-up" : "top-down";
 
+    // 5-second timeout for the whole snapshot process
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Snapshot timeout")), 5000)
+    );
+
+    try {
       // Optimization: Identify elements outside the viewport to prune them during capture.
       // This significantly speeds up snapshotting on long pages by reducing the DOM size processed by modern-screenshot.
       const getOptimizedCaptureOptions = () => {
@@ -156,8 +165,11 @@ export function useThemeWipe({
         };
       };
 
-      // 1. Capture current theme
-      const snapshotA = await domToPng(document.documentElement, getOptimizedCaptureOptions());
+      // 1. Capture current theme (with timeout)
+      const snapshotA = await Promise.race([
+        domToPng(document.documentElement, getOptimizedCaptureOptions()),
+        timeoutPromise
+      ]) as string;
 
       // Mask the theme change immediately to avoid the flash of the new theme
       setSnapshots({ a: snapshotA, b: snapshotA });
@@ -170,18 +182,46 @@ export function useThemeWipe({
       // 3. Wait for the theme change to reflect in the DOM
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-      // 4. Capture new theme
-      const snapshotB = await domToPng(document.documentElement, getOptimizedCaptureOptions());
+      // 4. Capture new theme (with timeout)
+      const snapshotB = await Promise.race([
+        domToPng(document.documentElement, getOptimizedCaptureOptions()),
+        timeoutPromise
+      ]) as string;
 
       setWipeDirection(direction);
       // We don't overwrite animationTargetTheme here because it might have been flipped mid-capture
       setSnapshots({ a: snapshotA, b: snapshotB });
     } catch (error) {
-      console.error("Theme wipe failed:", error);
-      // Fallback
-      setTheme(resolvedTheme === "dark" ? "light" : "dark");
+      console.warn("Theme wipe snapshot failed or timed out, falling back to View Transition API:", error);
+
+      // Fallback to View Transition API
+      if (typeof document !== 'undefined' && 'startViewTransition' in document) {
+        // Set direction attribute for CSS animations
+        document.documentElement.setAttribute('data-wipe-direction', direction);
+
+        // Start the wipe progress animation so icon and CSS variables update
+        setWipeDirection(direction);
+
+        const transition = (document as any).startViewTransition(async () => {
+          setTheme(newTheme);
+          // Small delay to ensure theme is applied before transition proceeds
+          await new Promise(r => setTimeout(r, 0));
+        });
+
+        try {
+          await transition.finished;
+        } finally {
+          document.documentElement.removeAttribute('data-wipe-direction');
+          // Cleanup is also handled by handleAnimationComplete/Return via the setWipeDirection(direction) above
+        }
+      } else {
+        // Final fallback: switch theme without animation
+        setTheme(newTheme);
+        setScrollLock(false);
+        setAnimationTargetTheme(null);
+        setOriginalTheme(null);
+      }
       setSnapshots(null);
-      setScrollLock(false);
     } finally {
       setIsCapturing(false);
     }

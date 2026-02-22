@@ -45,6 +45,47 @@
   }
 }
 
+/* View Transition Fallback Styles */
+:root {
+  --wipe-progress: 0%;
+}
+
+::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  display: block;
+}
+
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  display: block;
+}
+
+::view-transition-group(navbar) {
+  z-index: 1000000;
+}
+
+[data-wipe-direction="top-down"]::view-transition-old(root) {
+  clip-path: inset(var(--wipe-progress) 0 0 0);
+  z-index: 2;
+}
+
+[data-wipe-direction="bottom-up"]::view-transition-old(root) {
+  clip-path: inset(0 0 var(--wipe-progress) 0);
+  z-index: 2;
+}
+
+[data-wipe-direction]::view-transition-new(root) {
+  z-index: 1;
+}
+
+/* Keep transition alive for the duration of the JS animation */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 1.25s;
+}
+
 .wavy-text-container {
   display: inline-flex;
   -webkit-font-smoothing: antialiased;
