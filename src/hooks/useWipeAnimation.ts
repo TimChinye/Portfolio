@@ -40,10 +40,8 @@ export function useWipeAnimation({
       onComplete: () => {
         if (isWipeCompleting) {
           onAnimationComplete();
-          wipeProgress.set(0);
         } else {
           onAnimationReturn();
-          // wipeProgress.set(0);
         }
       },
     });
@@ -52,11 +50,11 @@ export function useWipeAnimation({
   }, [animationTargetTheme, wipeDirection, wipeProgress, onAnimationComplete, onAnimationReturn]);
 
   // Transform the progress value into CSS properties.
-  const clipPath = useTransform(wipeProgress, (p) =>
-    wipeDirection === "top-down"
-      ? `inset(${p}% 0% 0% 0%)`
-      : `inset(0% 0% ${p}% 0%)`
-  );
+  const clipPath = useTransform(wipeProgress, (p) => {
+    if (wipeDirection === "top-down") return `inset(${p}% 0% 0% 0%)`;
+    if (wipeDirection === "bottom-up") return `inset(0% 0% ${p}% 0%)`;
+    return "inset(0% 0% 0% 0%)";
+  });
 
   const dividerTop = useTransform(
     wipeProgress,
@@ -64,7 +62,5 @@ export function useWipeAnimation({
     wipeDirection === "top-down" ? ["0vh", "100vh"] : ["100vh", "0vh"]
   );
 
-  const dividerTranslate = wipeDirection === "top-down" ? "0 -100%" : "0 0";
-
-  return { clipPath, dividerTop, dividerTranslate, wipeProgress };
+  return { clipPath, dividerTop, wipeProgress };
 }

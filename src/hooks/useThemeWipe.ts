@@ -2,7 +2,7 @@
 
 import { useState, useCallback, Dispatch, SetStateAction } from "react";
 import { useTheme } from "next-themes";
-import html2canvas from "html2canvas-pro";
+import { domToPng } from "modern-screenshot";
 import { useWipeAnimation } from "@/hooks/useWipeAnimation";
 import { Theme, WipeDirection } from "@/components/features/ThemeSwitcher/types";
 import type { MotionValue } from "motion/react";
@@ -13,13 +13,19 @@ type UseThemeWipeProps = {
   setWipeDirection: Dispatch<SetStateAction<WipeDirection | null>>;
 };
 
+export type Snapshots = {
+  a: string; // Original theme
+  b: string; // Target theme
+};
+
 export function useThemeWipe({
   wipeProgress,
   wipeDirection,
   setWipeDirection,
 }: UseThemeWipeProps) {
   const { setTheme, resolvedTheme } = useTheme();
-  const [screenshot, setScreenshot] = useState<string | null>(null);
+  const [snapshots, setSnapshots] = useState<Snapshots | null>(null);
+  const [isCapturing, setIsCapturing] = useState(false);
   const [animationTargetTheme, setAnimationTargetTheme] = useState<Theme | null>(null);
   const [originalTheme, setOriginalTheme] = useState<Theme | null>(null);
 
@@ -29,23 +35,31 @@ export function useThemeWipe({
   };
 
   const handleAnimationComplete = useCallback(() => {
-    setScreenshot(null);
-    setAnimationTargetTheme(null);
-    setWipeDirection(null);
-    setOriginalTheme(null);
-    setScrollLock(false);
-  }, [setWipeDirection]);
+    // Tiny delay to ensure the live page has fully rendered behind the snapshot
+    setTimeout(() => {
+      setSnapshots(null);
+      setAnimationTargetTheme(null);
+      setWipeDirection(null);
+      setOriginalTheme(null);
+      setScrollLock(false);
+      wipeProgress.set(0);
+    }, 50);
+  }, [setWipeDirection, wipeProgress]);
 
   const handleAnimationReturn = useCallback(() => {
     if (originalTheme) {
       setTheme(originalTheme);
     }
-    setScreenshot(null);
-    setAnimationTargetTheme(null);
-    setWipeDirection(null);
-    setOriginalTheme(null);
-    setScrollLock(false);
-  }, [originalTheme, setTheme, setWipeDirection]);
+    // Tiny delay to ensure the live page has fully rendered behind the snapshot
+    setTimeout(() => {
+      setSnapshots(null);
+      setAnimationTargetTheme(null);
+      setWipeDirection(null);
+      setOriginalTheme(null);
+      setScrollLock(false);
+      wipeProgress.set(0);
+    }, 50);
+  }, [originalTheme, setTheme, setWipeDirection, wipeProgress]);
 
   const { ...animationStyles } = useWipeAnimation({
     animationTargetTheme,
@@ -55,48 +69,91 @@ export function useThemeWipe({
     wipeProgress,
   });
 
-  const toggleTheme = useCallback(() => {
+  const toggleTheme = useCallback(async () => {
     // Reverse animation if already in progress
-    if (screenshot) {
-      setAnimationTargetTheme((prev) => (prev === "dark" ? "light" : "dark"));
+    if (snapshots || isCapturing) {
+      const nextTarget = animationTargetTheme === "dark" ? "light" : "dark";
+      setAnimationTargetTheme(nextTarget);
+      // Note: We do NOT call setTheme here. The theme was changed optimistically
+      // and stays that way until the animation completes or returns.
       return;
     }
 
-    // Capture screenshot and start animation
-    html2canvas(document.documentElement, {
-      useCORS: true,
-      y: window.scrollY,
-      width: window.innerWidth,
-      height: window.innerHeight,
-      scale: Math.max(window.devicePixelRatio, 2)
-    })
-    .then((canvas) => {
-      setScrollLock(true); // Disable scrolling
+    setIsCapturing(true);
+    setScrollLock(true); // Freeze the screen immediately
 
-      const currentTheme = resolvedTheme as Theme;
-      const newTheme: Theme = currentTheme === "dark" ? "light" : "dark";
+    const currentTheme = resolvedTheme as Theme;
+    const newTheme: Theme = currentTheme === "dark" ? "light" : "dark";
+    setOriginalTheme(currentTheme);
+    setAnimationTargetTheme(newTheme);
+
+    try {
       const direction: WipeDirection =
         currentTheme === "dark" ? "bottom-up" : "top-down";
 
-      setOriginalTheme(currentTheme);
-      setWipeDirection(direction);
-      setAnimationTargetTheme(newTheme);
-      setScreenshot(canvas.toDataURL());
-      setTheme(newTheme);
-    })
-    .catch((error) => {
-      console.error("html2canvas failed:", error);
+      const captureOptions = {
+        useCORS: true,
+        width: document.documentElement.clientWidth,
+        height: window.innerHeight,
+        scale: Math.max(window.devicePixelRatio, 2),
+        filter: (node: Node) => {
+          if (node instanceof HTMLElement || node instanceof SVGElement) {
+            if (node.hasAttribute('data-html2canvas-ignore')) return false;
 
-      // Fallback: switch theme without animation
+            // Safe optimization: Only prune elements that are entirely below the viewport.
+            // We do NOT prune elements above the viewport anymore because it causes layout shifts
+            // and transparency bugs that are hard to compensate for reliably across all designs.
+            const rect = node.getBoundingClientRect();
+            const buffer = 200;
+            if (rect.top > window.innerHeight + buffer) return false;
+          }
+          return true;
+        },
+        style: {
+          width: `${document.documentElement.clientWidth}px`,
+          height: `${document.documentElement.scrollHeight}px`,
+          transform: `translateY(-${window.scrollY}px)`,
+          transformOrigin: 'top left',
+          overflow: 'visible',
+        }
+      };
+
+      // 1. Capture current theme
+      const snapshotA = await domToPng(document.documentElement, captureOptions);
+
+      // Mask the theme change immediately to avoid the flash of the new theme
+      setSnapshots({ a: snapshotA, b: snapshotA });
+      // Ensure the overlay is rendered before we switch the underlying theme
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      // 2. Switch theme (Optimistic Change)
+      setTheme(newTheme);
+
+      // 3. Wait for the theme change to reflect in the DOM
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      // 4. Capture new theme
+      const snapshotB = await domToPng(document.documentElement, captureOptions);
+
+      setWipeDirection(direction);
+      // We don't overwrite animationTargetTheme here because it might have been flipped mid-capture
+      setSnapshots({ a: snapshotA, b: snapshotB });
+    } catch (error) {
+      console.error("Theme wipe failed:", error);
+      // Fallback
       setTheme(resolvedTheme === "dark" ? "light" : "dark");
-      setScreenshot(null);
+      setSnapshots(null);
       setScrollLock(false);
-    });
-  }, [screenshot, resolvedTheme, setTheme, setWipeDirection]);
+    } finally {
+      setIsCapturing(false);
+    }
+  }, [snapshots, isCapturing, resolvedTheme, setTheme, setWipeDirection, animationTargetTheme]);
 
   return {
     toggleTheme,
-    screenshot,
+    snapshots,
+    isCapturing,
+    originalTheme,
     animationStyles,
   };
 }

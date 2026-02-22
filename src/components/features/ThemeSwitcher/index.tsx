@@ -27,7 +27,7 @@ export function ThemeSwitcher({
   const [mounted, setMounted] = useState(false);
   
   const { resolvedTheme } = useTheme();
-  const { toggleTheme, screenshot, animationStyles } = useThemeWipe({
+  const { toggleTheme, snapshots, isCapturing, originalTheme, animationStyles } = useThemeWipe({
     wipeProgress,
     wipeDirection,
     setWipeDirection,
@@ -41,9 +41,7 @@ export function ThemeSwitcher({
     return <LoadingIcon />;
   }
 
-  const initialThemeForIcon = wipeDirection
-    ? wipeDirection === "top-down" ? "light" : "dark"
-    : (resolvedTheme as Theme);
+  const initialThemeForIcon = originalTheme || (resolvedTheme as Theme);
 
   return (
     <>
@@ -51,13 +49,13 @@ export function ThemeSwitcher({
         onClick={toggleTheme}
         progress={wipeProgress}
         initialTheme={initialThemeForIcon}
+        isLoading={isCapturing}
       />
 
       {createPortal(
         <WipeAnimationOverlay
-          screenshot={screenshot}
+          snapshots={snapshots}
           animationStyles={animationStyles}
-          wipeDirection={wipeDirection}
         />,
         document.body
       )}

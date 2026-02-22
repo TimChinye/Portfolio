@@ -7,6 +7,7 @@ type Props = {
   onClick: () => void;
   progress: MotionValue<number>;
   initialTheme: Theme;
+  isLoading?: boolean;
 };
 
 // Calculate transform ranges for sun rays based on theme direction
@@ -21,7 +22,7 @@ const getRayTransformParams = (isGoingToDark: boolean, index: number): [number[]
   return [inputRange, outputRange];
 };
 
-export function ThemeToggleButtonIcon({ onClick, progress, initialTheme }: Props) {
+export function ThemeToggleButtonIcon({ onClick, progress, initialTheme, isLoading }: Props) {
   const isGoingToDark = initialTheme === 'light';
 
   // Main hooks
@@ -43,39 +44,43 @@ export function ThemeToggleButtonIcon({ onClick, progress, initialTheme }: Props
   return (
     <button
       onClick={onClick}
-      className="relative h-8 w-8 cursor-pointer"
+      className="relative h-8 w-8 cursor-pointer flex items-center justify-center"
       aria-label="Toggle theme"
     >
-      <motion.svg
-        viewBox="0 0 18 18"
-        className="size-full overflow-visible hover:text-[#948D00] hover:dark:text-[#D9D24D]"
-        style={{ rotate: svgRotate }}
-      >
-        <mask id="moon-mask">
-          <rect x="0" y="0" width="18" height="18" fill="white" />
-          <motion.circle cx="10" cy="2" r="8" fill="black" style={{ x: moonMaskX }} />
-        </mask>
-        <motion.circle
-          cx="9"
-          cy="9"
-          r="8"
-          className="fill-current"
-          mask="url(#moon-mask)"
-          style={{ scale: sunCircleScale, rotate: sunCircleRotate }}
-        />
-        <g>
-          {sunRayScales.map((scale, i) => (
-             <motion.circle
-              key={i}
-              cx={9 + 8 * Math.cos(i * 60 * Math.PI / 180)}
-              cy={9 + 8 * Math.sin(i * 60 * Math.PI / 180)}
-              r="1.5"
-              className="fill-current"
-              style={{ scale }}
-            />
-          ))}
-        </g>
-      </motion.svg>
+      {isLoading ? (
+        <span className="relative inline-block w-full h-full inset-[2px_-2px] before:content-[''] before:absolute before:inset-0 before:rounded-full before:bg-black dark:before:bg-white after:content-[''] after:absolute after:inset-0 after:rounded-full after:bg-black dark:after:bg-white before:animate-[animloader_1s_linear_infinite] after:animate-[animloader_1s_linear_infinite] after:animate-delay-[0.25s]"></span>
+      ) : (
+        <motion.svg
+          viewBox="0 0 18 18"
+          className="size-full overflow-visible hover:text-[#948D00] hover:dark:text-[#D9D24D]"
+          style={{ rotate: svgRotate }}
+        >
+          <mask id="moon-mask">
+            <rect x="0" y="0" width="18" height="18" fill="white" />
+            <motion.circle cx="10" cy="2" r="8" fill="black" style={{ x: moonMaskX }} />
+          </mask>
+          <motion.circle
+            cx="9"
+            cy="9"
+            r="8"
+            className="fill-current"
+            mask="url(#moon-mask)"
+            style={{ scale: sunCircleScale, rotate: sunCircleRotate }}
+          />
+          <g>
+            {sunRayScales.map((scale, i) => (
+              <motion.circle
+                key={i}
+                cx={9 + 8 * Math.cos(i * 60 * Math.PI / 180)}
+                cy={9 + 8 * Math.sin(i * 60 * Math.PI / 180)}
+                r="1.5"
+                className="fill-current"
+                style={{ scale }}
+              />
+            ))}
+          </g>
+        </motion.svg>
+      )}
     </button>
   );
 }
