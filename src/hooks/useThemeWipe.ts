@@ -42,8 +42,9 @@ export function useThemeWipe({
       setWipeDirection(null);
       setOriginalTheme(null);
       setScrollLock(false);
+      wipeProgress.set(0);
     }, 50);
-  }, [setWipeDirection]);
+  }, [setWipeDirection, wipeProgress]);
 
   const handleAnimationReturn = useCallback(() => {
     if (originalTheme) {
@@ -56,8 +57,9 @@ export function useThemeWipe({
       setWipeDirection(null);
       setOriginalTheme(null);
       setScrollLock(false);
+      wipeProgress.set(0);
     }, 50);
-  }, [originalTheme, setTheme, setWipeDirection]);
+  }, [originalTheme, setTheme, setWipeDirection, wipeProgress]);
 
   const { ...animationStyles } = useWipeAnimation({
     animationTargetTheme,
@@ -92,6 +94,7 @@ export function useThemeWipe({
       const direction: WipeDirection =
         currentTheme === "dark" ? "bottom-up" : "top-down";
 
+      setOriginalTheme(currentTheme);
       setAnimationTargetTheme(newTheme);
 
       const captureOptions = {
@@ -133,7 +136,6 @@ export function useThemeWipe({
       // 4. Capture new theme
       const snapshotB = await domToPng(document.documentElement, captureOptions);
 
-      setOriginalTheme(currentTheme);
       setWipeDirection(direction);
       // We don't overwrite animationTargetTheme here because it might have been flipped mid-capture
       setSnapshots({ a: snapshotA, b: snapshotB });
@@ -152,6 +154,7 @@ export function useThemeWipe({
     toggleTheme,
     snapshots,
     isCapturing,
+    originalTheme,
     animationStyles,
   };
 }
