@@ -40,10 +40,8 @@ export function useWipeAnimation({
       onComplete: () => {
         if (isWipeCompleting) {
           onAnimationComplete();
-          wipeProgress.set(0);
         } else {
           onAnimationReturn();
-          // wipeProgress.set(0);
         }
       },
     });

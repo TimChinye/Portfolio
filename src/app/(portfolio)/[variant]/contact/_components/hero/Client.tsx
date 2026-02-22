@@ -80,7 +80,6 @@ export function Client() {
             WebkitTextStroke: '0.0125em',
             WebkitTextStrokeColor: mounted && resolvedTheme === 'dark' ? '#F5F5EF' : '#2F2F2B'
           }}
-          data-html2canvas-ignore="true"
         >
           <TextContent />
         </h1>

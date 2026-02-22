@@ -164,7 +164,6 @@ export const PointingArrow = ({
       ref={anchorRef}
       className={clsx('pointing-arrow contain-layout absolute w-px h-px', className)}
       aria-hidden="true"
-      data-html2canvas-ignore="true"
     >
       <motion.svg
         key={svgSize}

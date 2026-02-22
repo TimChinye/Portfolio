@@ -5,6 +5,7 @@ import type { WipeDirection } from "../types";
 
 interface WipeAnimationOverlayProps {
   screenshot: string | null;
+  newScreenshot?: string | null;
   wipeDirection: WipeDirection | null;
   animationStyles: {
     clipPath: MotionValue<string>;
@@ -15,16 +16,27 @@ interface WipeAnimationOverlayProps {
 
 export function WipeAnimationOverlay({
   screenshot,
+  newScreenshot,
   animationStyles: { clipPath, dividerTop, dividerTranslate },
 }: WipeAnimationOverlayProps) {
   return (
     <AnimatePresence>
       {screenshot && (
         <>
+          {newScreenshot && (
+            <motion.div
+              key="theme-switcher-new-overlay"
+              data-html2canvas-ignore="true"
+              className="fixed inset-0 z-9999 h-screen w-full pointer-events-none bg-[size:100%_100%]"
+              style={{
+                backgroundImage: `url(${newScreenshot})`,
+              }}
+            />
+          )}
           <motion.div
             key="theme-switcher-overlay"
             data-html2canvas-ignore="true"
-            className={`fixed top-0 left-0 z-10000 h-screen w-full pointer-events-none bg-size-[100%_100%]`}
+            className={`fixed top-0 left-0 z-10000 h-screen w-full pointer-events-none bg-[size:100%_100%]`}
             style={{
               backgroundImage: `url(${screenshot})`,
               clipPath,
@@ -33,7 +45,7 @@ export function WipeAnimationOverlay({
           <motion.div
             key="theme-switcher-divider"
             data-html2canvas-ignore="true"
-            className="fixed top-0 left-0 z-10000 h-1 w-full pointer-events-none bg-[#D9D24D]"
+            className="fixed top-0 left-0 z-10001 h-1 w-full pointer-events-none bg-[#D9D24D]"
             style={{
               top: dividerTop,
               translate: dividerTranslate,

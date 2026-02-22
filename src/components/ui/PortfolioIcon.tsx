@@ -19,8 +19,8 @@ export const PortfolioIcon = ({
   translateY = 0,
 }: PortfolioIconProps) => (
   <svg
-    width="100%"
-    height="100%"
+    width="64"
+    height="67"
     viewBox="0 0 64 67"
     xmlns="http://www.w3.org/2000/svg"
     className={className}
