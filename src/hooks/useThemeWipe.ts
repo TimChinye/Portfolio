@@ -94,8 +94,11 @@ export function useThemeWipe({
         overflow: "hidden",
       },
       filter: (node: Node) => {
-        if (node instanceof HTMLElement || node instanceof SVGElement) {
-          return node.getAttribute("data-html2canvas-ignore") !== "true";
+        if (
+          node instanceof HTMLElement &&
+          node.dataset.html2canvasIgnore === "true"
+        ) {
+          return false;
         }
         return true;
       },
