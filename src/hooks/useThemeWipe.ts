@@ -97,22 +97,22 @@ export function useThemeWipe({
         height: window.innerHeight,
         scale: Math.max(window.devicePixelRatio, 2),
         filter: (node: Node) => {
-          if (node instanceof HTMLElement) {
+          if (node instanceof HTMLElement || node instanceof SVGElement) {
             if (node.hasAttribute('data-html2canvas-ignore')) return false;
 
-            // Only capture what's visible in the viewport
             const rect = node.getBoundingClientRect();
-            const buffer = 100; // Small buffer for safety
-            return (
-              rect.bottom >= -buffer &&
-              rect.top <= window.innerHeight + buffer &&
-              rect.right >= -buffer &&
-              rect.left <= window.innerWidth + buffer
-            );
+            const buffer = 100;
+            // Only skip elements that are BELOW the viewport.
+            // Skipping elements ABOVE can break layout shifts for elements below them.
+            if (rect.top > window.innerHeight + buffer) return false;
           }
           return true;
         },
         style: {
+          height: 'auto',
+          minHeight: 'auto',
+          maxHeight: 'none',
+          overflow: 'visible',
           transform: `translateY(-${window.scrollY}px)`,
           transformOrigin: 'top left',
         }
