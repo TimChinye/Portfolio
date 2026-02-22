@@ -20,6 +20,7 @@
     "@vercel/analytics": "^1.6.1",
     "clsx": "^2.1.1",
     "html2canvas-pro": "^1.5.12",
+    "modern-screenshot": "^4.6.8",
     "motion": "^12.23.24",
     "next": "16.0.7",
     "next-mdx-remote": "^6.0.0",
