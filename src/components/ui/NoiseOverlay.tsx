@@ -52,7 +52,7 @@ export const NoiseOverlay = ({
 
   return (
     <>
-      <svg className="absolute w-0 h-0" aria-hidden="true">
+      <svg className="absolute w-0 h-0" aria-hidden="true" data-html2canvas-ignore="true">
         <defs>
           <filter id={filterId}>
             <feTurbulence
@@ -82,6 +82,7 @@ export const NoiseOverlay = ({
           className
         )}
         style={{ filter: `url(#${filterId})` }}
+        data-html2canvas-ignore="true"
       />
     </>
   );

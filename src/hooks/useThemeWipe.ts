@@ -91,35 +91,73 @@ export function useThemeWipe({
       const direction: WipeDirection =
         currentTheme === "dark" ? "bottom-up" : "top-down";
 
-      const captureOptions = {
-        useCORS: true,
-        width: document.documentElement.clientWidth,
-        height: window.innerHeight,
-        scale: Math.max(window.devicePixelRatio, 2),
-        filter: (node: Node) => {
-          if (node instanceof HTMLElement || node instanceof SVGElement) {
-            if (node.hasAttribute('data-html2canvas-ignore')) return false;
+      // Optimization: Identify elements outside the viewport to prune them during capture.
+      // This significantly speeds up snapshotting on long pages by reducing the DOM size processed by modern-screenshot.
+      const getOptimizedCaptureOptions = () => {
+        const elementsToSkip = new Set<Node>();
+        let shift = 0;
+        const vh = window.innerHeight;
+        const scrollY = window.scrollY;
+        const buffer = 200;
 
-            // Safe optimization: Only prune elements that are entirely below the viewport.
-            // We do NOT prune elements above the viewport anymore because it causes layout shifts
-            // and transparency bugs that are hard to compensate for reliably across all designs.
-            const rect = node.getBoundingClientRect();
-            const buffer = 200;
-            if (rect.top > window.innerHeight + buffer) return false;
+        // Target direct children of the main content container to avoid double-counting and nesting issues.
+        const mainContent = document.querySelector('.flex.flex-col') || document.body;
+        const children = Array.from(mainContent.children);
+
+        let firstVisibleChild = null;
+        const parentRect = mainContent.getBoundingClientRect();
+
+        for (const child of children) {
+          if (!(child instanceof HTMLElement || child instanceof SVGElement)) continue;
+          if (child.hasAttribute('data-html2canvas-ignore')) continue;
+
+          const rect = child.getBoundingClientRect();
+
+          // Entirely above viewport (with buffer)
+          if (rect.bottom < -buffer) {
+            elementsToSkip.add(child);
           }
-          return true;
-        },
-        style: {
-          width: `${document.documentElement.clientWidth}px`,
-          height: `${document.documentElement.scrollHeight}px`,
-          transform: `translateY(-${window.scrollY}px)`,
-          transformOrigin: 'top left',
-          overflow: 'visible',
+          // At least partially visible or below
+          else {
+            if (!firstVisibleChild) {
+              firstVisibleChild = child;
+              // Calculate vertical shift: the distance from the container's top to this element's top.
+              // When preceding siblings are pruned, this element will move up to the container's top.
+              shift = rect.top - parentRect.top;
+            }
+
+            // Entirely below viewport (with buffer)
+            if (rect.top > vh + buffer) {
+              elementsToSkip.add(child);
+            }
+          }
         }
+
+        return {
+          useCORS: true,
+          width: document.documentElement.clientWidth,
+          height: vh,
+          scale: Math.max(window.devicePixelRatio, 2),
+          filter: (node: Node) => {
+            if (elementsToSkip.has(node)) return false;
+            if (node instanceof HTMLElement || node instanceof SVGElement) {
+              if (node.hasAttribute('data-html2canvas-ignore')) return false;
+            }
+            return true;
+          },
+          style: {
+            width: `${document.documentElement.clientWidth}px`,
+            height: `${vh}px`,
+            // Adjust the scroll position to compensate for the pruned content above the viewport.
+            transform: `translateY(-${Math.max(0, scrollY - shift)}px)`,
+            transformOrigin: 'top left',
+            overflow: 'hidden',
+          }
+        };
       };
 
       // 1. Capture current theme
-      const snapshotA = await domToPng(document.documentElement, captureOptions);
+      const snapshotA = await domToPng(document.documentElement, getOptimizedCaptureOptions());
 
       // Mask the theme change immediately to avoid the flash of the new theme
       setSnapshots({ a: snapshotA, b: snapshotA });
@@ -133,7 +171,7 @@ export function useThemeWipe({
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
       // 4. Capture new theme
-      const snapshotB = await domToPng(document.documentElement, captureOptions);
+      const snapshotB = await domToPng(document.documentElement, getOptimizedCaptureOptions());
 
       setWipeDirection(direction);
       // We don't overwrite animationTargetTheme here because it might have been flipped mid-capture
