@@ -49,9 +49,8 @@ export function Navbar() {
   return (
     <>
       <nav
-        className="fixed flex items-center p-4 z-100000 gap-4 w-full justify-between md:justify-start pointer-events-none"
+        className="fixed flex items-center p-4 z-100000 gap-4 w-full justify-between md:justify-start pointer-events-none view-transition-navbar"
         data-html2canvas-ignore="true"
-        style={{ viewTransitionName: 'navbar' } as React.CSSProperties}
       >
         <Link
           href="/"

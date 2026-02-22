@@ -76,12 +76,9 @@ export function useThemeWipe({
     const newTheme: Theme = currentTheme === "dark" ? "light" : "dark";
 
     // Reverse animation if already in progress
-    if (snapshots || isCapturing) {
+    if (snapshots || isCapturing || wipeDirection) {
       const nextTarget = animationTargetTheme === "dark" ? "light" : "dark";
       setAnimationTargetTheme(nextTarget);
-
-      // If we are in a View Transition, we might need a different approach to reverse it.
-      // But for now, let's keep the existing logic for snapshot-based reversal.
       return;
     }
 
@@ -201,6 +198,9 @@ export function useThemeWipe({
 
         // Start the wipe progress animation so icon and CSS variables update
         setWipeDirection(direction);
+
+        // Stop capturing early so the icon can animate immediately
+        setIsCapturing(false);
 
         const transition = (document as any).startViewTransition(async () => {
           setTheme(newTheme);
