@@ -121,6 +121,11 @@ export function useThemeWipe({
       // 1. Capture current theme
       const snapshotA = await domToPng(document.documentElement, captureOptions);
 
+      // Mask the theme change immediately to avoid the flash of the new theme
+      setSnapshots({ a: snapshotA, b: snapshotA });
+      // Ensure the overlay is rendered before we switch the underlying theme
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
       // 2. Switch theme (Optimistic Change)
       setTheme(newTheme);
 
