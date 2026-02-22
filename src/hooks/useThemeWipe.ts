@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useCallback, Dispatch, SetStateAction } from "react";
+import { useState, useCallback, useEffect, Dispatch, SetStateAction } from "react";
 import { useTheme } from "next-themes";
+import { usePathname } from "next/navigation";
 import { domToCanvas } from "modern-screenshot";
 import { useWipeAnimation } from "@/hooks/useWipeAnimation";
 import { Theme, WipeDirection } from "@/components/features/ThemeSwitcher/types";
@@ -19,11 +20,20 @@ export function useThemeWipe({
   setWipeDirection,
 }: UseThemeWipeProps) {
   const { setTheme, resolvedTheme } = useTheme();
+  const pathname = usePathname();
   const [screenshot, setScreenshot] = useState<string | null>(null);
   const [newScreenshot, setNewScreenshot] = useState<string | null>(null);
   const [animationTargetTheme, setAnimationTargetTheme] = useState<Theme | null>(null);
   const [originalTheme, setOriginalTheme] = useState<Theme | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
+
+  // Reset state on navigation to prevent being stuck in capturing state
+  useEffect(() => {
+    setIsCapturing(false);
+    setScreenshot(null);
+    setNewScreenshot(null);
+    setScrollLock(false);
+  }, [pathname]);
 
   const setScrollLock = (isLocked: boolean) => {
     document.documentElement.style.overflow = isLocked ? 'hidden' : '';
@@ -90,22 +100,29 @@ export function useThemeWipe({
         transform: `translateY(-${scrollY}px)`,
         transformOrigin: "top left",
         width: `${width}px`,
-        height: `${scrollY + height}px`,
+        height: `${height}px`,
         overflow: "hidden",
       },
       filter: (node: Node) => {
-        if (
-          node instanceof HTMLElement &&
-          node.dataset.html2canvasIgnore === "true"
-        ) {
-          return false;
-        }
-        return true;
+        if (!(node instanceof HTMLElement)) return true;
+        if (node.dataset.html2canvasIgnore === "true") return false;
+
+        const tagName = node.tagName.toLowerCase();
+        return tagName !== "video" && tagName !== "iframe";
       },
       scale: Math.max(window.devicePixelRatio, 2),
     };
 
-    domToCanvas(document.documentElement, options)
+    const captureWithTimeout = async () => {
+      return Promise.race([
+        domToCanvas(document.body, options),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("Capture timeout")), 3500)
+        )
+      ]);
+    };
+
+    captureWithTimeout()
       .then(async (canvas) => {
         const oldDataUrl = canvas.toDataURL("image/png");
 
@@ -140,18 +157,23 @@ export function useThemeWipe({
           requestAnimationFrame(() => requestAnimationFrame(resolve))
         );
 
-        const newCanvas = await domToCanvas(document.documentElement, options);
-        const newDataUrl = newCanvas.toDataURL("image/png");
-
-        const newImg = new Image();
-        newImg.src = newDataUrl;
         try {
-          await newImg.decode();
+          const newCanvas = await captureWithTimeout();
+          const newDataUrl = newCanvas.toDataURL("image/png");
+
+          const newImg = new Image();
+          newImg.src = newDataUrl;
+          try {
+            await newImg.decode();
+          } catch (e) {
+            console.warn("New screenshot decoding failed:", e);
+          }
+
+          setNewScreenshot(newDataUrl);
         } catch (e) {
-          console.warn("New screenshot decoding failed:", e);
+          console.warn("New theme capture failed, falling back to live DOM reveal:", e);
         }
 
-        setNewScreenshot(newDataUrl);
         setWipeDirection(direction);
         setAnimationTargetTheme(newTheme);
         setIsCapturing(false);
@@ -160,7 +182,8 @@ export function useThemeWipe({
         console.error("modern-screenshot failed:", error);
 
         // Fallback: switch theme without animation
-        setTheme(resolvedTheme === "dark" ? "light" : "dark");
+        const newTheme = resolvedTheme === "dark" ? "light" : "dark";
+        setTheme(newTheme);
         setScreenshot(null);
         setNewScreenshot(null);
         setScrollLock(false);
