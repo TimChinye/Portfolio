@@ -71,31 +71,25 @@ export function useThemeWipe({
 
   const toggleTheme = useCallback(async () => {
     // Reverse animation if already in progress
-    if (snapshots) {
+    if (snapshots || isCapturing) {
       const nextTarget = animationTargetTheme === "dark" ? "light" : "dark";
       setAnimationTargetTheme(nextTarget);
-      setTheme(nextTarget);
-      return;
-    }
-
-    if (isCapturing) {
-      const nextTarget = animationTargetTheme === "dark" ? "light" : "dark";
-      setAnimationTargetTheme(nextTarget);
-      setTheme(nextTarget);
+      // Note: We do NOT call setTheme here. The theme was changed optimistically
+      // and stays that way until the animation completes or returns.
       return;
     }
 
     setIsCapturing(true);
     setScrollLock(true); // Freeze the screen immediately
 
+    const currentTheme = resolvedTheme as Theme;
+    const newTheme: Theme = currentTheme === "dark" ? "light" : "dark";
+    setOriginalTheme(currentTheme);
+    setAnimationTargetTheme(newTheme);
+
     try {
-      const currentTheme = resolvedTheme as Theme;
-      const newTheme: Theme = currentTheme === "dark" ? "light" : "dark";
       const direction: WipeDirection =
         currentTheme === "dark" ? "bottom-up" : "top-down";
-
-      setOriginalTheme(currentTheme);
-      setAnimationTargetTheme(newTheme);
 
       const captureOptions = {
         useCORS: true,
@@ -127,7 +121,7 @@ export function useThemeWipe({
       // 1. Capture current theme
       const snapshotA = await domToPng(document.documentElement, captureOptions);
 
-      // 2. Switch theme
+      // 2. Switch theme (Optimistic Change)
       setTheme(newTheme);
 
       // 3. Wait for the theme change to reflect in the DOM
