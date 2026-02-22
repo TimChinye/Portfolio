@@ -100,21 +100,21 @@ export function useThemeWipe({
           if (node instanceof HTMLElement || node instanceof SVGElement) {
             if (node.hasAttribute('data-html2canvas-ignore')) return false;
 
+            // Safe optimization: Only prune elements that are entirely below the viewport.
+            // We do NOT prune elements above the viewport anymore because it causes layout shifts
+            // and transparency bugs that are hard to compensate for reliably across all designs.
             const rect = node.getBoundingClientRect();
-            const buffer = 100;
-            // Only skip elements that are BELOW the viewport.
-            // Skipping elements ABOVE can break layout shifts for elements below them.
+            const buffer = 200;
             if (rect.top > window.innerHeight + buffer) return false;
           }
           return true;
         },
         style: {
-          height: 'auto',
-          minHeight: 'auto',
-          maxHeight: 'none',
-          overflow: 'visible',
+          width: `${document.documentElement.clientWidth}px`,
+          height: `${document.documentElement.scrollHeight}px`,
           transform: `translateY(-${window.scrollY}px)`,
           transformOrigin: 'top left',
+          overflow: 'visible',
         }
       };
 
