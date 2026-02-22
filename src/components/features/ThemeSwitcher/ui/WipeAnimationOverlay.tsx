@@ -8,13 +8,12 @@ interface WipeAnimationOverlayProps {
   animationStyles: {
     clipPath: MotionValue<string>;
     dividerTop: MotionValue<string>;
-    dividerTranslate: string;
   };
 }
 
 export function WipeAnimationOverlay({
   snapshots,
-  animationStyles: { clipPath, dividerTop, dividerTranslate },
+  animationStyles: { clipPath, dividerTop },
 }: WipeAnimationOverlayProps) {
   // Use the client width to ensure the snapshot matches the content area (excluding scrollbar)
   const contentWidth = typeof document !== 'undefined' ? `${document.documentElement.clientWidth}px` : '100%';
@@ -23,7 +22,7 @@ export function WipeAnimationOverlay({
     <AnimatePresence>
       {snapshots && (
         <div
-          className="fixed inset-0 z-10000 pointer-events-none"
+          className="fixed inset-0 z-10000"
           data-html2canvas-ignore="true"
         >
           {/* Target Theme Snapshot (Bottom Layer - Revealed) */}
@@ -49,10 +48,9 @@ export function WipeAnimationOverlay({
           {/* Wipe Divider */}
           <motion.div
             key="theme-switcher-divider"
-            className="absolute left-0 h-1 bg-[#D9D24D]"
+            className="absolute left-0 h-1 bg-[#D9D24D] -translate-y-1/2"
             style={{
               top: dividerTop,
-              translate: dividerTranslate,
               width: contentWidth,
             }}
           />

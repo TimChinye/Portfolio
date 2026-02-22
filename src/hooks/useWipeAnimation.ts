@@ -62,7 +62,5 @@ export function useWipeAnimation({
     wipeDirection === "top-down" ? ["0vh", "100vh"] : ["100vh", "0vh"]
   );
 
-  const dividerTranslate = wipeDirection === "top-down" ? "0 -100%" : "0 0";
-
-  return { clipPath, dividerTop, dividerTranslate, wipeProgress };
+  return { clipPath, dividerTop, wipeProgress };
 }
