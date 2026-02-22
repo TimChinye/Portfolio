@@ -41,19 +41,18 @@ export function useThemeWipe({
   };
 
   const handleAnimationComplete = useCallback(() => {
-    // Wait two frames to ensure the new theme is fully painted before removing overlay
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setScreenshot(null);
-        setNewScreenshot(null);
-        setAnimationTargetTheme(null);
-        setWipeDirection(null);
-        setOriginalTheme(null);
-        setScrollLock(false);
-        setIsCapturing(false);
-        wipeProgress.set(0);
-      });
-    });
+    // Wait a brief moment to ensure the new theme is fully painted before removing overlay
+    // This helps avoid the "flash" when switching from snapshot to live DOM
+    setTimeout(() => {
+      setScreenshot(null);
+      setNewScreenshot(null);
+      setAnimationTargetTheme(null);
+      setWipeDirection(null);
+      setOriginalTheme(null);
+      setScrollLock(false);
+      setIsCapturing(false);
+      wipeProgress.set(0);
+    }, 60);
   }, [setWipeDirection, wipeProgress]);
 
   const handleAnimationReturn = useCallback(() => {
@@ -99,25 +98,42 @@ export function useThemeWipe({
       style: {
         transform: `translateY(-${scrollY}px)`,
         transformOrigin: "top left",
-        width: `${width}px`,
-        height: `${height}px`,
-        overflow: "hidden",
+        width: `${document.documentElement.scrollWidth}px`,
+        height: `${document.documentElement.scrollHeight}px`,
       },
       filter: (node: Node) => {
-        if (!(node instanceof HTMLElement)) return true;
-        if (node.dataset.html2canvasIgnore === "true") return false;
+        if (node instanceof HTMLElement || node instanceof SVGElement) {
+          const el = node as HTMLElement;
+          if (el.getAttribute?.("data-html2canvas-ignore") === "true") return false;
 
-        const tagName = node.tagName.toLowerCase();
-        return tagName !== "video" && tagName !== "iframe";
+          const tagName = el.tagName?.toLowerCase();
+          if (tagName === "video" || tagName === "iframe") return false;
+
+          // Viewport Pruning Optimization:
+          // Ignore sections or large elements that are far outside the current viewport.
+          // We apply this only to direct children of body or main to keep it performant.
+          const parent = el.parentElement;
+          const parentTag = parent?.tagName?.toLowerCase();
+          if (parentTag === "body" || parentTag === "main") {
+            const rect = el.getBoundingClientRect();
+            const buffer = 800; // px buffer
+            const isInViewport = (
+              rect.bottom >= -buffer &&
+              rect.top <= window.innerHeight + buffer
+            );
+            if (!isInViewport) return false;
+          }
+        }
+        return true;
       },
-      scale: Math.max(window.devicePixelRatio, 2),
+      scale: Math.max(window.devicePixelRatio, 1.5),
     };
 
     const captureWithTimeout = async () => {
       return Promise.race([
-        domToCanvas(document.body, options),
+        domToCanvas(document.documentElement, options),
         new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error("Capture timeout")), 3500)
+          setTimeout(() => reject(new Error("Capture timeout")), 3000)
         )
       ]);
     };
@@ -153,8 +169,9 @@ export function useThemeWipe({
         setTheme(newTheme);
 
         // Wait for theme switch to settle and re-capture
+        // A small timeout helps ensure complex components have re-rendered and painted
         await new Promise((resolve) =>
-          requestAnimationFrame(() => requestAnimationFrame(resolve))
+          requestAnimationFrame(() => setTimeout(resolve, 80))
         );
 
         try {

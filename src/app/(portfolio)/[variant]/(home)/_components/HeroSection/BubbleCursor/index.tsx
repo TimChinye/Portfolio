@@ -140,6 +140,7 @@ export function BubbleCursor({ hoveredProject }: BubbleCursorProps) {
           scale: finalScale
         }}
         className={`${bubbleWrapperClasses} ${bubbleClasses} ${isSupported ? liquidGlassClasses : frostedGlassClasses}`}
+        data-html2canvas-ignore="true"
       >
         <AnimatePresence>
           {hoveredProject && (

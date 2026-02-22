@@ -82,6 +82,7 @@ export const NoiseOverlay = ({
           className
         )}
         style={{ filter: `url(#${filterId})` }}
+        data-html2canvas-ignore="true"
       />
     </>
   );

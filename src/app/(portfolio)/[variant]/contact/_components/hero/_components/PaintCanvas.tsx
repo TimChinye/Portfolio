@@ -109,6 +109,7 @@ export function PaintCanvas({ brushSize, color }: PaintCanvasProps) {
     <div
       ref={containerRef}
       className="absolute inset-0 z-1 pointer-events-none mix-blend-lighten dark:mix-blend-darken"
+      data-html2canvas-ignore="true"
     >
       <canvas 
         ref={canvasRef}
