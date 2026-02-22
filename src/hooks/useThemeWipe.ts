@@ -2,7 +2,7 @@
 
 import { useState, useCallback, Dispatch, SetStateAction } from "react";
 import { useTheme } from "next-themes";
-import { toCanvas } from "html-to-image";
+import { domToCanvas } from "modern-screenshot";
 import { useWipeAnimation } from "@/hooks/useWipeAnimation";
 import { Theme, WipeDirection } from "@/components/features/ThemeSwitcher/types";
 import type { MotionValue } from "motion/react";
@@ -102,11 +102,10 @@ export function useThemeWipe({
         }
         return true;
       },
-      pixelRatio: Math.max(window.devicePixelRatio, 2),
-      cacheBust: true,
+      scale: Math.max(window.devicePixelRatio, 2),
     };
 
-    toCanvas(document.documentElement, options)
+    domToCanvas(document.documentElement, options)
       .then(async (canvas) => {
         const oldDataUrl = canvas.toDataURL("image/png");
 
@@ -141,7 +140,7 @@ export function useThemeWipe({
           requestAnimationFrame(() => requestAnimationFrame(resolve))
         );
 
-        const newCanvas = await toCanvas(document.documentElement, options);
+        const newCanvas = await domToCanvas(document.documentElement, options);
         const newDataUrl = newCanvas.toDataURL("image/png");
 
         const newImg = new Image();
@@ -158,7 +157,7 @@ export function useThemeWipe({
         setIsCapturing(false);
       })
       .catch((error) => {
-        console.error("html-to-image failed:", error);
+        console.error("modern-screenshot failed:", error);
 
         // Fallback: switch theme without animation
         setTheme(resolvedTheme === "dark" ? "light" : "dark");
