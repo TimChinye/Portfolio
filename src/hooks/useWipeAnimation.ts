@@ -62,12 +62,5 @@ export function useWipeAnimation({
     wipeDirection === "top-down" ? ["0vh", "100vh"] : ["100vh", "0vh"]
   );
 
-  // Sync to CSS variables for View Transition fallback
-  useEffect(() => {
-    return wipeProgress.on("change", (p) => {
-      document.documentElement.style.setProperty("--wipe-progress", `${p}%`);
-    });
-  }, [wipeProgress]);
-
   return { clipPath, dividerTop, wipeProgress };
 }
