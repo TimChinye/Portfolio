@@ -84,8 +84,10 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
   }: SectionProps<T>,
   ref: ForwardedRef<HTMLDivElement>
 ) {
-  const Component = as || 'section';
-  const MotionComponent = motion.create(Component);
+  const MotionComponent = useMemo(() => {
+    const Component = as || 'section';
+    return motion.create(Component);
+  }, [as]);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLElement>(null);

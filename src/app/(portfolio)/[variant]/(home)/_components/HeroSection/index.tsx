@@ -1,4 +1,3 @@
-import { forwardRef } from 'react';
 import { getGlobalContent, getHeroProjects } from '@/sanity/lib/queries';
 import { Section, type SectionProps } from '@/components/ui/Section';
 import { Client } from './Client';
@@ -7,9 +6,7 @@ type HeroSectionProps = {
   variant: 'tim' | 'tiger';
 } & SectionProps<'section'>;
 
-const HeroSectionComponent = forwardRef<HTMLDivElement, HeroSectionProps>(
-  async ({ variant, ...props }, ref) => {
-
+export async function HeroSection({ variant, ...props }: HeroSectionProps) {
   let [globalContent, projects] = await Promise.all([
     getGlobalContent(),
     getHeroProjects(variant),
@@ -35,7 +32,7 @@ const HeroSectionComponent = forwardRef<HTMLDivElement, HeroSectionProps>(
   if (!heroName || !heroBio) {
     // Graceful fallback if CMS data is missing
     return (
-      <Section {...props} ref={ref}>
+      <Section {...props}>
         <div className="size-full flex items-center justify-center text-center">
           <p>Error: Could not load hero content from the CMS.</p>
         </div>
@@ -44,17 +41,13 @@ const HeroSectionComponent = forwardRef<HTMLDivElement, HeroSectionProps>(
   };
 
   return (
-    <Section {...props} ref={ref}>
+    <Section {...props}>
       <Client 
         variant={variant}
         heroName={heroName}
         heroBio={heroBio}
         projects={projects}
       />
-      </Section>
-    );
-  }
-);
-
-HeroSectionComponent.displayName = 'HeroSection';
-export const HeroSection = HeroSectionComponent;
+    </Section>
+  );
+}
