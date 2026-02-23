@@ -4,7 +4,7 @@ type Filter = {
 };
 
 export const Filter = (props: Filter) => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="absolute w-0 h-0" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" className="absolute w-0 h-0" aria-hidden="true" data-html2canvas-ignore="true">
     <defs>
       <filter id="glass-distortion">
         <feTurbulence

@@ -133,6 +133,7 @@ export function BubbleCursor({ hoveredProject }: BubbleCursorProps) {
     <>
       {isSupported && <Filter baseFrequency={`${freq} ${freq}`} scale={scale} />}
       <motion.div
+        data-html2canvas-ignore="true"
         style={{
           ...customProperties,
           x: smoothMouseX,
