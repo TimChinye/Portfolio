@@ -82,6 +82,7 @@ export function useThemeWipe({
 
     setIsCapturing(true);
     setScrollLock(true); // Freeze the screen immediately
+    document.documentElement.classList.add('disable-transitions');
 
     setOriginalTheme(currentTheme);
     setAnimationTargetTheme(newTheme);
@@ -158,6 +159,7 @@ export function useThemeWipe({
       wipeProgress.set(0);
     } finally {
       setIsCapturing(false);
+      document.documentElement.classList.remove('disable-transitions');
     }
   }, [snapshots, isCapturing, resolvedTheme, setTheme, setWipeDirection, animationTargetTheme]);
 

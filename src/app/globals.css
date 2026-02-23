@@ -43,6 +43,12 @@
   .group:hover .animate-marquee {
     animation-duration: var(--marquee-slowed-duration, 90s);
   }
+
+  .disable-transitions,
+  .disable-transitions * {
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
 
