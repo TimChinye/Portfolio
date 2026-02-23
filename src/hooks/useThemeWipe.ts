@@ -82,6 +82,7 @@ export function useThemeWipe({
 
     setIsCapturing(true);
     setScrollLock(true); // Freeze the screen immediately
+    document.documentElement.classList.add('disable-transitions');
 
     setOriginalTheme(currentTheme);
     setAnimationTargetTheme(newTheme);
@@ -95,47 +96,9 @@ export function useThemeWipe({
     );
 
     try {
-      // Optimization: Identify elements outside the viewport to prune them during capture.
-      // This significantly speeds up snapshotting on long pages by reducing the DOM size processed by modern-screenshot.
-      const getOptimizedCaptureOptions = () => {
-        const elementsToSkip = new Set<Node>();
-        let shift = 0;
+      const getCaptureOptions = () => {
         const vh = window.innerHeight;
         const scrollY = window.scrollY;
-        const buffer = 200;
-
-        // Target direct children of the main content container to avoid double-counting and nesting issues.
-        const mainContent = document.querySelector('.flex.flex-col') || document.body;
-        const children = Array.from(mainContent.children);
-
-        let firstVisibleChild = null;
-        const parentRect = mainContent.getBoundingClientRect();
-
-        for (const child of children) {
-          if (!(child instanceof HTMLElement || child instanceof SVGElement)) continue;
-          if (child.hasAttribute('data-html2canvas-ignore')) continue;
-
-          const rect = child.getBoundingClientRect();
-
-          // Entirely above viewport (with buffer)
-          if (rect.bottom < -buffer) {
-            elementsToSkip.add(child);
-          }
-          // At least partially visible or below
-          else {
-            if (!firstVisibleChild) {
-              firstVisibleChild = child;
-              // Calculate vertical shift: the distance from the container's top to this element's top.
-              // When preceding siblings are pruned, this element will move up to the container's top.
-              shift = rect.top - parentRect.top;
-            }
-
-            // Entirely below viewport (with buffer)
-            if (rect.top > vh + buffer) {
-              elementsToSkip.add(child);
-            }
-          }
-        }
 
         return {
           useCORS: true,
@@ -143,7 +106,6 @@ export function useThemeWipe({
           height: vh,
           scale: Math.max(window.devicePixelRatio, 2),
           filter: (node: Node) => {
-            if (elementsToSkip.has(node)) return false;
             if (node instanceof HTMLElement || node instanceof SVGElement) {
               if (node.hasAttribute('data-html2canvas-ignore')) return false;
             }
@@ -151,18 +113,16 @@ export function useThemeWipe({
           },
           style: {
             width: `${document.documentElement.clientWidth}px`,
-            height: `${vh}px`,
-            // Adjust the scroll position to compensate for the pruned content above the viewport.
-            transform: `translateY(-${Math.max(0, scrollY - shift)}px)`,
+            height: `${document.documentElement.scrollHeight}px`,
+            transform: `translateY(-${scrollY}px)`,
             transformOrigin: 'top left',
-            overflow: 'hidden',
           }
         };
       };
 
       // 1. Capture current theme (with timeout)
       const snapshotA = await Promise.race([
-        domToPng(document.documentElement, getOptimizedCaptureOptions()),
+        domToPng(document.documentElement, getCaptureOptions()),
         timeoutPromise
       ]) as string;
 
@@ -179,7 +139,7 @@ export function useThemeWipe({
 
       // 4. Capture new theme (with timeout)
       const snapshotB = await Promise.race([
-        domToPng(document.documentElement, getOptimizedCaptureOptions()),
+        domToPng(document.documentElement, getCaptureOptions()),
         timeoutPromise
       ]) as string;
 
@@ -199,6 +159,7 @@ export function useThemeWipe({
       wipeProgress.set(0);
     } finally {
       setIsCapturing(false);
+      document.documentElement.classList.remove('disable-transitions');
     }
   }, [snapshots, isCapturing, resolvedTheme, setTheme, setWipeDirection, animationTargetTheme]);
 
