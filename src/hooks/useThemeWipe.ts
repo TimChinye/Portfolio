@@ -2,7 +2,7 @@
 
 import { useState, useCallback, Dispatch, SetStateAction } from "react";
 import { useTheme } from "next-themes";
-import { domToPng } from "modern-screenshot";
+import html2canvas from "@html2canvas/html2canvas";
 import { useWipeAnimation } from "@/hooks/useWipeAnimation";
 import { Theme, WipeDirection } from "@/components/features/ThemeSwitcher/types";
 import type { MotionValue } from "motion/react";
@@ -96,52 +96,39 @@ export function useThemeWipe({
     );
 
     try {
-      const getCaptureOptions = () => {
-        const vh = window.innerHeight;
-        const scrollY = window.scrollY;
-
-        return {
+      const captureSnapshot = async () => {
+        const canvas = await html2canvas(document.documentElement, {
           useCORS: true,
-          width: document.documentElement.clientWidth,
-          height: vh,
+          y: window.scrollY,
+          width: window.innerWidth,
+          height: window.innerHeight,
           scale: Math.max(window.devicePixelRatio, 2),
-          filter: (node: Node) => {
-            if (node instanceof HTMLElement || node instanceof SVGElement) {
-              if (node.hasAttribute('data-html2canvas-ignore')) return false;
-            }
-            return true;
-          },
-          style: {
-            width: `${document.documentElement.clientWidth}px`,
-            height: `${document.documentElement.scrollHeight}px`,
-            transform: `translateY(-${scrollY}px)`,
-            transformOrigin: 'top left',
-          }
-        };
+        });
+        return canvas.toDataURL("image/png");
       };
 
       // 1. Capture current theme (with timeout)
-      const snapshotA = await Promise.race([
-        domToPng(document.documentElement, getCaptureOptions()),
-        timeoutPromise
-      ]) as string;
+      const snapshotA = (await Promise.race([
+        captureSnapshot(),
+        timeoutPromise,
+      ])) as string;
 
       // Mask the theme change immediately to avoid the flash of the new theme
       setSnapshots({ a: snapshotA, b: snapshotA });
       // Ensure the overlay is rendered before we switch the underlying theme
-      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
       // 2. Switch theme (Optimistic Change)
       setTheme(newTheme);
 
       // 3. Wait for the theme change to reflect in the DOM
-      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
       // 4. Capture new theme (with timeout)
-      const snapshotB = await Promise.race([
-        domToPng(document.documentElement, getCaptureOptions()),
-        timeoutPromise
-      ]) as string;
+      const snapshotB = (await Promise.race([
+        captureSnapshot(),
+        timeoutPromise,
+      ])) as string;
 
       setWipeDirection(direction);
       // We don't overwrite animationTargetTheme here because it might have been flipped mid-capture
