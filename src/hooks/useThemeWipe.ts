@@ -26,32 +26,45 @@ export type Snapshots = {
 function getOptimizedClone() {
   const vh = window.innerHeight;
   const vw = document.documentElement.clientWidth;
+  const scrollHeight = document.documentElement.scrollHeight;
 
-  // Create a container that mimics the document root
+  // Capture current computed styles to ensure the mock looks identical
+  const htmlStyle = window.getComputedStyle(document.documentElement);
+  const bodyStyle = window.getComputedStyle(document.body);
+
+  // Create a container that mimics the document structure
   const rootMock = document.createElement("div");
+  rootMock.id = "theme-wipe-optimized-root";
   rootMock.className = document.documentElement.className;
-  if (document.documentElement instanceof HTMLElement) {
-    rootMock.style.cssText = document.documentElement.style.cssText;
-  }
-  // Ensure the mock is fixed and off-screen but still part of the DOM for style computation
+
+  // Replicate essential styles for correct theme rendering
   Object.assign(rootMock.style, {
-    position: "fixed",
+    position: "absolute",
     top: "0",
-    left: "-9999px",
+    left: "-9999px", // Off-screen but in DOM for style computation
     width: `${vw}px`,
+    height: `${scrollHeight}px`,
+    zIndex: "-1000000",
     pointerEvents: "none",
+    backgroundColor: htmlStyle.backgroundColor,
+    color: htmlStyle.color,
+    fontSize: htmlStyle.fontSize,
+    fontFamily: htmlStyle.fontFamily,
   });
 
   const bodyMock = document.createElement("div");
   bodyMock.className = document.body.className;
-  if (document.body instanceof HTMLElement) {
-    bodyMock.style.cssText = document.body.style.cssText;
-  }
+  Object.assign(bodyMock.style, {
+    backgroundColor: bodyStyle.backgroundColor,
+    color: bodyStyle.color,
+    minHeight: "100%",
+  });
   rootMock.appendChild(bodyMock);
 
   // Prune direct children of body
   for (const child of Array.from(document.body.children)) {
     if (child.hasAttribute("data-html2canvas-ignore")) continue;
+    if (child.id === "theme-wipe-optimized-root") continue;
 
     const rect = child.getBoundingClientRect();
     const isVisible = rect.bottom > 0 && rect.top < vh;
@@ -59,7 +72,7 @@ function getOptimizedClone() {
     if (isVisible) {
       bodyMock.appendChild(child.cloneNode(true));
     } else {
-      // For off-screen elements, we use a simple placeholder to preserve layout/scroll position
+      // Placeholder to preserve layout and scroll position
       const placeholder = document.createElement(child.tagName);
       const className = child.getAttribute("class");
       if (className) placeholder.setAttribute("class", className);
