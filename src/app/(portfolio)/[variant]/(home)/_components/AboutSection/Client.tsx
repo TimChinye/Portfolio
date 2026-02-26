@@ -40,7 +40,7 @@ export function Client({ data }: ClientProps) {
 	const animatedBorderRadius = useTransform(stickyProgress, [0, 0.75], radiusRange);
 
 	return (
-		<div className="px-[0.5em] py-[0.25em] md:px-[0.75em] md:py-[0.375em] leading-none flex h-screen w-full flex-col items-center justify-center overflow-hidden">
+		<div className="px-[0.5em] py-[0.5em] md:px-[0.75em] md:py-[0.625em] leading-none flex h-screen w-full flex-col items-center justify-center overflow-hidden">
 			<NoiseOverlay className="-z-1 [mask:linear-gradient(to_bottom,black_70%,transparent)]" opacityClass="opacity-50" baseFrequency={0.25} />
 			
 			<div ref={containerRef} className="flex size-full flex-col items-center justify-center gap-8 px-4 text-[0.25em] text-center">
