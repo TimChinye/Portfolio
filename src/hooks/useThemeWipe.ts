@@ -18,6 +18,66 @@ export type Snapshots = {
   b: string; // Target theme
 };
 
+/**
+ * Creates a pruned clone of the document for optimized snapshotting.
+ * It mimics the html/body structure using divs to avoid HierarchyRequestErrors,
+ * and only deep-clones elements that are currently visible in the viewport.
+ */
+function getOptimizedClone() {
+  const vh = window.innerHeight;
+  const vw = document.documentElement.clientWidth;
+
+  // Create a container that mimics the document root
+  const rootMock = document.createElement("div");
+  rootMock.className = document.documentElement.className;
+  if (document.documentElement instanceof HTMLElement) {
+    rootMock.style.cssText = document.documentElement.style.cssText;
+  }
+  // Ensure the mock is fixed and off-screen but still part of the DOM for style computation
+  Object.assign(rootMock.style, {
+    position: "fixed",
+    top: "0",
+    left: "-9999px",
+    width: `${vw}px`,
+    pointerEvents: "none",
+  });
+
+  const bodyMock = document.createElement("div");
+  bodyMock.className = document.body.className;
+  if (document.body instanceof HTMLElement) {
+    bodyMock.style.cssText = document.body.style.cssText;
+  }
+  rootMock.appendChild(bodyMock);
+
+  // Prune direct children of body
+  for (const child of Array.from(document.body.children)) {
+    if (child.hasAttribute("data-html2canvas-ignore")) continue;
+
+    const rect = child.getBoundingClientRect();
+    const isVisible = rect.bottom > 0 && rect.top < vh;
+
+    if (isVisible) {
+      bodyMock.appendChild(child.cloneNode(true));
+    } else {
+      // For off-screen elements, we use a simple placeholder to preserve layout/scroll position
+      const placeholder = document.createElement(child.tagName);
+      const className = child.getAttribute("class");
+      if (className) placeholder.setAttribute("class", className);
+
+      if (child instanceof HTMLElement || child instanceof SVGElement) {
+        const pStyle = (placeholder as HTMLElement | SVGElement).style;
+        pStyle.cssText = child.style.cssText;
+        pStyle.height = `${rect.height}px`;
+        pStyle.width = `${rect.width}px`;
+        pStyle.visibility = "hidden";
+      }
+      bodyMock.appendChild(placeholder);
+    }
+  }
+
+  return rootMock;
+}
+
 export function useThemeWipe({
   wipeProgress,
   wipeDirection,
@@ -121,10 +181,14 @@ export function useThemeWipe({
       };
 
       // 1. Capture current theme (with timeout)
-      const snapshotA = await Promise.race([
-        domToPng(document.documentElement, getCaptureOptions()),
-        timeoutPromise
-      ]) as string;
+      const rootA = getOptimizedClone();
+      document.body.appendChild(rootA);
+      const snapshotA = (await Promise.race([
+        domToPng(rootA, getCaptureOptions()),
+        timeoutPromise,
+      ]).finally(() => {
+        document.body.removeChild(rootA);
+      })) as string;
 
       // Mask the theme change immediately to avoid the flash of the new theme
       setSnapshots({ a: snapshotA, b: snapshotA });
@@ -138,10 +202,14 @@ export function useThemeWipe({
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
       // 4. Capture new theme (with timeout)
-      const snapshotB = await Promise.race([
-        domToPng(document.documentElement, getCaptureOptions()),
-        timeoutPromise
-      ]) as string;
+      const rootB = getOptimizedClone();
+      document.body.appendChild(rootB);
+      const snapshotB = (await Promise.race([
+        domToPng(rootB, getCaptureOptions()),
+        timeoutPromise,
+      ]).finally(() => {
+        document.body.removeChild(rootB);
+      })) as string;
 
       setWipeDirection(direction);
       // We don't overwrite animationTargetTheme here because it might have been flipped mid-capture
