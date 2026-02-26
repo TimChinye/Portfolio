@@ -2,7 +2,7 @@
 
 import { useState, useCallback, Dispatch, SetStateAction } from "react";
 import { useTheme } from "next-themes";
-import html2canvas from "@html2canvas/html2canvas";
+import html2canvas from "html2canvas-pro";
 import { useWipeAnimation } from "@/hooks/useWipeAnimation";
 import { Theme, WipeDirection } from "@/components/features/ThemeSwitcher/types";
 import type { MotionValue } from "motion/react";
@@ -97,15 +97,25 @@ export function useThemeWipe({
 
     try {
       const captureSnapshot = async () => {
+        // Wait for fonts to be ready to avoid default serif fallback
+        if (typeof document !== 'undefined' && 'fonts' in document) {
+          await document.fonts.ready;
+        }
+
         const canvas = await html2canvas(document.documentElement, {
           useCORS: true,
+          allowTaint: true,
           y: window.scrollY,
-          width: window.innerWidth,
+          width: document.documentElement.clientWidth,
           height: window.innerHeight,
           scale: Math.max(window.devicePixelRatio, 2),
+          backgroundColor: null,
         });
         return canvas.toDataURL("image/png");
       };
+
+      // Ensure UI has settled after starting capture mode
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
       // 1. Capture current theme (with timeout)
       const snapshotA = (await Promise.race([
