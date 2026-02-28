@@ -88,20 +88,21 @@ export function useThemeWipe({
     const direction: WipeDirection =
       currentTheme === "dark" ? "bottom-up" : "top-down";
 
-    const fetchSnapshot = async (themeOverride?: "light" | "dark") => {
-      const html = getFullPageHTML(themeOverride);
+    const fetchSnapshots = async (themes: (Theme | undefined)[]): Promise<string[]> => {
+      const tasks = themes.map(theme => ({
+        html: getFullPageHTML(theme),
+        width: window.innerWidth,
+        height: window.innerHeight,
+        devicePixelRatio: window.devicePixelRatio,
+      }));
+
       const response = await fetch("/api/snapshot", {
         method: "POST",
-        body: JSON.stringify({
-          html,
-          width: window.innerWidth,
-          height: window.innerHeight,
-          devicePixelRatio: window.devicePixelRatio,
-        }),
+        body: JSON.stringify({ tasks }),
       });
       const data = await response.json();
       if (data.error) throw new Error(data.error);
-      return data.snapshot;
+      return data.snapshots;
     };
 
     const captureWithModernScreenshot = async (): Promise<Snapshots> => {
@@ -151,9 +152,9 @@ export function useThemeWipe({
 
     try {
       // PHASE 1: Try Puppeteer (3s timeout)
-      console.log("Attempting Puppeteer snapshot...");
+      console.log("Attempting Puppeteer snapshots...");
       const [snapshotA, snapshotB] = await withTimeout(
-        Promise.all([fetchSnapshot(), fetchSnapshot(newTheme)]),
+        fetchSnapshots([undefined, newTheme]),
         3000,
         "Puppeteer timeout"
       ) as [string, string];
