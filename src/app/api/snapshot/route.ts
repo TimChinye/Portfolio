@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Browser, Page } from "puppeteer-core";
 import { puppeteerManager } from "@/utils/puppeteer-manager";
 
 export const maxDuration = 60;
@@ -30,8 +31,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let browser: any = null;
-  const pages: any[] = [];
+  let browser: Browser | null = null;
+  const pages: Page[] = [];
 
   try {
     const body = await req.json();
@@ -73,8 +74,8 @@ export async function POST(req: Request) {
         // Performance: Disable JS
         await page.setJavaScriptEnabled(false);
 
-        // Wait for full load
-        await page.setContent(html, { waitUntil: "load" });
+        // Wait for DOM to be ready
+        await page.setContent(html, { waitUntil: "domcontentloaded" });
 
         // Tiny delay for layout/font rendering
         await new Promise(r => setTimeout(r, 100));
@@ -104,9 +105,15 @@ export async function POST(req: Request) {
     console.error("Snapshot API error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   } finally {
-    // Close all pages created in this request
-    for (const page of pages) {
-      await page.close().catch((err) => console.error("Error closing page:", err));
+    // Check if browser is still connected before closing pages
+    if (browser && browser.isConnected()) {
+      for (const page of pages) {
+        await page.close().catch((err) => {
+          if (!err.message.includes("Connection closed") && !err.message.includes("Target closed")) {
+            console.error("Error closing page:", err);
+          }
+        });
+      }
     }
     // We do NOT disconnect or close the browser here.
     // It's a persistent instance managed by PuppeteerManager.

@@ -151,11 +151,11 @@ export function useThemeWipe({
     };
 
     try {
-      // PHASE 1: Try Puppeteer (3s timeout)
+      // PHASE 1: Try Puppeteer (10s timeout)
       console.log("Attempting Puppeteer snapshots...");
       const [snapshotA, snapshotB] = await withTimeout(
         fetchSnapshots([undefined, newTheme]),
-        3000,
+        10000,
         "Puppeteer timeout"
       ) as [string, string];
 
