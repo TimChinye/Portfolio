@@ -51,7 +51,7 @@ export function WipeAnimationOverlay({
           {/* Wipe Divider */}
           <motion.div
             key="theme-switcher-divider"
-            className="absolute left-0 h-1 bg-[#D9D24D] -translate-y-1/2"
+            className="absolute left-0 h-1 bg-[#D9D24D]"
             style={{
               top: dividerTop,
               width: contentWidth,

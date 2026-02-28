@@ -4,11 +4,11 @@ import fs from "fs";
 
 /**
  * Manages a persistent Puppeteer browser instance to reduce launch overhead.
+ * Prioritizes Browserless.io via PUPPETEER_WS_ENDPOINT if available.
  */
 class PuppeteerManager {
   private static instance: PuppeteerManager;
   private browser: Browser | null = null;
-  private wsEndpoint: string | null = null;
   private initializing: Promise<Browser> | null = null;
 
   private constructor() {}
@@ -20,9 +20,20 @@ class PuppeteerManager {
     return PuppeteerManager.instance;
   }
 
-  private async launchBrowser(): Promise<Browser> {
+  private async initializeBrowser(): Promise<Browser> {
+    const wsEndpoint = process.env.PUPPETEER_WS_ENDPOINT;
+
+    // 1. Prioritize Browserless.io
+    if (wsEndpoint) {
+      console.log("Connecting to Browserless.io...");
+      return await puppeteer.connect({
+        browserWSEndpoint: wsEndpoint,
+      });
+    }
+
     const isLocal = process.env.NODE_ENV === "development";
 
+    // 2. Handle Local Development
     if (isLocal) {
       const paths = [
         process.env.PUPPETEER_EXECUTABLE_PATH,
@@ -42,6 +53,7 @@ class PuppeteerManager {
       });
     }
 
+    // 3. Fallback to local Chromium (Serverless)
     return await puppeteer.launch({
       args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
       defaultViewport: chromium.defaultViewport,
@@ -63,14 +75,18 @@ class PuppeteerManager {
     this.initializing = (async () => {
       try {
         if (this.browser) {
-          await this.browser.close().catch(() => {});
+          // If we were connected via WS, just disconnect. If it was local, close.
+          if (process.env.PUPPETEER_WS_ENDPOINT) {
+            await this.browser.disconnect().catch(() => {});
+          } else {
+            await this.browser.close().catch(() => {});
+          }
         }
-        this.browser = await this.launchBrowser();
-        this.wsEndpoint = this.browser.wsEndpoint();
+
+        this.browser = await this.initializeBrowser();
 
         this.browser.on('disconnected', () => {
           this.browser = null;
-          this.wsEndpoint = null;
         });
 
         return this.browser;
