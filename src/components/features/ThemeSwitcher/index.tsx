@@ -35,6 +35,8 @@ export function ThemeSwitcher({
 
   useEffect(() => {
     setMounted(true);
+    // Warm up the snapshot API on mount
+    fetch("/api/snapshot").catch(() => {});
   }, []);
 
   if (!mounted) {

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import chromium from "@sparticuz/chromium-min";
 import puppeteer from "puppeteer-core";
-import fs from "fs";
+import { puppeteerManager } from "@/utils/puppeteer-manager";
 
 export const maxDuration = 60;
 
@@ -17,49 +16,14 @@ function isValidRequest(req: Request) {
   }
 }
 
-async function getBrowserInstance(width: number, height: number, devicePixelRatio: number) {
-  const isLocal = process.env.NODE_ENV === "development";
-
-  const safeWidth = Math.min(Math.max(width || 1280, 100), 3840);
-  const safeHeight = Math.min(Math.max(height || 720, 100), 2160);
-  const safeScale = Math.min(Math.max(devicePixelRatio || 2, 1), 3);
-
-  const viewport = {
-    width: safeWidth,
-    height: safeHeight,
-    deviceScaleFactor: safeScale,
-  };
-
-  if (isLocal) {
-    const paths = [
-      process.env.PUPPETEER_EXECUTABLE_PATH,
-      "/usr/bin/google-chrome",
-      "/usr/bin/chromium-browser",
-      "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-      "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
-      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    ];
-
-    const executablePath = paths.find(p => p && fs.existsSync(p)) || "/usr/bin/google-chrome";
-
-    return await puppeteer.launch({
-      headless: true,
-      executablePath,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      defaultViewport: viewport,
-    });
+export async function GET() {
+  try {
+    // Lazy initialize the browser
+    await puppeteerManager.getBrowser();
+    return NextResponse.json({ status: "warmed up" });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
-
-  return await puppeteer.launch({
-    args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
-    defaultViewport: {
-      ...chromium.defaultViewport,
-      ...viewport,
-    },
-    executablePath: await chromium.executablePath(),
-    headless: chromium.headless,
-    ignoreHTTPSErrors: true,
-  });
 }
 
 export async function POST(req: Request) {
@@ -68,6 +32,8 @@ export async function POST(req: Request) {
   }
 
   let browser: any = null;
+  let page: any = null;
+
   try {
     const { html, width, height, devicePixelRatio = 2 } = await req.json();
 
@@ -75,20 +41,32 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "HTML content is required" }, { status: 400 });
     }
 
-    browser = await getBrowserInstance(width, height, devicePixelRatio);
-    const page = await browser.newPage();
+    // Connect to the persistent browser instance
+    const wsEndpoint = await puppeteerManager.getWsEndpoint();
+    browser = await puppeteer.connect({ browserWSEndpoint: wsEndpoint });
 
-    // Security: Disable JS to prevent XSS/SSRF from the client-provided HTML
+    page = await browser.newPage();
+
+    // Set viewport correctly for this specific snapshot
+    const safeWidth = Math.min(Math.max(width || 1280, 100), 3840);
+    const safeHeight = Math.min(Math.max(height || 720, 100), 2160);
+    const safeScale = Math.min(Math.max(devicePixelRatio || 2, 1), 3);
+
+    await page.setViewport({
+      width: safeWidth,
+      height: safeHeight,
+      deviceScaleFactor: safeScale,
+    });
+
+    // Performance: Disable JS
     await page.setJavaScriptEnabled(false);
 
-    // Wait for full load to ensure fonts and images are rendered
+    // Wait for full load
     await page.setContent(html, { waitUntil: "load" });
 
-    // Wait a tiny bit more for layout/font rendering to settle
+    // Tiny delay for layout/font rendering
     await new Promise(r => setTimeout(r, 100));
 
-    // Even with JS disabled, we can still use page.evaluate for our own purposes
-    // Note: page.evaluate works even if JS is disabled in the page context!
     await page.evaluate(() => {
       const htmlEl = document.documentElement;
       const x = parseInt(htmlEl.getAttribute('data-scroll-x') || '0');
@@ -108,8 +86,12 @@ export async function POST(req: Request) {
     console.error("Snapshot API error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   } finally {
+    if (page) {
+      await page.close().catch(() => {});
+    }
     if (browser) {
-      await browser.close();
+      // We disconnect from the persistent browser, NOT close it
+      await browser.disconnect();
     }
   }
 }
