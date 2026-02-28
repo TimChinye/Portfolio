@@ -35,6 +35,8 @@ export function ThemeSwitcher({
 
   useEffect(() => {
     setMounted(true);
+    // Warm up the snapshot API on mount
+    fetch("/api/snapshot").catch(() => {});
   }, []);
 
   if (!mounted) {
@@ -56,6 +58,7 @@ export function ThemeSwitcher({
         <WipeAnimationOverlay
           snapshots={snapshots}
           animationStyles={animationStyles}
+          wipeDirection={wipeDirection}
         />,
         document.body
       )}
