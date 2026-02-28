@@ -2,6 +2,7 @@
 
 import { useState, useCallback, Dispatch, SetStateAction } from "react";
 import { useTheme } from "next-themes";
+import { domToPng } from "modern-screenshot";
 import { getFullPageHTML } from "@/utils/dom-serializer";
 import { useWipeAnimation } from "@/hooks/useWipeAnimation";
 import { Theme, WipeDirection } from "@/components/features/ThemeSwitcher/types";
@@ -35,7 +36,6 @@ export function useThemeWipe({
   };
 
   const handleAnimationComplete = useCallback(() => {
-    // Tiny delay to ensure the live page has fully rendered behind the snapshot
     setTimeout(() => {
       setSnapshots(null);
       setAnimationTargetTheme(null);
@@ -50,7 +50,6 @@ export function useThemeWipe({
     if (originalTheme) {
       setTheme(originalTheme);
     }
-    // Tiny delay to ensure the live page has fully rendered behind the snapshot
     setTimeout(() => {
       setSnapshots(null);
       setAnimationTargetTheme(null);
@@ -73,7 +72,6 @@ export function useThemeWipe({
     const currentTheme = resolvedTheme as Theme;
     const newTheme: Theme = currentTheme === "dark" ? "light" : "dark";
 
-    // Reverse animation if already in progress
     if (snapshots || isCapturing || wipeDirection) {
       const nextTarget = animationTargetTheme === "dark" ? "light" : "dark";
       setAnimationTargetTheme(nextTarget);
@@ -81,7 +79,7 @@ export function useThemeWipe({
     }
 
     setIsCapturing(true);
-    setScrollLock(true); // Freeze the screen immediately
+    setScrollLock(true);
     document.documentElement.classList.add('disable-transitions');
 
     setOriginalTheme(currentTheme);
@@ -106,52 +104,96 @@ export function useThemeWipe({
       return data.snapshot;
     };
 
-    const withTimeout = (promise: Promise<any>, ms: number) => {
+    const captureWithModernScreenshot = async (): Promise<Snapshots> => {
+      const vh = window.innerHeight;
+      const scrollY = window.scrollY;
+      const options = {
+        useCORS: true,
+        width: document.documentElement.clientWidth,
+        height: vh,
+        scale: Math.max(window.devicePixelRatio, 2),
+        filter: (node: Node) => {
+          if (node instanceof HTMLElement || node instanceof SVGElement) {
+            if (node.hasAttribute('data-html2canvas-ignore')) return false;
+          }
+          return true;
+        },
+        style: {
+          width: `${document.documentElement.clientWidth}px`,
+          height: `${document.documentElement.scrollHeight}px`,
+          transform: `translateY(-${scrollY}px)`,
+          transformOrigin: 'top left',
+        }
+      };
+
+      // 1. Snapshot A (current)
+      const a = await domToPng(document.documentElement, options);
+
+      // Mask switch
+      setSnapshots({ a, b: a });
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      // 2. Switch theme
+      setTheme(newTheme);
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      // 3. Snapshot B (new)
+      const b = await domToPng(document.documentElement, options);
+      return { a, b };
+    };
+
+    const withTimeout = (promise: Promise<any>, ms: number, errorMsg: string) => {
       return Promise.race([
         promise,
-        new Promise((_, reject) => setTimeout(() => reject(new Error("Snapshot timeout")), ms))
+        new Promise((_, reject) => setTimeout(() => reject(new Error(errorMsg)), ms))
       ]);
     };
 
     try {
-      // 1. Capture both themes in parallel immediately
+      // PHASE 1: Try Puppeteer (3s timeout)
+      console.log("Attempting Puppeteer snapshot...");
       const [snapshotA, snapshotB] = await withTimeout(
-        Promise.all([
-          fetchSnapshot(), // Current theme
-          fetchSnapshot(newTheme) // Target theme
-        ]),
-        7000 // Slightly longer timeout for parallel requests
+        Promise.all([fetchSnapshot(), fetchSnapshot(newTheme)]),
+        3000,
+        "Puppeteer timeout"
       ) as [string, string];
 
-      // 2. Set the snapshots to start the overlay rendering
-      // We mask the change by showing Snapshot A as both A and B for a single frame if needed,
-      // but since we have both, we can just set them and switch theme.
       setSnapshots({ a: snapshotA, b: snapshotB });
-
-      // Ensure the overlay is rendered before we switch the underlying theme
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-
-      // 3. Switch theme (Optimistic Change)
       setTheme(newTheme);
-
-      // 4. Start the wipe animation
       setWipeDirection(direction);
-    } catch (error) {
-      console.warn("Theme wipe snapshot failed or timed out, changing theme instantly:", error);
 
-      // Fallback: switch theme instantly without animation
-      setTheme(newTheme);
-      setSnapshots(null);
-      setScrollLock(false);
-      setAnimationTargetTheme(null);
-      setOriginalTheme(null);
-      setWipeDirection(null);
-      wipeProgress.set(0);
+    } catch (e: any) {
+      console.warn("Puppeteer failed or timed out, falling back to modern-screenshot:", e.message);
+
+      try {
+        // PHASE 2: Try modern-screenshot (2s timeout)
+        const snapshots = await withTimeout(
+          captureWithModernScreenshot(),
+          2000,
+          "modern-screenshot timeout"
+        ) as Snapshots;
+
+        setSnapshots(snapshots);
+        setWipeDirection(direction);
+
+      } catch (e2: any) {
+        console.warn("modern-screenshot failed or timed out, changing theme instantly:", e2.message);
+
+        // PHASE 3: Fallback instantly
+        setTheme(newTheme);
+        setSnapshots(null);
+        setScrollLock(false);
+        setAnimationTargetTheme(null);
+        setOriginalTheme(null);
+        setWipeDirection(null);
+        wipeProgress.set(0);
+      }
     } finally {
       setIsCapturing(false);
       document.documentElement.classList.remove('disable-transitions');
     }
-  }, [snapshots, isCapturing, resolvedTheme, setTheme, setWipeDirection, animationTargetTheme]);
+  }, [snapshots, isCapturing, resolvedTheme, setTheme, setWipeDirection, animationTargetTheme, wipeProgress]);
 
   return {
     toggleTheme,
