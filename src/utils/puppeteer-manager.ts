@@ -1,5 +1,4 @@
 import puppeteer, { Browser } from "puppeteer-core";
-import chromium from "@sparticuz/chromium-min";
 import fs from "fs";
 
 /**
@@ -23,7 +22,8 @@ class PuppeteerManager {
   private async initializeBrowser(): Promise<Browser> {
     const wsEndpoint = process.env.PUPPETEER_WS_ENDPOINT;
 
-    // 1. Prioritize Browserless.io
+    // 1. Prioritize Browserless.io (WebSocket)
+    // This bypasses the need for local Chromium/sparticuz during execution
     if (wsEndpoint) {
       console.log("Connecting to Browserless.io...");
       return await puppeteer.connect({
@@ -33,7 +33,7 @@ class PuppeteerManager {
 
     const isLocal = process.env.NODE_ENV === "development";
 
-    // 2. Handle Local Development
+    // 2. Handle Local Development (Local Chrome)
     if (isLocal) {
       const paths = [
         process.env.PUPPETEER_EXECUTABLE_PATH,
@@ -53,14 +53,21 @@ class PuppeteerManager {
       });
     }
 
-    // 3. Fallback to local Chromium (Serverless)
-    return await puppeteer.launch({
-      args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
-      ignoreHTTPSErrors: true,
-    });
+    // 3. Fallback to local Chromium (Vercel Serverless)
+    // We use a dynamic import and type casting to avoid build-time errors
+    // since this branch is only reached if Browserless is NOT configured.
+    try {
+      const chromium = (await import("@sparticuz/chromium-min")).default;
+      return await puppeteer.launch({
+        args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless as any,
+      });
+    } catch (e) {
+      console.error("Failed to launch fallback Chromium:", e);
+      throw new Error("Puppeteer launch failed: No Browserless endpoint or local Chromium found.");
+    }
   }
 
   public async getBrowser(): Promise<Browser> {
