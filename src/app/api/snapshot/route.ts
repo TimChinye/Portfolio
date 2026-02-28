@@ -53,6 +53,7 @@ export async function POST(req: Request) {
     browser = await puppeteerManager.getBrowser();
 
     const results = await Promise.all(tasks.map(async (task: any) => {
+      if (!browser) throw new Error("Browser not initialized");
       let page: any = null;
       try {
         page = await browser.newPage();
