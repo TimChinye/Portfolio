@@ -134,5 +134,30 @@ export function getFullPageHTML(themeOverride?: "light" | "dark"): string {
   const itemsToHide = doc.querySelectorAll('[data-html2canvas-ignore]');
   itemsToHide.forEach(el => (el as HTMLElement).style.display = 'none');
 
+  // Inline CSS to ensure snapshots have styles even if the remote browser can't fetch them
+  let allCss = "";
+  try {
+    for (const sheet of Array.from(document.styleSheets)) {
+      try {
+        const rules = Array.from(sheet.cssRules);
+        for (const rule of rules) {
+          allCss += rule.cssText + "\n";
+        }
+      } catch (e) {
+        // Fallback for cross-origin sheets (though most in Next.js are local)
+        console.warn("Could not read stylesheet rules", e);
+      }
+    }
+  } catch (e) {
+    console.error("Inlining CSS failed", e);
+  }
+
+  const styleTag = doc.ownerDocument?.createElement("style") || document.createElement("style");
+  styleTag.textContent = allCss;
+  doc.querySelector("head")?.appendChild(styleTag);
+
+  // Remove existing <link> stylesheets to avoid double-loading or failed fetches
+  doc.querySelectorAll('link[rel="stylesheet"]').forEach(el => el.remove());
+
   return `<!DOCTYPE html><html ${Array.from(doc.attributes).map(a => `${a.name}="${a.value}"`).join(' ')}>${doc.innerHTML}</html>`;
 }
