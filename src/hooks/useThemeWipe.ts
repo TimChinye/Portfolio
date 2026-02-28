@@ -2,7 +2,7 @@
 
 import { useState, useCallback, Dispatch, SetStateAction } from "react";
 import { useTheme } from "next-themes";
-import { domToPng } from "modern-screenshot";
+import { getFullPageHTML } from "@/utils/dom-serializer";
 import { useWipeAnimation } from "@/hooks/useWipeAnimation";
 import { Theme, WipeDirection } from "@/components/features/ThemeSwitcher/types";
 import type { MotionValue } from "motion/react";
@@ -90,41 +90,32 @@ export function useThemeWipe({
     const direction: WipeDirection =
       currentTheme === "dark" ? "bottom-up" : "top-down";
 
-    // 3-second timeout for the snapshot process
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Snapshot timeout")), 3000)
-    );
+    const fetchSnapshot = async () => {
+      const html = getFullPageHTML();
+      const response = await fetch("/api/snapshot", {
+        method: "POST",
+        body: JSON.stringify({
+          html,
+          width: window.innerWidth,
+          height: window.innerHeight,
+          devicePixelRatio: window.devicePixelRatio,
+        }),
+      });
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+      return data.snapshot;
+    };
+
+    const withTimeout = (promise: Promise<any>, ms: number) => {
+      return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Snapshot timeout")), ms))
+      ]);
+    };
 
     try {
-      const getCaptureOptions = () => {
-        const vh = window.innerHeight;
-        const scrollY = window.scrollY;
-
-        return {
-          useCORS: true,
-          width: document.documentElement.clientWidth,
-          height: vh,
-          scale: Math.max(window.devicePixelRatio, 2),
-          filter: (node: Node) => {
-            if (node instanceof HTMLElement || node instanceof SVGElement) {
-              if (node.hasAttribute('data-html2canvas-ignore')) return false;
-            }
-            return true;
-          },
-          style: {
-            width: `${document.documentElement.clientWidth}px`,
-            height: `${document.documentElement.scrollHeight}px`,
-            transform: `translateY(-${scrollY}px)`,
-            transformOrigin: 'top left',
-          }
-        };
-      };
-
       // 1. Capture current theme (with timeout)
-      const snapshotA = await Promise.race([
-        domToPng(document.documentElement, getCaptureOptions()),
-        timeoutPromise
-      ]) as string;
+      const snapshotA = await withTimeout(fetchSnapshot(), 5000) as string;
 
       // Mask the theme change immediately to avoid the flash of the new theme
       setSnapshots({ a: snapshotA, b: snapshotA });
@@ -138,10 +129,7 @@ export function useThemeWipe({
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
       // 4. Capture new theme (with timeout)
-      const snapshotB = await Promise.race([
-        domToPng(document.documentElement, getCaptureOptions()),
-        timeoutPromise
-      ]) as string;
+      const snapshotB = await withTimeout(fetchSnapshot(), 5000) as string;
 
       setWipeDirection(direction);
       // We don't overwrite animationTargetTheme here because it might have been flipped mid-capture
