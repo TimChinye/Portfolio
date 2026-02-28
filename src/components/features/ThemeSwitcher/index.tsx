@@ -58,6 +58,7 @@ export function ThemeSwitcher({
         <WipeAnimationOverlay
           snapshots={snapshots}
           animationStyles={animationStyles}
+          wipeDirection={wipeDirection}
         />,
         document.body
       )}

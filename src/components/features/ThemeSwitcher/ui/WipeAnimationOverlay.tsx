@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence, MotionValue } from "motion/react";
 import type { Snapshots } from "@/hooks/useThemeWipe";
+import { WipeDirection } from "../types";
 
 interface WipeAnimationOverlayProps {
   snapshots: Snapshots | null;
@@ -9,11 +10,13 @@ interface WipeAnimationOverlayProps {
     clipPath: MotionValue<string>;
     dividerTop: MotionValue<string>;
   };
+  wipeDirection: WipeDirection | null;
 }
 
 export function WipeAnimationOverlay({
   snapshots,
   animationStyles: { clipPath, dividerTop },
+  wipeDirection,
 }: WipeAnimationOverlayProps) {
   // Use the client width to ensure the snapshot matches the content area (excluding scrollbar)
   const contentWidth = typeof document !== 'undefined' ? `${document.documentElement.clientWidth}px` : '100%';
@@ -52,6 +55,7 @@ export function WipeAnimationOverlay({
             style={{
               top: dividerTop,
               width: contentWidth,
+              translate: wipeDirection === "top-down" ? "0 -100%" : "0 0",
             }}
           />
         </div>

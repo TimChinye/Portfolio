@@ -90,8 +90,8 @@ export function useThemeWipe({
     const direction: WipeDirection =
       currentTheme === "dark" ? "bottom-up" : "top-down";
 
-    const fetchSnapshot = async () => {
-      const html = getFullPageHTML();
+    const fetchSnapshot = async (themeOverride?: "light" | "dark") => {
+      const html = getFullPageHTML(themeOverride);
       const response = await fetch("/api/snapshot", {
         method: "POST",
         body: JSON.stringify({
@@ -114,26 +114,28 @@ export function useThemeWipe({
     };
 
     try {
-      // 1. Capture current theme (with timeout)
-      const snapshotA = await withTimeout(fetchSnapshot(), 5000) as string;
+      // 1. Capture both themes in parallel immediately
+      const [snapshotA, snapshotB] = await withTimeout(
+        Promise.all([
+          fetchSnapshot(), // Current theme
+          fetchSnapshot(newTheme) // Target theme
+        ]),
+        7000 // Slightly longer timeout for parallel requests
+      ) as [string, string];
 
-      // Mask the theme change immediately to avoid the flash of the new theme
-      setSnapshots({ a: snapshotA, b: snapshotA });
+      // 2. Set the snapshots to start the overlay rendering
+      // We mask the change by showing Snapshot A as both A and B for a single frame if needed,
+      // but since we have both, we can just set them and switch theme.
+      setSnapshots({ a: snapshotA, b: snapshotB });
+
       // Ensure the overlay is rendered before we switch the underlying theme
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-      // 2. Switch theme (Optimistic Change)
+      // 3. Switch theme (Optimistic Change)
       setTheme(newTheme);
 
-      // 3. Wait for the theme change to reflect in the DOM
-      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-
-      // 4. Capture new theme (with timeout)
-      const snapshotB = await withTimeout(fetchSnapshot(), 5000) as string;
-
+      // 4. Start the wipe animation
       setWipeDirection(direction);
-      // We don't overwrite animationTargetTheme here because it might have been flipped mid-capture
-      setSnapshots({ a: snapshotA, b: snapshotB });
     } catch (error) {
       console.warn("Theme wipe snapshot failed or timed out, changing theme instantly:", error);
 

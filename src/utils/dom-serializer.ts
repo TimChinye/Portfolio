@@ -92,7 +92,7 @@ export function serializeDOM(root: HTMLElement): string {
   return clone.innerHTML; // Return innerHTML to avoid nested body
 }
 
-export function getFullPageHTML(): string {
+export function getFullPageHTML(themeOverride?: "light" | "dark"): string {
   const originalHtml = document.documentElement;
   const doc = originalHtml.cloneNode(true) as HTMLElement;
 
@@ -100,6 +100,19 @@ export function getFullPageHTML(): string {
   Array.from(originalHtml.attributes).forEach(attr => {
     doc.setAttribute(attr.name, attr.value);
   });
+
+  if (themeOverride) {
+    // next-themes typically uses class="dark" or class="light" on html
+    if (themeOverride === "dark") {
+      doc.classList.add("dark");
+      doc.classList.remove("light");
+    } else {
+      doc.classList.add("light");
+      doc.classList.remove("dark");
+    }
+    // Also handle data-theme if present
+    doc.setAttribute("data-theme", themeOverride);
+  }
 
   const body = doc.querySelector('body');
   if (body) {
