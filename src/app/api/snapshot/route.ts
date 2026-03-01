@@ -52,9 +52,16 @@ export async function POST(req: Request) {
     // Get the persistent browser instance (shared across requests)
     browser = await puppeteerManager.getBrowser();
 
-    const results = await Promise.all(tasks.map(async (task: any) => {
-      if (!browser) throw new Error("Browser not initialized");
-      let page: any = null;
+    const results: string[] = [];
+
+    // Process tasks SEQUENTIALLY to avoid "Target closed" and "detached frame" errors
+    // on a single shared WebSocket connection.
+    for (const task of tasks) {
+      if (!browser || !browser.isConnected()) {
+        throw new Error("Browser connection lost");
+      }
+
+      let page: Page | null = null;
       try {
         page = await browser.newPage();
         pages.push(page);
@@ -75,10 +82,10 @@ export async function POST(req: Request) {
         // Performance: Disable JS
         await page.setJavaScriptEnabled(false);
 
-        // Wait for assets and fonts to be ready
+        // Wait for DOM to be ready
         await page.setContent(html, { waitUntil: "load" });
 
-        // Tiny delay for layout/font rendering to settle
+        // Tiny delay for layout/font rendering
         await new Promise(r => setTimeout(r, 100));
 
         await page.evaluate(() => {
@@ -93,12 +100,12 @@ export async function POST(req: Request) {
           fullPage: false,
         });
 
-        return `data:image/png;base64,${buffer.toString("base64")}`;
+        results.push(`data:image/png;base64,${buffer.toString("base64")}`);
       } catch (err: any) {
         console.error("Task failed:", err);
         throw err;
       }
-    }));
+    }
 
     return NextResponse.json(isMulti ? { snapshots: results } : { snapshot: results[0] });
 
