@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import puppeteer, { Browser, Page } from "puppeteer-core";
+import { Browser } from "puppeteer-core";
 import { puppeteerManager } from "@/utils/puppeteer-manager";
 
 export const maxDuration = 60;
@@ -48,13 +48,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "HTML content is required for all tasks" }, { status: 400 });
     }
 
-    // Connect to the persistent browser instance
-    const wsEndpoint = await puppeteerManager.getWsEndpoint();
-    browser = await puppeteer.connect({ browserWSEndpoint: wsEndpoint });
+    // Get the shared persistent browser instance
+    browser = await puppeteerManager.getBrowser();
 
     const results: string[] = [];
 
-    // Process tasks SEQUENTIALLY and close pages immediately to minimize resource usage
+    // Process tasks SEQUENTIALLY to stay within the 2-concurrency limit
     for (const task of tasks) {
       if (!browser || !browser.isConnected()) {
         throw new Error("Browser connection lost");
@@ -101,6 +100,7 @@ export async function POST(req: Request) {
         console.error("Task failed:", err);
         throw err;
       } finally {
+        // Close EACH page immediately to free up connection/resources
         await page.close().catch(() => {});
       }
     }
@@ -111,9 +111,7 @@ export async function POST(req: Request) {
     console.error("Snapshot API error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   } finally {
-    if (browser) {
-      // We disconnect from the persistent browser, NOT close it
-      await browser.disconnect().catch(() => {});
-    }
+    // We do NOT disconnect from the shared singleton browser here.
+    // That's what was causing the "Target closed" and "Navigating frame was detached" errors.
   }
 }
