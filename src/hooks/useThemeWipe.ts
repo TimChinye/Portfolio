@@ -108,7 +108,7 @@ export function useThemeWipe({
       return data.snapshots;
     };
 
-    const captureWithModernScreenshot = async (): Promise<Snapshots> => {
+    const captureWithModernScreenshot = async (): Promise<{ a: string; b: string }> => {
       const vh = window.innerHeight;
       const scrollY = window.scrollY;
       const options = {
@@ -134,7 +134,7 @@ export function useThemeWipe({
       const a = await domToPng(document.documentElement, options);
 
       // Mask switch
-      setSnapshots({ a, b: a });
+      setSnapshots({ a, b: a, method: "modern-screenshot" });
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
       // 2. Switch theme

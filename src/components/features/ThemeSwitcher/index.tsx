@@ -4,7 +4,6 @@ import { useState, useEffect, Dispatch, SetStateAction, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useTheme } from "next-themes";
 import { useThemeWipe } from "../../../hooks/useThemeWipe";
-import { Settings } from "lucide-react";
 import { ThemeToggleButtonIcon } from "./ui/ThemeToggleButtonIcon";
 import { WipeAnimationOverlay } from "./ui/WipeAnimationOverlay";
 import { Theme, WipeDirection } from "./types";
@@ -109,10 +108,23 @@ export function ThemeSwitcher({
           )}
           <button
             onClick={() => setShowDebug(!showDebug)}
-            className="p-3 bg-yellow-400 dark:bg-yellow-500 text-black rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all duration-200"
+            className="p-3 bg-yellow-400 dark:bg-yellow-500 text-black rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 flex items-center justify-center"
             title="Theme Debug Settings"
           >
-            <Settings size={20} className={showDebug ? "rotate-45" : ""} />
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={`transition-transform duration-200 ${showDebug ? "rotate-45" : ""}`}
+            >
+              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
           </button>
         </div>,
         document.body
