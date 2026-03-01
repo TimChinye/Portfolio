@@ -134,57 +134,5 @@ export function getFullPageHTML(themeOverride?: "light" | "dark"): string {
   const itemsToHide = doc.querySelectorAll('[data-html2canvas-ignore]');
   itemsToHide.forEach(el => (el as HTMLElement).style.display = 'none');
 
-  // Inline CSS to ensure snapshots have styles even if the remote browser can't fetch them
-  let allCss = "";
-  const origin = window.location.origin;
-
-  try {
-    for (const sheet of Array.from(document.styleSheets)) {
-      try {
-        const sheetBase = sheet.href ? new URL(sheet.href).href : origin;
-        const rules = Array.from(sheet.cssRules);
-        for (const rule of rules) {
-          // Resolve relative URLs in CSS (fonts, images) to absolute URLs
-          let cssText = rule.cssText;
-          cssText = cssText.replace(/url\(['"]?([^'"()]+)['"]?\)/g, (match, p1) => {
-            if (!p1.startsWith('http') && !p1.startsWith('data:')) {
-              try {
-                return `url("${new URL(p1, sheetBase).href}")`;
-              } catch (e) {
-                return match;
-              }
-            }
-            return match;
-          });
-          allCss += cssText + "\n";
-        }
-      } catch (e) {
-        // Fallback for cross-origin sheets (though most in Next.js are local)
-        console.warn("Could not read stylesheet rules", e);
-      }
-    }
-  } catch (e) {
-    console.error("Inlining CSS failed", e);
-  }
-
-  const styleTag = doc.ownerDocument?.createElement("style") || document.createElement("style");
-  styleTag.textContent = allCss;
-  doc.querySelector("head")?.appendChild(styleTag);
-
-  // Remove scripts to prevent hydration layout shifts
-  doc.querySelectorAll('script').forEach(el => el.remove());
-
-  // Ensure all relative links are converted to absolute URLs based on current location
-  // This helps Puppeteer resolve fonts/images even when set via setContent
-  doc.querySelectorAll('link[href], img[src], source[src], video[src]').forEach(el => {
-    const attr = el.tagName === 'LINK' ? 'href' : 'src';
-    const val = el.getAttribute(attr);
-    if (val && !val.startsWith('http') && !val.startsWith('data:')) {
-      try {
-        el.setAttribute(attr, new URL(val, origin).href);
-      } catch (e) {}
-    }
-  });
-
   return `<!DOCTYPE html><html ${Array.from(doc.attributes).map(a => `${a.name}="${a.value}"`).join(' ')}>${doc.innerHTML}</html>`;
 }

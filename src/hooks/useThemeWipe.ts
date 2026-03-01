@@ -91,7 +91,14 @@ export function useThemeWipe({
     const direction: WipeDirection =
       currentTheme === "dark" ? "bottom-up" : "top-down";
 
-    const fetchSnapshots = async (themes: (Theme | undefined)[]): Promise<string[]> => {
+    const withTimeout = (promise: Promise<any>, ms: number, errorMsg: string) => {
+      return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error(errorMsg)), ms))
+      ]);
+    };
+
+    const fetchSnapshotsFromApi = async (themes: (Theme | undefined)[]): Promise<string[]> => {
       const tasks = themes.map(theme => ({
         html: getFullPageHTML(theme),
         width: window.innerWidth,
@@ -133,12 +140,14 @@ export function useThemeWipe({
       // 1. Snapshot A (current)
       const a = await domToPng(document.documentElement, options);
 
-      // Mask switch
+      // Mask switch (freeze the current view)
       setSnapshots({ a, b: a, method: "modern-screenshot" });
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
       // 2. Switch theme
       setTheme(newTheme);
+      // Wait for DOM to update and themes to apply
+      await new Promise(r => setTimeout(r, 100));
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
       // 3. Snapshot B (new)
@@ -146,73 +155,56 @@ export function useThemeWipe({
       return { a, b };
     };
 
-    const withTimeout = (promise: Promise<any>, ms: number, errorMsg: string) => {
-      return Promise.race([
-        promise,
-        new Promise((_, reject) => setTimeout(() => reject(new Error(errorMsg)), ms))
-      ]);
-    };
-
     const forceFallback = typeof window !== 'undefined' ? (window as any).FORCE_FALLBACK || {} : {};
 
-    const fallbackToInstant = () => {
-      setTheme(newTheme);
-      setSnapshots(null);
-      setScrollLock(false);
-      setAnimationTargetTheme(null);
-      setOriginalTheme(null);
-      setWipeDirection(null);
-      wipeProgress.set(0);
-      setIsCapturing(false);
-      document.documentElement.classList.remove('disable-transitions');
-    };
-
-    const tryModernScreenshot = async () => {
-      try {
-        if (forceFallback.disableModernScreenshot) throw new Error("modern-screenshot manually disabled");
-        console.log("Attempting modern-screenshot fallback...");
-        const { a, b } = await withTimeout(
-          captureWithModernScreenshot(),
-          2000,
-          "modern-screenshot timeout"
-        ) as { a: string, b: string };
-
-        setSnapshots({ a, b, method: "modern-screenshot" });
-        setWipeDirection(direction);
-        setTheme(newTheme); // Ensure theme actually switches!
-      } catch (e) {
-        console.warn("modern-screenshot failed, falling back to instant theme change:", e);
-        fallbackToInstant();
-      } finally {
-        setIsCapturing(false);
-        document.documentElement.classList.remove('disable-transitions');
-      }
-    };
-
     try {
+      // --- PHASE 1: PUPPETEER ---
       if (forceFallback.disablePuppeteer) throw new Error("Puppeteer manually disabled");
 
-      // PHASE 1: Try Puppeteer (10s timeout)
       console.log("Attempting Puppeteer snapshots...");
       const results = await withTimeout(
-        fetchSnapshots([undefined, newTheme]),
+        fetchSnapshotsFromApi([undefined, newTheme]),
         10000,
         "Puppeteer timeout"
       );
 
-      if (!results || !Array.isArray(results)) throw new Error("Invalid Puppeteer response");
+      if (!results || !Array.isArray(results) || results.length < 2) throw new Error("Invalid Puppeteer response");
       const [snapshotA, snapshotB] = results;
 
       setSnapshots({ a: snapshotA, b: snapshotB, method: "puppeteer" });
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
       setTheme(newTheme);
       setWipeDirection(direction);
-      setIsCapturing(false);
-      document.documentElement.classList.remove('disable-transitions');
 
     } catch (e: any) {
       console.warn("Puppeteer failed, falling back to modern-screenshot:", e.message);
-      await tryModernScreenshot();
+
+      try {
+        // --- PHASE 2: MODERN SCREENSHOT ---
+        if (forceFallback.disableModernScreenshot) throw new Error("modern-screenshot manually disabled");
+
+        console.log("Attempting modern-screenshot snapshots...");
+        const result = await withTimeout(
+          captureWithModernScreenshot(),
+          7000,
+          "modern-screenshot timeout"
+        );
+
+        setSnapshots({ a: result.a, b: result.b, method: "modern-screenshot" });
+        setWipeDirection(direction);
+
+      } catch (e2: any) {
+        console.warn("modern-screenshot failed, changing theme instantly:", e2.message);
+
+        // --- PHASE 3: INSTANT FALLBACK ---
+        setTheme(newTheme);
+        setSnapshots(null);
+        setScrollLock(false);
+        setAnimationTargetTheme(null);
+        setOriginalTheme(null);
+        setWipeDirection(null);
+        wipeProgress.set(0);
+      }
     } finally {
       setIsCapturing(false);
       document.documentElement.classList.remove('disable-transitions');

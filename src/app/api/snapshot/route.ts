@@ -72,17 +72,14 @@ export async function POST(req: Request) {
           deviceScaleFactor: safeScale,
         });
 
-        // Set a realistic User Agent
-        await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
-
-        // Performance: Disable JS (the serializer removes scripts anyway, but this is a safeguard)
+        // Performance: Disable JS
         await page.setJavaScriptEnabled(false);
 
         // Wait for assets and fonts to be ready
         await page.setContent(html, { waitUntil: "load" });
 
         // Tiny delay for layout/font rendering to settle
-        await new Promise(r => setTimeout(r, 500));
+        await new Promise(r => setTimeout(r, 100));
 
         await page.evaluate(() => {
           const htmlEl = document.documentElement;

@@ -78,9 +78,9 @@ export function ThemeSwitcher({
         document.body
       )}
 
-      {/* Dev Debug UI - Visible for user testing on live link */}
+      {/* Dev Debug UI - Moved to bottom-left as requested */}
       {createPortal(
-        <div className="fixed bottom-24 right-4 z-[10001] flex flex-col items-end gap-2">
+        <div className="fixed bottom-4 left-4 z-[10001] flex flex-col items-start gap-2">
           {showDebug && (
             <div className="bg-white/95 dark:bg-black/95 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-2xl backdrop-blur-md flex flex-col gap-3 text-sm font-sans min-w-[200px]">
               <div className="font-bold border-b border-neutral-100 dark:border-neutral-900 pb-2 mb-1">
