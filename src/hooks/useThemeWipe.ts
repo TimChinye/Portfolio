@@ -14,9 +14,12 @@ type UseThemeWipeProps = {
   setWipeDirection: Dispatch<SetStateAction<WipeDirection | null>>;
 };
 
+export type SnapshotMethod = "puppeteer" | "modern-screenshot" | "instant";
+
 export type Snapshots = {
   a: string; // Original theme
   b: string; // Target theme
+  method: SnapshotMethod;
 };
 
 export function useThemeWipe({
@@ -150,46 +153,64 @@ export function useThemeWipe({
       ]);
     };
 
-    try {
-      // PHASE 1: Try Puppeteer (10s timeout)
-      console.log("Attempting Puppeteer snapshots...");
-      const [snapshotA, snapshotB] = await withTimeout(
-        fetchSnapshots([undefined, newTheme]),
-        10000,
-        "Puppeteer timeout"
-      ) as [string, string];
+    const forceFallback = typeof window !== 'undefined' ? (window as any).FORCE_FALLBACK || {} : {};
 
-      setSnapshots({ a: snapshotA, b: snapshotB });
-      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const fallbackToInstant = () => {
       setTheme(newTheme);
-      setWipeDirection(direction);
+      setSnapshots(null);
+      setScrollLock(false);
+      setAnimationTargetTheme(null);
+      setOriginalTheme(null);
+      setWipeDirection(null);
+      wipeProgress.set(0);
+      setIsCapturing(false);
+      document.documentElement.classList.remove('disable-transitions');
+    };
 
-    } catch (e: any) {
-      console.warn("Puppeteer failed or timed out, falling back to modern-screenshot:", e.message);
-
+    const tryModernScreenshot = async () => {
       try {
-        // PHASE 2: Try modern-screenshot (2s timeout)
-        const snapshots = await withTimeout(
+        if (forceFallback.disableModernScreenshot) throw new Error("modern-screenshot manually disabled");
+        console.log("Attempting modern-screenshot fallback...");
+        const { a, b } = await withTimeout(
           captureWithModernScreenshot(),
           2000,
           "modern-screenshot timeout"
-        ) as Snapshots;
-
-        setSnapshots(snapshots);
+        ) as { a: string, b: string };
+        setSnapshots({ a, b, method: "modern-screenshot" });
         setWipeDirection(direction);
-
-      } catch (e2: any) {
-        console.warn("modern-screenshot failed or timed out, changing theme instantly:", e2.message);
-
-        // PHASE 3: Fallback instantly
-        setTheme(newTheme);
-        setSnapshots(null);
-        setScrollLock(false);
-        setAnimationTargetTheme(null);
-        setOriginalTheme(null);
-        setWipeDirection(null);
-        wipeProgress.set(0);
+      } catch (e) {
+        console.warn("modern-screenshot failed, falling back to instant theme change:", e);
+        fallbackToInstant();
+      } finally {
+        setIsCapturing(false);
+        document.documentElement.classList.remove('disable-transitions');
       }
+    };
+
+    try {
+      if (forceFallback.disablePuppeteer) throw new Error("Puppeteer manually disabled");
+
+      // PHASE 1: Try Puppeteer (10s timeout)
+      console.log("Attempting Puppeteer snapshots...");
+      const results = await withTimeout(
+        fetchSnapshots([undefined, newTheme]),
+        10000,
+        "Puppeteer timeout"
+      );
+
+      if (!results || !Array.isArray(results)) throw new Error("Invalid Puppeteer response");
+      const [snapshotA, snapshotB] = results;
+
+      setSnapshots({ a: snapshotA, b: snapshotB, method: "puppeteer" });
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      setTheme(newTheme);
+      setWipeDirection(direction);
+      setIsCapturing(false);
+      document.documentElement.classList.remove('disable-transitions');
+
+    } catch (e: any) {
+      console.warn("Puppeteer failed, falling back to modern-screenshot:", e.message);
+      await tryModernScreenshot();
     } finally {
       setIsCapturing(false);
       document.documentElement.classList.remove('disable-transitions');

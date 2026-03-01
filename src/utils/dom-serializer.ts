@@ -136,12 +136,26 @@ export function getFullPageHTML(themeOverride?: "light" | "dark"): string {
 
   // Inline CSS to ensure snapshots have styles even if the remote browser can't fetch them
   let allCss = "";
+  const baseUrl = window.location.origin;
+
   try {
     for (const sheet of Array.from(document.styleSheets)) {
       try {
         const rules = Array.from(sheet.cssRules);
         for (const rule of rules) {
-          allCss += rule.cssText + "\n";
+          // Resolve relative URLs in CSS (fonts, images) to absolute URLs
+          let cssText = rule.cssText;
+          cssText = cssText.replace(/url\(['"]?([^'"()]+)['"]?\)/g, (match, p1) => {
+            if (!p1.startsWith('http') && !p1.startsWith('data:')) {
+              try {
+                return `url("${new URL(p1, baseUrl).href}")`;
+              } catch (e) {
+                return match;
+              }
+            }
+            return match;
+          });
+          allCss += cssText + "\n";
         }
       } catch (e) {
         // Fallback for cross-origin sheets (though most in Next.js are local)
@@ -156,8 +170,18 @@ export function getFullPageHTML(themeOverride?: "light" | "dark"): string {
   styleTag.textContent = allCss;
   doc.querySelector("head")?.appendChild(styleTag);
 
-  // Remove existing <link> stylesheets to avoid double-loading or failed fetches
-  doc.querySelectorAll('link[rel="stylesheet"]').forEach(el => el.remove());
+  // Ensure all relative links are converted to absolute URLs based on current location
+  // This helps Puppeteer resolve fonts/images even when set via setContent
+
+  doc.querySelectorAll('link[href], img[src], script[src]').forEach(el => {
+    const attr = el.tagName === 'LINK' ? 'href' : 'src';
+    const val = el.getAttribute(attr);
+    if (val && !val.startsWith('http') && !val.startsWith('data:')) {
+      try {
+        el.setAttribute(attr, new URL(val, baseUrl).href);
+      } catch (e) {}
+    }
+  });
 
   return `<!DOCTYPE html><html ${Array.from(doc.attributes).map(a => `${a.name}="${a.value}"`).join(' ')}>${doc.innerHTML}</html>`;
 }
