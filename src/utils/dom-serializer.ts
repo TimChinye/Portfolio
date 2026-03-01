@@ -136,11 +136,12 @@ export function getFullPageHTML(themeOverride?: "light" | "dark"): string {
 
   // Inline CSS to ensure snapshots have styles even if the remote browser can't fetch them
   let allCss = "";
-  const baseUrl = window.location.origin;
+  const origin = window.location.origin;
 
   try {
     for (const sheet of Array.from(document.styleSheets)) {
       try {
+        const sheetBase = sheet.href ? new URL(sheet.href).href : origin;
         const rules = Array.from(sheet.cssRules);
         for (const rule of rules) {
           // Resolve relative URLs in CSS (fonts, images) to absolute URLs
@@ -148,7 +149,7 @@ export function getFullPageHTML(themeOverride?: "light" | "dark"): string {
           cssText = cssText.replace(/url\(['"]?([^'"()]+)['"]?\)/g, (match, p1) => {
             if (!p1.startsWith('http') && !p1.startsWith('data:')) {
               try {
-                return `url("${new URL(p1, baseUrl).href}")`;
+                return `url("${new URL(p1, sheetBase).href}")`;
               } catch (e) {
                 return match;
               }
@@ -170,15 +171,17 @@ export function getFullPageHTML(themeOverride?: "light" | "dark"): string {
   styleTag.textContent = allCss;
   doc.querySelector("head")?.appendChild(styleTag);
 
+  // Remove scripts to prevent hydration layout shifts
+  doc.querySelectorAll('script').forEach(el => el.remove());
+
   // Ensure all relative links are converted to absolute URLs based on current location
   // This helps Puppeteer resolve fonts/images even when set via setContent
-
-  doc.querySelectorAll('link[href], img[src], script[src]').forEach(el => {
+  doc.querySelectorAll('link[href], img[src], source[src], video[src]').forEach(el => {
     const attr = el.tagName === 'LINK' ? 'href' : 'src';
     const val = el.getAttribute(attr);
     if (val && !val.startsWith('http') && !val.startsWith('data:')) {
       try {
-        el.setAttribute(attr, new URL(val, baseUrl).href);
+        el.setAttribute(attr, new URL(val, origin).href);
       } catch (e) {}
     }
   });

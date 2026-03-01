@@ -176,8 +176,10 @@ export function useThemeWipe({
           2000,
           "modern-screenshot timeout"
         ) as { a: string, b: string };
+
         setSnapshots({ a, b, method: "modern-screenshot" });
         setWipeDirection(direction);
+        setTheme(newTheme); // Ensure theme actually switches!
       } catch (e) {
         console.warn("modern-screenshot failed, falling back to instant theme change:", e);
         fallbackToInstant();
