@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Dispatch, SetStateAction, useMemo } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { createPortal } from "react-dom";
 import { useTheme } from "next-themes";
 import { useThemeWipe } from "../../../hooks/useThemeWipe";

@@ -75,11 +75,11 @@ export async function POST(req: Request) {
         // Performance: Disable JS
         await page.setJavaScriptEnabled(false);
 
-        // Wait for DOM to be ready
-        await page.setContent(html, { waitUntil: "domcontentloaded" });
+        // Wait for assets and fonts to be ready
+        await page.setContent(html, { waitUntil: "load" });
 
         // Tiny delay for layout/font rendering
-        await new Promise(r => setTimeout(r, 100));
+        await new Promise(r => setTimeout(r, 200));
 
         await page.evaluate(() => {
           const htmlEl = document.documentElement;
