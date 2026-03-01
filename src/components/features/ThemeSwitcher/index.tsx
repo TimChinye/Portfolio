@@ -78,7 +78,7 @@ export function ThemeSwitcher({
         document.body
       )}
 
-      {/* Dev Debug UI - Moved back to bottom-right as requested */}
+      {/* Dev Debug UI - Positioned for user visibility */}
       {createPortal(
         <div className="fixed bottom-24 right-4 z-[10001] flex flex-col items-end gap-2">
           {showDebug && (

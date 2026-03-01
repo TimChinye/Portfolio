@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { Browser, Page } from "puppeteer-core";
+import puppeteer, { Browser, Page } from "puppeteer-core";
 import { puppeteerManager } from "@/utils/puppeteer-manager";
 
 export const maxDuration = 60;
@@ -32,7 +32,6 @@ export async function POST(req: Request) {
   }
 
   let browser: Browser | null = null;
-  const pages: Page[] = [];
 
   try {
     const body = await req.json();
@@ -49,23 +48,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "HTML content is required for all tasks" }, { status: 400 });
     }
 
-    // Get the persistent browser instance (shared across requests)
-    browser = await puppeteerManager.getBrowser();
+    // Connect to the persistent browser instance
+    const wsEndpoint = await puppeteerManager.getWsEndpoint();
+    browser = await puppeteer.connect({ browserWSEndpoint: wsEndpoint });
 
     const results: string[] = [];
 
-    // Process tasks SEQUENTIALLY to avoid "Target closed" and "detached frame" errors
-    // on a single shared WebSocket connection.
+    // Process tasks SEQUENTIALLY and close pages immediately to minimize resource usage
     for (const task of tasks) {
       if (!browser || !browser.isConnected()) {
         throw new Error("Browser connection lost");
       }
 
-      let page: Page | null = null;
+      const page = await browser.newPage();
       try {
-        page = await browser.newPage();
-        pages.push(page);
-
         const { html, width, height, devicePixelRatio = 2 } = task;
 
         // Set viewport correctly for this specific snapshot
@@ -100,10 +96,12 @@ export async function POST(req: Request) {
           fullPage: false,
         });
 
-        results.push(`data:image/png;base64,${buffer.toString("base64")}`);
+        results.push(`data:image/png;base64,${Buffer.from(buffer).toString("base64")}`);
       } catch (err: any) {
         console.error("Task failed:", err);
         throw err;
+      } finally {
+        await page.close().catch(() => {});
       }
     }
 
@@ -113,17 +111,9 @@ export async function POST(req: Request) {
     console.error("Snapshot API error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   } finally {
-    // Check if browser is still connected before closing pages
-    if (browser && browser.isConnected()) {
-      for (const page of pages) {
-        await page.close().catch((err) => {
-          if (!err.message.includes("Connection closed") && !err.message.includes("Target closed")) {
-            console.error("Error closing page:", err);
-          }
-        });
-      }
+    if (browser) {
+      // We disconnect from the persistent browser, NOT close it
+      await browser.disconnect().catch(() => {});
     }
-    // We do NOT disconnect or close the browser here.
-    // It's a persistent instance managed by PuppeteerManager.
   }
 }
