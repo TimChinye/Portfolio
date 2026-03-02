@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import puppeteer from "puppeteer-core";
 import { puppeteerManager } from "@/utils/puppeteer-manager";
 
 export const maxDuration = 60;
@@ -55,9 +54,11 @@ export async function POST(req: Request) {
     // Use the manager to get the browser (it handles launch/connect singleton)
     browser = await puppeteerManager.getBrowser();
 
-    // Process tasks in parallel to ensure snapshots are "taken at the same time"
-    // as per user requirement, while using the same browser connection.
-    const snapshotPromises = tasks.map(async (task: any) => {
+    const snapshots = [];
+
+    // Process tasks sequentially to maintain stability on low-concurrency connections (Browserless.io)
+    // while still using a single WebSocket connection for the entire batch.
+    for (const task of tasks) {
       const { html, width, height, devicePixelRatio = 2 } = task;
       const page = await browser.newPage();
       try {
@@ -94,13 +95,11 @@ export async function POST(req: Request) {
         });
 
         // Correct base64 encoding for Puppeteer snapshots (Uint8Array)
-        return `data:image/png;base64,${Buffer.from(buffer).toString("base64")}`;
+        snapshots.push(`data:image/png;base64,${Buffer.from(buffer).toString("base64")}`);
       } finally {
         await page.close().catch(() => {});
       }
-    });
-
-    const snapshots = await Promise.all(snapshotPromises);
+    }
     return NextResponse.json({ snapshots });
 
   } catch (error: any) {

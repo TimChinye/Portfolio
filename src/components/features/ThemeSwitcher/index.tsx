@@ -68,14 +68,15 @@ export function ThemeSwitcher({
         isLoading={isLoading}
       />
 
-      <DebugControls />
-
       {createPortal(
-        <WipeAnimationOverlay
-          snapshots={snapshots}
-          animationStyles={animationStyles}
-          wipeDirection={wipeDirection}
-        />,
+        <>
+          <DebugControls />
+          <WipeAnimationOverlay
+            snapshots={snapshots}
+            animationStyles={animationStyles}
+            wipeDirection={wipeDirection}
+          />
+        </>,
         document.body
       )}
     </>
