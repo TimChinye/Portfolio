@@ -139,6 +139,7 @@ export function getFullPageHTML(themeOverride?: "light" | "dark"): string {
     Array.from(document.body.attributes).forEach(attr => {
       body.setAttribute(attr.name, attr.value);
     });
+    // Correctly replace inner content
     body.innerHTML = serializeDOM(document.body);
   }
 

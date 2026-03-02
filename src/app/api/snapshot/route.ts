@@ -79,8 +79,8 @@ export async function POST(req: Request) {
         // Wait for full load
         await page.setContent(html, { waitUntil: "load" });
 
-        // Tiny delay for layout/font rendering
-        await new Promise(r => setTimeout(r, 250));
+        // Delay for layout, font rendering, and asset loading
+        await new Promise(r => setTimeout(r, 500));
 
         await page.evaluate(() => {
           const htmlEl = document.documentElement;

@@ -90,8 +90,21 @@ export function useThemeWipe({
       currentTheme === "dark" ? "bottom-up" : "top-down";
 
     const fetchSnapshotsBatch = async (newTheme: Theme) => {
+      // 1. Snapshot A (current)
       const htmlA = getFullPageHTML();
-      const htmlB = getFullPageHTML(newTheme);
+
+      // 2. Switch theme (to handle layouts that require re-render)
+      setTheme(newTheme);
+      // Wait for React to re-render
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      // 3. Snapshot B (newly rendered theme)
+      const htmlB = getFullPageHTML();
+
+      // 4. Switch back to prepare for animation (A will be on top)
+      setTheme(currentTheme);
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
       const response = await fetch("/api/snapshot", {
         method: "POST",
         body: JSON.stringify({
