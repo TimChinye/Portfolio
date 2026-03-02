@@ -101,6 +101,25 @@ export function getFullPageHTML(themeOverride?: "light" | "dark"): string {
     doc.setAttribute(attr.name, attr.value);
   });
 
+  // 1. Capture all CSS rules to ensure visually perfect rendering in headless browsers
+  // that may not have access to local assets (like Browserless.io).
+  let inlineStyles = '';
+  try {
+    for (const sheet of Array.from(document.styleSheets)) {
+      try {
+        if (!sheet.cssRules) continue;
+        for (const rule of Array.from(sheet.cssRules)) {
+          inlineStyles += rule.cssText + '\n';
+        }
+      } catch (e) {
+        // Handle cross-origin stylesheets (they may be blocked by CORS)
+        console.warn('Could not read cssRules from stylesheet', sheet.href, e);
+      }
+    }
+  } catch (e) {
+    console.error('Error reading stylesheets', e);
+  }
+
   if (themeOverride) {
     // next-themes typically uses class="dark" or class="light" on html
     if (themeOverride === "dark") {
@@ -115,13 +134,21 @@ export function getFullPageHTML(themeOverride?: "light" | "dark"): string {
   }
 
   const body = doc.querySelector('body');
-  if (body) {
-    // Correctly replace inner content
+  if (body && document.body) {
+    // Preserve body attributes (classes, etc.) which are often used by Tailwind/Next.js
+    Array.from(document.body.attributes).forEach(attr => {
+      body.setAttribute(attr.name, attr.value);
+    });
     body.innerHTML = serializeDOM(document.body);
   }
 
   const head = doc.querySelector('head');
   if (head) {
+    // Inject the inlined styles
+    const styleTag = document.createElement('style');
+    styleTag.textContent = inlineStyles;
+    head.appendChild(styleTag);
+
     const base = document.createElement('base');
     base.href = window.location.origin;
     head.insertBefore(base, head.firstChild);

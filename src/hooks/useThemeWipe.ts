@@ -198,8 +198,6 @@ export function useThemeWipe({
         setWipeDirection(direction);
 
       } catch (e2: any) {
-        console.warn("modern-screenshot failed or timed out, changing theme instantly:", e2.message);
-
         // PHASE 3: Fallback instantly
         console.warn("modern-screenshot failed or timed out, changing theme instantly:", e2.message);
         setTheme(newTheme);

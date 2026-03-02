@@ -80,7 +80,7 @@ export async function POST(req: Request) {
         await page.setContent(html, { waitUntil: "load" });
 
         // Tiny delay for layout/font rendering
-        await new Promise(r => setTimeout(r, 100));
+        await new Promise(r => setTimeout(r, 250));
 
         await page.evaluate(() => {
           const htmlEl = document.documentElement;
