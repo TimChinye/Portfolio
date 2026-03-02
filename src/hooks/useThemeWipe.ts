@@ -17,6 +17,7 @@ type UseThemeWipeProps = {
 export type Snapshots = {
   a: string; // Original theme
   b: string; // Target theme
+  method?: string; // Method used for snapshot
 };
 
 export function useThemeWipe({
@@ -88,20 +89,31 @@ export function useThemeWipe({
     const direction: WipeDirection =
       currentTheme === "dark" ? "bottom-up" : "top-down";
 
-    const fetchSnapshot = async (themeOverride?: "light" | "dark") => {
-      const html = getFullPageHTML(themeOverride);
+    const fetchSnapshotsBatch = async (newTheme: Theme) => {
+      const htmlA = getFullPageHTML();
+      const htmlB = getFullPageHTML(newTheme);
       const response = await fetch("/api/snapshot", {
         method: "POST",
         body: JSON.stringify({
-          html,
-          width: window.innerWidth,
-          height: window.innerHeight,
-          devicePixelRatio: window.devicePixelRatio,
+          tasks: [
+            {
+              html: htmlA,
+              width: window.innerWidth,
+              height: window.innerHeight,
+              devicePixelRatio: window.devicePixelRatio,
+            },
+            {
+              html: htmlB,
+              width: window.innerWidth,
+              height: window.innerHeight,
+              devicePixelRatio: window.devicePixelRatio,
+            }
+          ]
         }),
       });
       const data = await response.json();
       if (data.error) throw new Error(data.error);
-      return data.snapshot;
+      return data.snapshots; // Array of [snapshotA, snapshotB]
     };
 
     const captureWithModernScreenshot = async (): Promise<Snapshots> => {
@@ -149,16 +161,21 @@ export function useThemeWipe({
       ]);
     };
 
+    const forceFallback = (window as any).FORCE_FALLBACK || {};
+
     try {
-      // PHASE 1: Try Puppeteer (3s timeout)
+      if (forceFallback.puppeteer) {
+        throw new Error("Puppeteer manually disabled");
+      }
+      // PHASE 1: Try Puppeteer (10s timeout as per instructions)
       console.log("Attempting Puppeteer snapshot...");
       const [snapshotA, snapshotB] = await withTimeout(
-        Promise.all([fetchSnapshot(), fetchSnapshot(newTheme)]),
-        3000,
+        fetchSnapshotsBatch(newTheme),
+        10000,
         "Puppeteer timeout"
       ) as [string, string];
 
-      setSnapshots({ a: snapshotA, b: snapshotB });
+      setSnapshots({ a: snapshotA, b: snapshotB, method: "Puppeteer" });
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
       setTheme(newTheme);
       setWipeDirection(direction);
@@ -167,27 +184,36 @@ export function useThemeWipe({
       console.warn("Puppeteer failed or timed out, falling back to modern-screenshot:", e.message);
 
       try {
-        // PHASE 2: Try modern-screenshot (2s timeout)
-        const snapshots = await withTimeout(
+        if (forceFallback.modernScreenshot) {
+          throw new Error("modern-screenshot manually disabled");
+        }
+        // PHASE 2: Try modern-screenshot (7s timeout as per instructions)
+        const snapshotsResult = await withTimeout(
           captureWithModernScreenshot(),
-          2000,
+          7000,
           "modern-screenshot timeout"
         ) as Snapshots;
 
-        setSnapshots(snapshots);
+        setSnapshots({ ...snapshotsResult, method: "modern-screenshot" });
         setWipeDirection(direction);
 
       } catch (e2: any) {
         console.warn("modern-screenshot failed or timed out, changing theme instantly:", e2.message);
 
         // PHASE 3: Fallback instantly
+        console.warn("modern-screenshot failed or timed out, changing theme instantly:", e2.message);
         setTheme(newTheme);
-        setSnapshots(null);
-        setScrollLock(false);
-        setAnimationTargetTheme(null);
-        setOriginalTheme(null);
-        setWipeDirection(null);
-        wipeProgress.set(0);
+        setSnapshots({ a: '', b: '', method: 'Instant' });
+        // Give it a moment to show the status before clearing
+        setTimeout(() => {
+          // Check if we haven't started a new capture in the meantime
+          setSnapshots(prev => (prev?.method === 'Instant' ? null : prev));
+          setScrollLock(false);
+          setAnimationTargetTheme(prev => (prev === newTheme ? null : prev));
+          setOriginalTheme(prev => (prev === currentTheme ? null : prev));
+          setWipeDirection(prev => (prev === null ? null : prev)); // Don't clear if animation started
+          wipeProgress.set(0);
+        }, 2000);
       }
     } finally {
       setIsCapturing(false);
