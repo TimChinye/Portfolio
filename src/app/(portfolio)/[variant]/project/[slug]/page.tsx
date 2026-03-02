@@ -127,7 +127,7 @@ export default async function ProjectPage({ params }: Props) {
                   href={project.ctaPrimary.url} 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-8 py-4 bg-[#2F2F2B] dark:bg-[#F5F5EF] text-[#F5F5EF] dark:text-[#2F2F2B] rounded-full font-bold uppercase tracking-wide hover:scale-105 transition-transform"
+                  className="px-8 py-4 bg-[#2F2F2B] dark:bg-[#F5F5EF] text-[#F5F5EF] dark:text-[#2F2F2B] rounded-full font-bold uppercase tracking-wide content-center hover:scale-105 transition-transform"
                 >
                   {project.ctaPrimary.label}{isExternal(project.ctaPrimary.url) && " ↗"}
                 </a>
