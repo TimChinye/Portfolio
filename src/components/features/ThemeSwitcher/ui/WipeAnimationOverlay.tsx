@@ -28,6 +28,11 @@ export function WipeAnimationOverlay({
           className="fixed inset-0 z-10000"
           data-html2canvas-ignore="true"
         >
+          {/* Debug Method Text */}
+          <div className="absolute top-4 left-4 z-[10001] bg-black/50 text-white px-2 py-1 rounded text-xs font-mono">
+            Method: {snapshots.method || 'unknown'}
+          </div>
+
           {/* Target Theme Snapshot (Bottom Layer - Revealed) */}
           <div
             className="absolute inset-0 bg-no-repeat bg-size-[100%_100%]"

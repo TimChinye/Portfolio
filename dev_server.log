@@ -1,0 +1,312 @@
+ ⚠ Port 3000 is in use by an unknown process, using available port 3001 instead.
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   ▲ Next.js 16.0.7 (Turbopack)
+   - Local:         http://localhost:3001
+   - Network:       http://192.168.0.2:3001
+
+ ✓ Starting...
+ ⨯ Unable to acquire lock at /app/.next/dev/lock, is another instance of next dev running?
+   Suggestion: If you intended to restart next dev, terminate the other process, and then try again.
+[baseline-browser-mapping] The data in this module is over two mon ○ Compiling /[variant] ...
+ ⨯ ./node_modules/@sanity/client/dist/index.browser.js:4:1
+Module not found: Can't resolve 'rxjs'
+[0m [90m 2 |[39m [36mimport[39m { adapter[33m,[39m environment } [36mfrom[39m [32m"get-it"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { retry[33m,[39m jsonRequest[33m,[39m jsonResponse[33m,[39m progress[33m,[39m observable } [36mfrom[39m [32m"get-it/middleware"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mObservable[39m[33m,[39m defer[33m,[39m [36mof[39m[33m,[39m isObservable[33m,[39m mergeMap[33m,[39m [36mfrom[39m[33m,[39m lastValueFrom[33m,[39m shareReplay[33m,[39m catchError[33m,[39m concat[33m,[39m throwError[33m,[39m timer[33m,[39m tap[33m,[39m finalize[33m,[39m share[33m,[39m merge[33m,[39m map [36mas[39m map$1[33m,[39m firstValueFrom } [36mfrom[39m [32m"rxjs"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m [36mimport[39m { isRecord[33m,[39m stegaClean } [36mfrom[39m [32m"./_chunks-es/stegaClean.js"[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m { combineLatestWith[33m,[39m map[33m,[39m filter[33m,[39m finalize [36mas[39m finalize$1 } [36mfrom[39m [32m"rxjs/operators"[39m[33m;[39m
+ [90m 7 |[39m [36mimport[39m { getVersionFromId[33m,[39m isDraftId[33m,[39m getVersionId[33m,[39m getDraftId[33m,[39m isVersionId[33m,[39m getPublishedId } [36mfrom[39m [32m"@sanity/client/csm"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  #1 [Server Component]:
+    ./node_modules/@sanity/client/dist/index.browser.js
+    ./src/sanity/lib/client.ts
+    ./src/sanity/lib/queries.ts
+    ./src/app/(portfolio)/[variant]/layout.tsx
+
+  #2 [Server Component]:
+    ./node_modules/@sanity/client/dist/index.browser.js
+    ./src/sanity/lib/client.ts
+    ./src/sanity/lib/queries.ts
+    ./src/app/not-found.tsx
+
+  #3 [Client Component Browser]:
+    ./node_modules/@sanity/client/dist/index.browser.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Server Component]
+    ./node_modules/next-sanity/dist/live.js [Server Component]
+    ./src/sanity/lib/live.ts [Server Component]
+    ./src/app/(portfolio)/[variant]/layout.tsx [Server Component]
+
+  #4 [Client Component Browser]:
+    ./node_modules/@sanity/client/dist/index.browser.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Server Component]
+    ./node_modules/next-sanity/dist/live.js [Server Component]
+    ./src/sanity/lib/live.ts [Server Component]
+    ./src/sanity/lib/queries.ts [Server Component]
+    ./src/app/not-found.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./node_modules/@sanity/client/dist/index.js:4:1
+Module not found: Can't resolve 'rxjs'
+[0m [90m 2 |[39m [36mimport[39m { adapter[33m,[39m environment } [36mfrom[39m [32m"get-it"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { retry[33m,[39m jsonRequest[33m,[39m jsonResponse[33m,[39m progress[33m,[39m observable[33m,[39m debug[33m,[39m headers[33m,[39m agent } [36mfrom[39m [32m"get-it/middleware"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mObservable[39m[33m,[39m defer[33m,[39m [36mof[39m[33m,[39m isObservable[33m,[39m mergeMap[33m,[39m [36mfrom[39m[33m,[39m lastValueFrom[33m,[39m shareReplay[33m,[39m catchError[33m,[39m concat[33m,[39m throwError[33m,[39m timer[33m,[39m tap[33m,[39m finalize[33m,[39m share[33m,[39m merge[33m,[39m map [36mas[39m map$1[33m,[39m firstValueFrom } [36mfrom[39m [32m"rxjs"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m [36mimport[39m { isRecord } [36mfrom[39m [32m"./_chunks-es/isRecord.js"[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m { stegaClean } [36mfrom[39m [32m"./_chunks-es/stegaClean.js"[39m[33m;[39m
+ [90m 7 |[39m [36mimport[39m { combineLatestWith[33m,[39m map[33m,[39m filter[33m,[39m finalize [36mas[39m finalize$1 } [36mfrom[39m [32m"rxjs/operators"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  #1 [Client Component SSR]:
+    ./node_modules/@sanity/client/dist/index.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Server Component]
+    ./node_modules/next-sanity/dist/live.js [Server Component]
+    ./src/sanity/lib/live.ts [Server Component]
+    ./src/app/(portfolio)/[variant]/layout.tsx [Server Component]
+
+  #2 [Client Component SSR]:
+    ./node_modules/@sanity/client/dist/index.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Server Component]
+    ./node_modules/next-sanity/dist/live.js [Server Component]
+    ./src/sanity/lib/live.ts [Server Component]
+    ./src/sanity/lib/queries.ts [Server Component]
+    ./src/app/not-found.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./node_modules/@sanity/comlink/dist/index.js:3:1
+Module not found: Can't resolve 'rxjs'
+[0m [90m 1 |[39m [36mimport[39m { v4 } [36mfrom[39m [32m"uuid"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { fromEventObservable[33m,[39m setup[33m,[39m sendTo[33m,[39m assign[33m,[39m fromCallback[33m,[39m createActor[33m,[39m enqueueActions[33m,[39m raise[33m,[39m emit[33m,[39m assertEvent[33m,[39m stopChild } [36mfrom[39m [32m"xstate"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { defer[33m,[39m fromEvent[33m,[39m map[33m,[39m pipe[33m,[39m filter[33m,[39m bufferCount[33m,[39m concatMap[33m,[39m take[33m,[39m [33mEMPTY[39m[33m,[39m takeUntil } [36mfrom[39m [32m"rxjs"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m [36mconst[39m listenInputFromContext [33m=[39m (config) [33m=>[39m ({
+ [90m 5 |[39m   context
+ [90m 6 |[39m }) [33m=>[39m {[0m
+
+
+
+Import traces:
+  #1 [Client Component Browser]:
+    ./node_modules/@sanity/comlink/dist/index.js [Client Component Browser]
+    ./node_modules/@sanity/presentation-comlink/dist/index.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Server Component]
+    ./node_modules/next-sanity/dist/live.js [Server Component]
+    ./src/sanity/lib/live.ts [Server Component]
+    ./src/app/(portfolio)/[variant]/layout.tsx [Server Component]
+
+  #2 [Client Component SSR]:
+    ./node_modules/@sanity/comlink/dist/index.js [Client Component SSR]
+    ./node_modules/@sanity/presentation-comlink/dist/index.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Server Component]
+    ./node_modules/next-sanity/dist/live.js [Server Component]
+    ./src/sanity/lib/live.ts [Server Component]
+    ./src/app/(portfolio)/[variant]/layout.tsx [Server Component]
+
+  #3 [Client Component Browser]:
+    ./node_modules/@sanity/comlink/dist/index.js [Client Component Browser]
+    ./node_modules/@sanity/presentation-comlink/dist/index.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Server Component]
+    ./node_modules/next-sanity/dist/live.js [Server Component]
+    ./src/sanity/lib/live.ts [Server Component]
+    ./src/sanity/lib/queries.ts [Server Component]
+    ./src/app/not-found.tsx [Server Component]
+
+  #4 [Client Component SSR]:
+    ./node_modules/@sanity/comlink/dist/index.js [Client Component SSR]
+    ./node_modules/@sanity/presentation-comlink/dist/index.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Server Component]
+    ./node_modules/next-sanity/dist/live.js [Server Component]
+    ./src/sanity/lib/live.ts [Server Component]
+    ./src/sanity/lib/queries.ts [Server Component]
+    ./src/app/not-found.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./node_modules/next-sanity/node_modules/@sanity/mutate/dist/_unstable_machine.browser.js:4:1
+Module not found: Can't resolve 'rxjs'
+[0m [90m 2 |[39m [36mimport[39m { groupBy } [36mfrom[39m [32m"lodash-es"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { applyPatch } [36mfrom[39m [32m"mendoza"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { share[33m,[39m filter[33m,[39m merge[33m,[39m shareReplay[33m,[39m defer[33m,[39m observeOn[33m,[39m asapScheduler } [36mfrom[39m [32m"rxjs"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m [36mimport[39m { setup[33m,[39m assign [36mas[39m assign$1[33m,[39m raise[33m,[39m spawnChild[33m,[39m stopChild[33m,[39m assertEvent[33m,[39m enqueueActions[33m,[39m sendParent[33m,[39m fromEventObservable[33m,[39m fromPromise } [36mfrom[39m [32m"xstate"[39m[33m;[39m
+ [90m 6 |[39m [36mfunction[39m getMutationDocumentId(mutation) {
+ [90m 7 |[39m   [36mif[39m (mutation[33m.[39mtype [33m===[39m [32m"patch"[39m)[0m
+
+
+
+Import trace:
+  Client Component Browser:
+    ./node_modules/next-sanity/node_modules/@sanity/mutate/dist/_unstable_machine.browser.js [Client Component Browser]
+    ./node_modules/next-sanity/node_modules/@sanity/visual-editing/dist/optimistic/index.js [Client Component Browser]
+    ./node_modules/next-sanity/node_modules/@sanity/visual-editing/dist/react/index.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/VisualEditing.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/visual-editing/client-component/index.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/visual-editing/client-component/index.js [Server Component]
+    ./node_modules/next-sanity/dist/visual-editing/index.js [Server Component]
+    ./src/app/(portfolio)/[variant]/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./node_modules/next-sanity/node_modules/@sanity/mutate/dist/_unstable_machine.js:3:1
+Module not found: Can't resolve 'rxjs'
+[0m [90m 1 |[39m [36mimport[39m { rebase[33m,[39m applyMutations[33m,[39m commit[33m,[39m toTransactions[33m,[39m squashDMPStrings[33m,[39m squashMutationGroups } [36mfrom[39m [32m"./_chunks-es/toTransactions.js"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { applyPatch } [36mfrom[39m [32m"mendoza"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { share[33m,[39m filter[33m,[39m merge[33m,[39m shareReplay[33m,[39m defer[33m,[39m observeOn[33m,[39m asapScheduler } [36mfrom[39m [32m"rxjs"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m [36mimport[39m { setup[33m,[39m assign[33m,[39m raise[33m,[39m spawnChild[33m,[39m stopChild[33m,[39m assertEvent[33m,[39m enqueueActions[33m,[39m sendParent[33m,[39m fromEventObservable[33m,[39m fromPromise } [36mfrom[39m [32m"xstate"[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m { encodeTransaction } [36mfrom[39m [32m"./_chunks-es/encode.js"[39m[33m;[39m
+ [90m 6 |[39m [36mfunction[39m createSharedListener(client) {[0m
+
+
+
+Import trace:
+  Client Component SSR:
+    ./node_modules/next-sanity/node_modules/@sanity/mutate/dist/_unstable_machine.js [Client Component SSR]
+    ./node_modules/next-sanity/node_modules/@sanity/visual-editing/dist/optimistic/index.js [Client Component SSR]
+    ./node_modules/next-sanity/node_modules/@sanity/visual-editing/dist/react/index.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/VisualEditing.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/visual-editing/client-component/index.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/visual-editing/client-component/index.js [Server Component]
+    ./node_modules/next-sanity/dist/visual-editing/index.js [Server Component]
+    ./src/app/(portfolio)/[variant]/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./node_modules/next-sanity/node_modules/@sanity/visual-editing/dist/react/index.js:23:1
+Module not found: Can't resolve 'rxjs'
+[0m [90m 21 |[39m [36mimport[39m { setActor } [36mfrom[39m [32m"../_chunks-es/context.js"[39m[33m;[39m
+ [90m 22 |[39m [36mimport[39m { emptyActor } [36mfrom[39m [32m"../_chunks-es/context.js"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 23 |[39m [36mimport[39m { [33mReplaySubject[39m[33m,[39m [33mSubject[39m[33m,[39m merge } [36mfrom[39m [32m"rxjs"[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 24 |[39m [36mimport[39m { createDatasetMutator } [36mfrom[39m [32m"../optimistic/index.js"[39m[33m;[39m
+ [90m 25 |[39m [36mimport[39m { createDocumentMutator } [36mfrom[39m [32m"../optimistic/index.js"[39m[33m;[39m
+ [90m 26 |[39m [36mconst[39m [33mHistory[39m [33m=[39m (props) [33m=>[39m {[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./node_modules/next-sanity/node_modules/@sanity/visual-editing/dist/react/index.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/VisualEditing.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/visual-editing/client-component/index.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/visual-editing/client-component/index.js [Server Component]
+    ./node_modules/next-sanity/dist/visual-editing/index.js [Server Component]
+    ./src/app/(portfolio)/[variant]/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./node_modules/next-sanity/node_modules/@sanity/visual-editing/dist/react/index.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/VisualEditing.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/visual-editing/client-component/index.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/visual-editing/client-component/index.js [Server Component]
+    ./node_modules/next-sanity/dist/visual-editing/index.js [Server Component]
+    ./src/app/(portfolio)/[variant]/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./node_modules/@sanity/client/dist/index.browser.js:6:1
+Module not found: Can't resolve 'rxjs/operators'
+[0m [90m 4 |[39m [36mimport[39m { [33mObservable[39m[33m,[39m defer[33m,[39m [36mof[39m[33m,[39m isObservable[33m,[39m mergeMap[33m,[39m [36mfrom[39m[33m,[39m lastValueFrom[33m,[39m shareReplay[33m,[39m catchError[33m,[39m concat[33m,[39m throwError[33m,[39m timer[33m,[39m tap[33m,[39m finalize[33m,[39m share[33m,[39m merge[33m,[39m map [36mas[39m map$1[33m,[39m firstValueFrom } [36mfrom[39m [32m"rxjs"[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m { isRecord[33m,[39m stegaClean } [36mfrom[39m [32m"./_chunks-es/stegaClean.js"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 6 |[39m [36mimport[39m { combineLatestWith[33m,[39m map[33m,[39m filter[33m,[39m finalize [36mas[39m finalize$1 } [36mfrom[39m [32m"rxjs/operators"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 7 |[39m [36mimport[39m { getVersionFromId[33m,[39m isDraftId[33m,[39m getVersionId[33m,[39m getDraftId[33m,[39m isVersionId[33m,[39m getPublishedId } [36mfrom[39m [32m"@sanity/client/csm"[39m[33m;[39m
+ [90m 8 |[39m [36mimport[39m { customAlphabet } [36mfrom[39m [32m"nanoid"[39m[33m;[39m
+ [90m 9 |[39m [36mconst[39m [33mNEWLINE[39m [33m=[39m [35m/\r\n|[\n\r\u2028\u2029]/[39m[33m;[39m[0m
+
+
+
+Import traces:
+  #1 [Server Component]:
+    ./node_modules/@sanity/client/dist/index.browser.js
+    ./src/sanity/lib/client.ts
+    ./src/sanity/lib/queries.ts
+    ./src/app/(portfolio)/[variant]/layout.tsx
+
+  #2 [Server Component]:
+    ./node_modules/@sanity/client/dist/index.browser.js
+    ./src/sanity/lib/client.ts
+    ./src/sanity/lib/queries.ts
+    ./src/app/not-found.tsx
+
+  #3 [Client Component Browser]:
+    ./node_modules/@sanity/client/dist/index.browser.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Server Component]
+    ./node_modules/next-sanity/dist/live.js [Server Component]
+    ./src/sanity/lib/live.ts [Server Component]
+    ./src/app/(portfolio)/[variant]/layout.tsx [Server Component]
+
+  #4 [Client Component Browser]:
+    ./node_modules/@sanity/client/dist/index.browser.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Client Component Browser]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Server Component]
+    ./node_modules/next-sanity/dist/live.js [Server Component]
+    ./src/sanity/lib/live.ts [Server Component]
+    ./src/sanity/lib/queries.ts [Server Component]
+    ./src/app/not-found.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./node_modules/@sanity/client/dist/index.js:7:1
+Module not found: Can't resolve 'rxjs/operators'
+[0m [90m  5 |[39m [36mimport[39m { isRecord } [36mfrom[39m [32m"./_chunks-es/isRecord.js"[39m[33m;[39m
+ [90m  6 |[39m [36mimport[39m { stegaClean } [36mfrom[39m [32m"./_chunks-es/stegaClean.js"[39m[33m;[39m
+[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m { combineLatestWith[33m,[39m map[33m,[39m filter[33m,[39m finalize [36mas[39m finalize$1 } [36mfrom[39m [32m"rxjs/operators"[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m  8 |[39m [36mimport[39m { getVersionFromId[33m,[39m isDraftId[33m,[39m getVersionId[33m,[39m getDraftId[33m,[39m isVersionId[33m,[39m getPublishedId } [36mfrom[39m [32m"@sanity/client/csm"[39m[33m;[39m
+ [90m  9 |[39m [36mimport[39m { customAlphabet } [36mfrom[39m [32m"nanoid"[39m[33m;[39m
+ [90m 10 |[39m [36mimport[39m { validateObject[33m,[39m validateInsert[33m,[39m requireDocumentId[33m,[39m validateDocumentId[33m,[39m requireDocumentType[33m,[39m printCreateVersionWithBaseIdWarning[33m,[39m resourceConfig[33m,[39m hasDataset[33m,[39m requestTag[33m,[39m printPreviewDraftsDeprecationWarning[33m,[39m validateApiPerspective[33m,[39m printCdnPreviewDraftsWarning[33m,[39m validateAssetType[33m,[39m resourceGuard[33m,[39m dataset[33m,[39m validateVersionIdMatch[33m,[39m defaultConfig[33m,[39m initConfig[33m,[39m printNoDefaultExport } [36mfrom[39m [32m"./_chunks-es/config.js"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  #1 [Client Component SSR]:
+    ./node_modules/@sanity/client/dist/index.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Server Component]
+    ./node_modules/next-sanity/dist/live.js [Server Component]
+    ./src/sanity/lib/live.ts [Server Component]
+    ./src/app/(portfolio)/[variant]/layout.tsx [Server Component]
+
+  #2 [Client Component SSR]:
+    ./node_modules/@sanity/client/dist/index.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Client Component SSR]
+    ./node_modules/next-sanity/dist/live/client-components/live/index.js [Server Component]
+    ./node_modules/next-sanity/dist/live.js [Server Component]
+    ./src/sanity/lib/live.ts [Server Component]
+    ./src/sanity/lib/queries.ts [Server Component]
+    ./src/app/not-found.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ GET / 500 in 18.1s (compile: 17.7s, proxy.ts: 209ms, render: 249ms)
