@@ -91,15 +91,16 @@ export function useThemeWipe({
 
     const fetchSnapshotsBatch = async (newTheme: Theme) => {
       // 1. Snapshot A (current)
-      const htmlA = getFullPageHTML();
+      const htmlA = await getFullPageHTML();
 
       // 2. Switch theme (to handle layouts that require re-render)
       setTheme(newTheme);
-      // Wait multiple frames to ensure all React components/effects have settled
+      // Wait multiple frames and a small timeout to ensure all React components/effects have settled
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(r))));
+      await new Promise(r => setTimeout(r, 250));
 
       // 3. Snapshot B (newly rendered theme)
-      const htmlB = getFullPageHTML();
+      const htmlB = await getFullPageHTML();
 
       // 4. Restore original theme state before sending to API
       // This ensures the live page matches Snapshot A when the wipe animation starts.
@@ -183,11 +184,11 @@ export function useThemeWipe({
       if (forceFallback.puppeteer) {
         throw new Error("Puppeteer manually disabled");
       }
-      // PHASE 1: Try Puppeteer (10s timeout as per instructions)
+      // PHASE 1: Try Puppeteer (20s timeout as per instructions)
       console.log("Attempting Puppeteer snapshot...");
       const [snapshotA, snapshotB] = await withTimeout(
         fetchSnapshotsBatch(newTheme),
-        10000,
+        20000,
         "Puppeteer timeout"
       ) as [string, string];
 
@@ -203,10 +204,10 @@ export function useThemeWipe({
         if (forceFallback.modernScreenshot) {
           throw new Error("modern-screenshot manually disabled");
         }
-        // PHASE 2: Try modern-screenshot (7s timeout as per instructions)
+        // PHASE 2: Try modern-screenshot (15s timeout as per instructions)
         const snapshotsResult = await withTimeout(
           captureWithModernScreenshot(),
-          7000,
+          15000,
           "modern-screenshot timeout"
         ) as Snapshots;
 

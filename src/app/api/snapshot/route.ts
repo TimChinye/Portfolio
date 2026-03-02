@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import puppeteer from "puppeteer-core";
+import fs from "fs";
 
 export const maxDuration = 60;
 
@@ -13,9 +15,6 @@ function isValidRequest(req: Request) {
     return false;
   }
 }
-
-import puppeteer from "puppeteer-core";
-import fs from "fs";
 
 async function getBrowserInstance() {
   const wsEndpoint = process.env.PUPPETEER_WS_ENDPOINT;
@@ -113,13 +112,15 @@ export async function POST(req: Request) {
         await page.setJavaScriptEnabled(false);
         await page.setContent(html, { waitUntil: "load" });
 
-        // Ensure fonts are ready and assets are settled
+        // Delay for layout, font rendering, and asset loading
+        await new Promise(r => setTimeout(r, 500));
+
+        // Ensure fonts are fully loaded
         try {
           await page.evaluateHandle('document.fonts.ready');
         } catch (e) {
           console.warn("Fonts ready check failed:", e);
         }
-        await new Promise(r => setTimeout(r, 100)); // Brief settle delay
 
         await page.evaluate(() => {
           const htmlEl = document.documentElement;

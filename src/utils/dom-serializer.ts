@@ -26,6 +26,34 @@ export function serializeDOM(root: HTMLElement): string {
     }
   });
 
+  // 1.5. Inlining images to ensure visual parity in headless browsers.
+  // We convert visible images to data URLs to ensure they render in remote environments.
+  const originalImages = root.querySelectorAll('img');
+  const clonedImages = clone.querySelectorAll('img');
+  originalImages.forEach((img, index) => {
+    try {
+      const clonedImg = clonedImages[index] as HTMLImageElement;
+      if (!clonedImg) return;
+
+      // Only attempt to inline images that are already loaded
+      if (img instanceof HTMLImageElement && img.complete && img.naturalWidth > 0) {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0);
+          clonedImg.src = canvas.toDataURL();
+          // Remove srcset to force the data URL
+          clonedImg.removeAttribute('srcset');
+        }
+      }
+    } catch (e) {
+      // CORS might block this, which is fine, we fallback to the original src
+      console.warn('Could not inline image', e);
+    }
+  });
+
   // 2. Form values
   const inputs = root.querySelectorAll('input, textarea, select');
   const clonedInputs = clone.querySelectorAll('input, textarea, select');
@@ -92,7 +120,19 @@ export function serializeDOM(root: HTMLElement): string {
   return clone.innerHTML; // Return innerHTML to avoid nested body
 }
 
-export function getFullPageHTML(themeOverride?: "light" | "dark"): string {
+export async function getFullPageHTML(themeOverride?: "light" | "dark"): Promise<string> {
+  // Ensure fonts and images are loaded before serialization
+  try {
+    await document.fonts.ready;
+    const images = Array.from(document.images);
+    await Promise.all(images.map(img => img.complete ? Promise.resolve() : new Promise(r => {
+      img.onload = r;
+      img.onerror = r;
+    })));
+  } catch (e) {
+    console.warn('Wait for assets failed:', e);
+  }
+
   const originalHtml = document.documentElement;
   const doc = originalHtml.cloneNode(true) as HTMLElement;
 
@@ -108,8 +148,9 @@ export function getFullPageHTML(themeOverride?: "light" | "dark"): string {
     for (const sheet of Array.from(document.styleSheets)) {
       try {
         if (!sheet.cssRules) continue;
-        // Limit total inline size to avoid massive payloads and potential browser crashes
-        if (inlineStyles.length > 5000000) break; // 5MB limit
+        // Limit total inline size to stay within Vercel's 4.5MB payload limit
+        // (especially since we send two HTML payloads in one request)
+        if (inlineStyles.length > 1500000) break; // 1.5MB limit
         for (const rule of Array.from(sheet.cssRules)) {
           inlineStyles += rule.cssText + '\n';
         }
@@ -160,9 +201,14 @@ export function getFullPageHTML(themeOverride?: "light" | "dark"): string {
     doc.setAttribute('data-scroll-y', window.scrollY.toString());
   }
 
+  // 5. Cleanup: Remove scripts and other non-visual elements to reduce payload size
+  const scripts = doc.querySelectorAll('script, noscript, template, iframe');
+  scripts.forEach(s => s.remove());
+
   // Hide the switcher and overlay
   const itemsToHide = doc.querySelectorAll('[data-html2canvas-ignore]');
   itemsToHide.forEach(el => (el as HTMLElement).style.display = 'none');
 
-  return `<!DOCTYPE html><html ${Array.from(doc.attributes).map(a => `${a.name}="${a.value}"`).join(' ')}>${doc.innerHTML}</html>`;
+  const htmlAttrs = Array.from(doc.attributes).map(a => `${a.name}="${a.value}"`).join(' ');
+  return `<!DOCTYPE html><html ${htmlAttrs}>${doc.innerHTML}</html>`;
 }
