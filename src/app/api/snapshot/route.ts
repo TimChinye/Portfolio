@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import puppeteer from "puppeteer-core";
 import { puppeteerManager } from "@/utils/puppeteer-manager";
 
 export const maxDuration = 60;
@@ -31,67 +30,77 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let browser: any = null;
-  let page: any = null;
-
   try {
-    const { html, width, height, devicePixelRatio = 2 } = await req.json();
+    const body = await req.json();
+    const tasks = Array.isArray(body.tasks) ? body.tasks : [body];
 
-    if (!html) {
-      return NextResponse.json({ error: "HTML content is required" }, { status: 400 });
+    if (tasks.length === 0) {
+      return NextResponse.json({ error: "No tasks provided" }, { status: 400 });
     }
 
-    // Connect to the persistent browser instance
-    const wsEndpoint = await puppeteerManager.getWsEndpoint();
-    browser = await puppeteer.connect({ browserWSEndpoint: wsEndpoint });
+    // Use the single, persistent browser instance
+    const browser = await puppeteerManager.getBrowser();
 
-    page = await browser.newPage();
+    const snapshots = await Promise.all(tasks.map(async (task: any) => {
+      let page: any = null;
+      try {
+        const { html, width, height, devicePixelRatio = 2 } = task;
 
-    // Set viewport correctly for this specific snapshot
-    const safeWidth = Math.min(Math.max(width || 1280, 100), 3840);
-    const safeHeight = Math.min(Math.max(height || 720, 100), 2160);
-    const safeScale = Math.min(Math.max(devicePixelRatio || 2, 1), 3);
+        if (!html) {
+          throw new Error("HTML content is required");
+        }
 
-    await page.setViewport({
-      width: safeWidth,
-      height: safeHeight,
-      deviceScaleFactor: safeScale,
-    });
+        page = await browser.newPage();
 
-    // Performance: Disable JS
-    await page.setJavaScriptEnabled(false);
+        // Set viewport correctly for this specific snapshot
+        const safeWidth = Math.min(Math.max(width || 1280, 100), 3840);
+        const safeHeight = Math.min(Math.max(height || 720, 100), 2160);
+        const safeScale = Math.min(Math.max(devicePixelRatio || 2, 1), 3);
 
-    // Wait for full load
-    await page.setContent(html, { waitUntil: "load" });
+        await page.setViewport({
+          width: safeWidth,
+          height: safeHeight,
+          deviceScaleFactor: safeScale,
+        });
 
-    // Tiny delay for layout/font rendering
-    await new Promise(r => setTimeout(r, 100));
+        // Performance: Disable JS
+        await page.setJavaScriptEnabled(false);
 
-    await page.evaluate(() => {
-      const htmlEl = document.documentElement;
-      const x = parseInt(htmlEl.getAttribute('data-scroll-x') || '0');
-      const y = parseInt(htmlEl.getAttribute('data-scroll-y') || '0');
-      window.scrollTo(x, y);
-    });
+        // Wait for full load
+        await page.setContent(html, { waitUntil: "load" });
 
-    const buffer = await page.screenshot({
-      type: "png",
-      fullPage: false,
-    });
+        // Tiny delay for layout/font rendering
+        await new Promise(r => setTimeout(r, 100));
 
-    const base64 = `data:image/png;base64,${buffer.toString("base64")}`;
-    return NextResponse.json({ snapshot: base64 });
+        await page.evaluate(() => {
+          const htmlEl = document.documentElement;
+          const x = parseInt(htmlEl.getAttribute('data-scroll-x') || '0');
+          const y = parseInt(htmlEl.getAttribute('data-scroll-y') || '0');
+          window.scrollTo(x, y);
+        });
+
+        const buffer = await page.screenshot({
+          type: "png",
+          fullPage: false,
+        });
+
+        return `data:image/png;base64,${Buffer.from(buffer).toString("base64")}`;
+      } finally {
+        if (page) {
+          await page.close().catch(() => {});
+        }
+      }
+    }));
+
+    // If it was a single task (non-array input), return single snapshot for backward compatibility
+    if (!Array.isArray(body.tasks)) {
+      return NextResponse.json({ snapshot: snapshots[0] });
+    }
+
+    return NextResponse.json({ snapshots });
 
   } catch (error: any) {
     console.error("Snapshot API error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
-  } finally {
-    if (page) {
-      await page.close().catch(() => {});
-    }
-    if (browser) {
-      // We disconnect from the persistent browser, NOT close it
-      await browser.disconnect();
-    }
   }
 }
