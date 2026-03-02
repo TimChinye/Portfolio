@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { puppeteerManager } from "@/utils/puppeteer-manager";
 
 export const maxDuration = 60;
 
@@ -15,24 +14,63 @@ function isValidRequest(req: Request) {
   }
 }
 
+import puppeteer from "puppeteer-core";
+import fs from "fs";
+
+async function getBrowserInstance() {
+  const wsEndpoint = process.env.PUPPETEER_WS_ENDPOINT;
+
+  if (wsEndpoint) {
+    console.log("Connecting to Browserless.io...");
+    return await puppeteer.connect({ browserWSEndpoint: wsEndpoint });
+  }
+
+  const isLocal = process.env.NODE_ENV === "development";
+  if (isLocal) {
+    const paths = [
+      process.env.PUPPETEER_EXECUTABLE_PATH,
+      "/usr/bin/google-chrome",
+      "/usr/bin/chromium-browser",
+      "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    ];
+    const executablePath = paths.find(p => p && fs.existsSync(p)) || "/usr/bin/google-chrome";
+    return await puppeteer.launch({
+      headless: true,
+      executablePath,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+  }
+
+  const chromium = (await import("@sparticuz/chromium-min")).default;
+  return await puppeteer.launch({
+    args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless as any,
+  });
+}
+
 export async function GET(req: Request) {
   if (!isValidRequest(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   let browser: any = null;
   try {
-    // Warm up by ensuring we can get a browser instance
-    browser = await puppeteerManager.getBrowser();
-
-    // If using Browserless, disconnect to free the slot after verification
-    if (process.env.PUPPETEER_WS_ENDPOINT && browser.connected) {
-      await browser.disconnect();
-    }
-
+    browser = await getBrowserInstance();
     return NextResponse.json({ status: "warmed up" });
   } catch (error: any) {
     console.error("Warmup API error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
+  } finally {
+    if (browser) {
+      if (process.env.PUPPETEER_WS_ENDPOINT) {
+        await browser.disconnect().catch(() => {});
+      } else {
+        await browser.close().catch(() => {});
+      }
+    }
   }
 }
 
@@ -51,18 +89,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "HTML content is required" }, { status: 400 });
     }
 
-    // Use the manager to get the browser (it handles launch/connect singleton)
-    browser = await puppeteerManager.getBrowser();
+    // Connect/Launch a FRESH browser for every request to avoid "Target closed" errors
+    // when multiple concurrent requests try to share/disconnect a singleton.
+    browser = await getBrowserInstance();
 
     const snapshots = [];
 
     // Process tasks sequentially to maintain stability on low-concurrency connections (Browserless.io)
-    // while still using a single WebSocket connection for the entire batch.
     for (const task of tasks) {
       const { html, width, height, devicePixelRatio = 2 } = task;
       const page = await browser.newPage();
       try {
-        // Set viewport correctly for this specific snapshot
         const safeWidth = Math.min(Math.max(width || 1280, 100), 3840);
         const safeHeight = Math.min(Math.max(height || 720, 100), 2160);
         const safeScale = Math.min(Math.max(devicePixelRatio || 2, 1), 3);
@@ -73,14 +110,16 @@ export async function POST(req: Request) {
           deviceScaleFactor: safeScale,
         });
 
-        // Performance: Disable JS
         await page.setJavaScriptEnabled(false);
-
-        // Wait for full load
         await page.setContent(html, { waitUntil: "load" });
 
-        // Delay for layout, font rendering, and asset loading
-        await new Promise(r => setTimeout(r, 500));
+        // Ensure fonts are ready and assets are settled
+        try {
+          await page.evaluateHandle('document.fonts.ready');
+        } catch (e) {
+          console.warn("Fonts ready check failed:", e);
+        }
+        await new Promise(r => setTimeout(r, 100)); // Brief settle delay
 
         await page.evaluate(() => {
           const htmlEl = document.documentElement;
@@ -89,12 +128,7 @@ export async function POST(req: Request) {
           window.scrollTo(x, y);
         });
 
-        const buffer = await page.screenshot({
-          type: "png",
-          fullPage: false,
-        });
-
-        // Correct base64 encoding for Puppeteer snapshots (Uint8Array)
+        const buffer = await page.screenshot({ type: "png", fullPage: false });
         snapshots.push(`data:image/png;base64,${Buffer.from(buffer).toString("base64")}`);
       } finally {
         await page.close().catch(() => {});
@@ -106,9 +140,12 @@ export async function POST(req: Request) {
     console.error("Snapshot API error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   } finally {
-    if (browser && process.env.PUPPETEER_WS_ENDPOINT) {
-      // Disconnect from Browserless to free the slot for other users
-      await browser.disconnect().catch(() => {});
+    if (browser) {
+      if (process.env.PUPPETEER_WS_ENDPOINT) {
+        await browser.disconnect().catch(() => {});
+      } else {
+        await browser.close().catch(() => {});
+      }
     }
   }
 }

@@ -101,13 +101,15 @@ export function getFullPageHTML(themeOverride?: "light" | "dark"): string {
     doc.setAttribute(attr.name, attr.value);
   });
 
-  // 1. Capture all CSS rules to ensure visually perfect rendering in headless browsers
+  // 1. Capture all readable CSS rules to ensure visually perfect rendering in headless browsers
   // that may not have access to local assets (like Browserless.io).
   let inlineStyles = '';
   try {
     for (const sheet of Array.from(document.styleSheets)) {
       try {
         if (!sheet.cssRules) continue;
+        // Limit total inline size to avoid massive payloads and potential browser crashes
+        if (inlineStyles.length > 5000000) break; // 5MB limit
         for (const rule of Array.from(sheet.cssRules)) {
           inlineStyles += rule.cssText + '\n';
         }

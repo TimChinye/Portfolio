@@ -95,13 +95,14 @@ export function useThemeWipe({
 
       // 2. Switch theme (to handle layouts that require re-render)
       setTheme(newTheme);
-      // Wait for React to re-render
-      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      // Wait multiple frames to ensure all React components/effects have settled
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(r))));
 
       // 3. Snapshot B (newly rendered theme)
       const htmlB = getFullPageHTML();
 
-      // 4. Switch back to prepare for animation (A will be on top)
+      // 4. Restore original theme state before sending to API
+      // This ensures the live page matches Snapshot A when the wipe animation starts.
       setTheme(currentTheme);
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
@@ -137,6 +138,8 @@ export function useThemeWipe({
         width: document.documentElement.clientWidth,
         height: vh,
         scale: Math.max(window.devicePixelRatio, 2),
+        // Force font rendering and asset loading delay for modern-screenshot too
+        waitForFonts: true,
         filter: (node: Node) => {
           if (node instanceof HTMLElement || node instanceof SVGElement) {
             if (node.hasAttribute('data-html2canvas-ignore')) return false;
