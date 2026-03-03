@@ -142,6 +142,22 @@ export function serializeDOM(root: HTMLElement): string {
   return clone.innerHTML; // Return innerHTML to avoid nested body
 }
 
+async function fetchAsDataURL(url: string): Promise<string | null> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const blob = await response.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(blob);
+    });
+  } catch (e) {
+    return null;
+  }
+}
+
 export async function getFullPageHTML(themeOverride?: "light" | "dark"): Promise<string> {
   // Ensure fonts and images are loaded before serialization
   try {
@@ -186,8 +202,7 @@ export async function getFullPageHTML(themeOverride?: "light" | "dark"): Promise
     body.innerHTML = serializeDOM(document.body);
   }
 
-  // 1. Capture and resolve all readable CSS rules to ensure visually perfect rendering
-  // in headless browsers that may not have access to local assets.
+  // 1. Capture and inline all readable CSS rules and assets (fonts/images)
   let inlineStyles = '';
   try {
     const origin = window.location.origin;
@@ -199,20 +214,32 @@ export async function getFullPageHTML(themeOverride?: "light" | "dark"): Promise
 
         for (const rule of Array.from(sheet.cssRules)) {
           let cssText = rule.cssText;
-          // Robustly resolve all relative URLs in CSS (fonts, background-images) to absolute
-          cssText = cssText.replace(/url\(['"]?([^'")]*)['"]?\)/g, (match, path) => {
-            try {
-              // Ignore data URLs and already absolute URLs
-              if (path.startsWith('data:') || path.startsWith('http') || path.startsWith('//')) {
-                return match;
-              }
-              // Resolve relative to the stylesheet's own URL, or the page origin
-              const absoluteUrl = new URL(path, sheet.href || origin).href;
-              return `url("${absoluteUrl}")`;
-            } catch (e) {
-              return match;
+
+          // Handle fonts and background images in CSS
+          const urlMatches = cssText.matchAll(/url\(['"]?([^'")]*)['"]?\)/g);
+          for (const match of Array.from(urlMatches)) {
+            const path = match[1];
+            if (!path || path.startsWith('data:') || path.startsWith('http') || path.startsWith('//')) {
+              continue;
             }
-          });
+
+            try {
+              const absoluteUrl = new URL(path, sheet.href || origin).href;
+              // Only attempt to inline fonts or small images
+              if (path.match(/\.(woff2?|ttf|otf|eot|svg|png|jpe?g|webp)$/i)) {
+                const dataUrl = await fetchAsDataURL(absoluteUrl);
+                if (dataUrl) {
+                  cssText = cssText.replace(match[0], `url("${dataUrl}")`);
+                } else {
+                  // Fallback to absolute URL if fetch fails
+                  cssText = cssText.replace(match[0], `url("${absoluteUrl}")`);
+                }
+              } else {
+                cssText = cssText.replace(match[0], `url("${absoluteUrl}")`);
+              }
+            } catch (e) {}
+          }
+
           inlineStyles += cssText + '\n';
         }
       } catch (e) {
