@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useCallback, Dispatch, SetStateAction } from "react";
+import { useState, useCallback, Dispatch, SetStateAction, useMemo } from "react";
 import { useTheme } from "next-themes";
+import { usePathname } from "next/navigation";
 import { domToPng } from "modern-screenshot";
 import { getFullPageHTML } from "@/utils/dom-serializer";
 import { useWipeAnimation } from "@/hooks/useWipeAnimation";
@@ -26,16 +27,31 @@ export function useThemeWipe({
   setWipeDirection,
 }: UseThemeWipeProps) {
   const { setTheme, resolvedTheme } = useTheme();
+  const pathname = usePathname();
   const [snapshots, setSnapshots] = useState<Snapshots | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [animationTargetTheme, setAnimationTargetTheme] = useState<Theme | null>(null);
   const [originalTheme, setOriginalTheme] = useState<Theme | null>(null);
 
+  const isPuppeteerPage = useMemo(() => {
+    // We want to use Puppeteer on:
+    // 1. Homepage: / or /[variant] (e.g. /tim, /tiger)
+    // 2. Projects: /projects or /[variant]/projects
+
+    const parts = pathname.split('/').filter(Boolean);
+
+    // Homepage: / or /tim or /tiger
+    if (parts.length === 0 || parts.length === 1) return true;
+
+    // Projects pages: /projects or /tim/projects or /tiger/projects
+    if (parts.length === 1 && parts[0] === 'projects') return true;
+    if (parts.length === 2 && parts[1] === 'projects') return true;
+
+    return false;
+  }, [pathname]);
+
   const setScrollLock = (isLocked: boolean) => {
-    const hasScrollbar = window.innerWidth > document.documentElement.clientWidth;
     document.documentElement.style.overflow = isLocked ? 'hidden' : '';
-    // Only reserve gutter space if a scrollbar was actually present to prevent layout shift on mobile
-    document.documentElement.style.scrollbarGutter = (isLocked && hasScrollbar) ? 'stable' : '';
   };
 
   const handleAnimationComplete = useCallback(() => {
@@ -72,7 +88,7 @@ export function useThemeWipe({
   });
 
   const toggleTheme = useCallback(async () => {
-    const currentTheme = resolvedTheme as Theme;
+    const currentTheme = (resolvedTheme as Theme) || "light";
     const newTheme: Theme = currentTheme === "dark" ? "light" : "dark";
 
     if (snapshots || isCapturing || wipeDirection) {
@@ -106,7 +122,7 @@ export function useThemeWipe({
           return true;
         },
         style: {
-          width: `${document.documentElement.clientWidth}px`,
+          width: `${window.innerWidth}px`,
           height: `${document.documentElement.scrollHeight}px`,
           transform: `translateY(-${scrollY}px)`,
           transformOrigin: 'top left',
@@ -115,9 +131,9 @@ export function useThemeWipe({
       return await domToPng(document.documentElement, options);
     };
 
-    const fetchSnapshotsBatch = async (newTheme: Theme) => {
+    const fetchSnapshotsBatch = async (currentTheme: Theme, newTheme: Theme) => {
       // 1. Snapshot A (current)
-      const htmlA = await getFullPageHTML();
+      const htmlA = await getFullPageHTML(currentTheme);
 
       // 2. Switch theme (to handle layouts that require re-render)
       setTheme(newTheme);
@@ -126,7 +142,7 @@ export function useThemeWipe({
       await new Promise(r => setTimeout(r, 250));
 
       // 3. Snapshot B (newly rendered theme)
-      const htmlB = await getFullPageHTML();
+      const htmlB = await getFullPageHTML(newTheme);
 
       // 4. Restore original theme state before sending to API
       // This ensures the live page matches Snapshot A when the wipe animation starts.
@@ -209,21 +225,25 @@ export function useThemeWipe({
       const mask = await captureMask();
       setSnapshots({ a: mask, b: mask, method: "Capturing..." });
 
-      // PHASE 1: Try Puppeteer (20s timeout as per instructions)
-      console.log("Attempting Puppeteer snapshot...");
-      const [snapshotA, snapshotB] = await withTimeout(
-        fetchSnapshotsBatch(newTheme),
-        20000,
-        "Puppeteer timeout"
-      ) as [string, string];
+      if (isPuppeteerPage) {
+        // PHASE 1: Try Puppeteer (20s timeout as per instructions)
+        console.log("Attempting Puppeteer snapshot...");
+        try {
+          const [snapshotA, snapshotB] = await withTimeout(
+            fetchSnapshotsBatch(currentTheme, newTheme),
+            20000,
+            "Puppeteer timeout"
+          ) as [string, string];
 
-      setSnapshots({ a: snapshotA, b: snapshotB, method: "Puppeteer" });
-      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-      setTheme(newTheme);
-      setWipeDirection(direction);
-
-    } catch (e: any) {
-      console.warn("Puppeteer failed or timed out, falling back to modern-screenshot:", e.message);
+          setSnapshots({ a: snapshotA, b: snapshotB, method: "Puppeteer" });
+          await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+          setTheme(newTheme);
+          setWipeDirection(direction);
+          return; // Exit on success
+        } catch (e: any) {
+          console.warn("Puppeteer failed or timed out, falling back to modern-screenshot:", e.message);
+        }
+      }
 
       try {
         // PHASE 2: Try modern-screenshot (15s timeout as per instructions)
