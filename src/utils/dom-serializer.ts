@@ -199,12 +199,19 @@ export async function getFullPageHTML(themeOverride?: "light" | "dark"): Promise
 
         for (const rule of Array.from(sheet.cssRules)) {
           let cssText = rule.cssText;
-          // Resolve relative URLs in CSS (fonts, background-images) to absolute
-          cssText = cssText.replace(/url\(['"]?(\/[^'"]+)['"]?\)/g, (match, path) => {
-            if (path.startsWith('/') && !path.startsWith('//')) {
-              return `url("${origin}${path}")`;
+          // Robustly resolve all relative URLs in CSS (fonts, background-images) to absolute
+          cssText = cssText.replace(/url\(['"]?([^'")]*)['"]?\)/g, (match, path) => {
+            try {
+              // Ignore data URLs and already absolute URLs
+              if (path.startsWith('data:') || path.startsWith('http') || path.startsWith('//')) {
+                return match;
+              }
+              // Resolve relative to the stylesheet's own URL, or the page origin
+              const absoluteUrl = new URL(path, sheet.href || origin).href;
+              return `url("${absoluteUrl}")`;
+            } catch (e) {
+              return match;
             }
-            return match;
           });
           inlineStyles += cssText + '\n';
         }
