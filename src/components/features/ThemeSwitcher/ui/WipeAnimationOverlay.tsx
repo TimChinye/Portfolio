@@ -22,12 +22,8 @@ export function WipeAnimationOverlay({
     <AnimatePresence>
       {snapshots && (
         <div
-          className="fixed inset-0 z-10000 pointer-events-none flex items-start justify-start"
+          className="fixed inset-0 z-10000 pointer-events-none"
           data-html2canvas-ignore="true"
-          style={snapshots.dimensions ? {
-            width: `${snapshots.dimensions.width}px`,
-            height: `${snapshots.dimensions.height}px`,
-          } : {}}
         >
           {/* Static Background Layer (to prevent target theme flash before wipe starts) */}
           <div
@@ -65,10 +61,9 @@ export function WipeAnimationOverlay({
           {/* Wipe Divider */}
           <motion.div
             key="theme-switcher-divider"
-            className="absolute left-0 h-1 bg-[#D9D24D]"
+            className="absolute left-0 w-full h-1 bg-[#D9D24D]"
             style={{
               top: dividerTop,
-              width: snapshots.dimensions ? `${snapshots.dimensions.width}px` : '100%',
               translate: wipeDirection === "top-down" ? "0 -100%" : "0 0",
             }}
           />

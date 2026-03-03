@@ -6,7 +6,6 @@ import { useTheme } from "next-themes";
 import { useThemeWipe } from "../../../hooks/useThemeWipe";
 import { ThemeToggleButtonIcon } from "./ui/ThemeToggleButtonIcon";
 import { WipeAnimationOverlay } from "./ui/WipeAnimationOverlay";
-import { DebugControls } from "./ui/DebugControls";
 import { Theme, WipeDirection } from "./types";
 import type { MotionValue } from "motion/react";
 
@@ -69,14 +68,11 @@ export function ThemeSwitcher({
       />
 
       {createPortal(
-        <>
-          <DebugControls />
-          <WipeAnimationOverlay
-            snapshots={snapshots}
-            animationStyles={animationStyles}
-            wipeDirection={wipeDirection}
-          />
-        </>,
+        <WipeAnimationOverlay
+          snapshots={snapshots}
+          animationStyles={animationStyles}
+          wipeDirection={wipeDirection}
+        />,
         document.body
       )}
     </>

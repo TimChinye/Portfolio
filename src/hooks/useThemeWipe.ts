@@ -18,7 +18,6 @@ export type Snapshots = {
   a: string; // Original theme
   b: string; // Target theme
   method?: string; // Method used for snapshot
-  dimensions?: { width: number, height: number }; // Viewport dimensions when captured
 };
 
 export function useThemeWipe({
@@ -92,18 +91,12 @@ export function useThemeWipe({
     const direction: WipeDirection =
       currentTheme === "dark" ? "bottom-up" : "top-down";
 
-    // Capture stable dimensions at the start of the process
-    const dimensions = {
-      width: document.documentElement.clientWidth,
-      height: document.documentElement.clientHeight,
-    };
-
     const captureMask = async () => {
-      const vh = dimensions.height;
+      const vh = window.innerHeight;
       const scrollY = window.scrollY;
       const options = {
         useCORS: true,
-        width: dimensions.width,
+        width: window.innerWidth,
         height: vh,
         scale: 1, // Low scale is fine for a temporary mask
         filter: (node: Node) => {
@@ -146,14 +139,14 @@ export function useThemeWipe({
           tasks: [
             {
               html: htmlA,
-              width: dimensions.width,
-              height: dimensions.height,
+              width: window.innerWidth,
+              height: window.innerHeight,
               devicePixelRatio: window.devicePixelRatio,
             },
             {
               html: htmlB,
-              width: dimensions.width,
-              height: dimensions.height,
+              width: window.innerWidth,
+              height: window.innerHeight,
               devicePixelRatio: window.devicePixelRatio,
             }
           ]
@@ -165,11 +158,11 @@ export function useThemeWipe({
     };
 
     const captureWithModernScreenshot = async (): Promise<Snapshots> => {
-      const vh = dimensions.height;
+      const vh = window.innerHeight;
       const scrollY = window.scrollY;
       const options = {
         useCORS: true,
-        width: dimensions.width,
+        width: window.innerWidth,
         height: vh,
         scale: Math.max(window.devicePixelRatio, 2),
         // Force font rendering and asset loading delay for modern-screenshot too
@@ -181,7 +174,7 @@ export function useThemeWipe({
           return true;
         },
         style: {
-          width: `${dimensions.width}px`,
+          width: `${window.innerWidth}px`,
           height: `${document.documentElement.scrollHeight}px`,
           transform: `translateY(-${scrollY}px)`,
           transformOrigin: 'top left',
@@ -211,16 +204,11 @@ export function useThemeWipe({
       ]);
     };
 
-    const forceFallback = (window as any).FORCE_FALLBACK || {};
-
     try {
       // PHASE 0: Capture Mask to prevent theme flash
       const mask = await captureMask();
-      setSnapshots({ a: mask, b: mask, method: "Capturing...", dimensions });
+      setSnapshots({ a: mask, b: mask, method: "Capturing..." });
 
-      if (forceFallback.puppeteer) {
-        throw new Error("Puppeteer manually disabled");
-      }
       // PHASE 1: Try Puppeteer (20s timeout as per instructions)
       console.log("Attempting Puppeteer snapshot...");
       const [snapshotA, snapshotB] = await withTimeout(
@@ -229,7 +217,7 @@ export function useThemeWipe({
         "Puppeteer timeout"
       ) as [string, string];
 
-      setSnapshots({ a: snapshotA, b: snapshotB, method: "Puppeteer", dimensions });
+      setSnapshots({ a: snapshotA, b: snapshotB, method: "Puppeteer" });
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
       setTheme(newTheme);
       setWipeDirection(direction);
@@ -238,9 +226,6 @@ export function useThemeWipe({
       console.warn("Puppeteer failed or timed out, falling back to modern-screenshot:", e.message);
 
       try {
-        if (forceFallback.modernScreenshot) {
-          throw new Error("modern-screenshot manually disabled");
-        }
         // PHASE 2: Try modern-screenshot (15s timeout as per instructions)
         const snapshotsResult = await withTimeout(
           captureWithModernScreenshot(),
@@ -248,7 +233,7 @@ export function useThemeWipe({
           "modern-screenshot timeout"
         ) as Snapshots;
 
-        setSnapshots({ ...snapshotsResult, method: "modern-screenshot", dimensions });
+        setSnapshots({ ...snapshotsResult, method: "modern-screenshot" });
         setWipeDirection(direction);
 
       } catch (e2: any) {
