@@ -32,8 +32,10 @@ export function useThemeWipe({
   const [originalTheme, setOriginalTheme] = useState<Theme | null>(null);
 
   const setScrollLock = (isLocked: boolean) => {
+    const hasScrollbar = window.innerWidth > document.documentElement.clientWidth;
     document.documentElement.style.overflow = isLocked ? 'hidden' : '';
-    document.documentElement.style.scrollbarGutter = isLocked ? 'stable' : '';
+    // Only reserve gutter space if a scrollbar was actually present to prevent layout shift on mobile
+    document.documentElement.style.scrollbarGutter = (isLocked && hasScrollbar) ? 'stable' : '';
   };
 
   const handleAnimationComplete = useCallback(() => {
