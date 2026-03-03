@@ -18,6 +18,7 @@ export type Snapshots = {
   a: string; // Original theme
   b: string; // Target theme
   method?: string; // Method used for snapshot
+  dimensions?: { width: number, height: number }; // Viewport dimensions when captured
 };
 
 export function useThemeWipe({
@@ -91,12 +92,18 @@ export function useThemeWipe({
     const direction: WipeDirection =
       currentTheme === "dark" ? "bottom-up" : "top-down";
 
+    // Capture stable dimensions at the start of the process
+    const dimensions = {
+      width: document.documentElement.clientWidth,
+      height: document.documentElement.clientHeight,
+    };
+
     const captureMask = async () => {
-      const vh = window.innerHeight;
+      const vh = dimensions.height;
       const scrollY = window.scrollY;
       const options = {
         useCORS: true,
-        width: window.innerWidth,
+        width: dimensions.width,
         height: vh,
         scale: 1, // Low scale is fine for a temporary mask
         filter: (node: Node) => {
@@ -139,14 +146,14 @@ export function useThemeWipe({
           tasks: [
             {
               html: htmlA,
-              width: window.innerWidth,
-              height: window.innerHeight,
+              width: dimensions.width,
+              height: dimensions.height,
               devicePixelRatio: window.devicePixelRatio,
             },
             {
               html: htmlB,
-              width: window.innerWidth,
-              height: window.innerHeight,
+              width: dimensions.width,
+              height: dimensions.height,
               devicePixelRatio: window.devicePixelRatio,
             }
           ]
@@ -158,11 +165,11 @@ export function useThemeWipe({
     };
 
     const captureWithModernScreenshot = async (): Promise<Snapshots> => {
-      const vh = window.innerHeight;
+      const vh = dimensions.height;
       const scrollY = window.scrollY;
       const options = {
         useCORS: true,
-        width: window.innerWidth,
+        width: dimensions.width,
         height: vh,
         scale: Math.max(window.devicePixelRatio, 2),
         // Force font rendering and asset loading delay for modern-screenshot too
@@ -174,7 +181,7 @@ export function useThemeWipe({
           return true;
         },
         style: {
-          width: `${window.innerWidth}px`,
+          width: `${dimensions.width}px`,
           height: `${document.documentElement.scrollHeight}px`,
           transform: `translateY(-${scrollY}px)`,
           transformOrigin: 'top left',
@@ -209,7 +216,7 @@ export function useThemeWipe({
     try {
       // PHASE 0: Capture Mask to prevent theme flash
       const mask = await captureMask();
-      setSnapshots({ a: mask, b: mask, method: "Capturing..." });
+      setSnapshots({ a: mask, b: mask, method: "Capturing...", dimensions });
 
       if (forceFallback.puppeteer) {
         throw new Error("Puppeteer manually disabled");
@@ -222,7 +229,7 @@ export function useThemeWipe({
         "Puppeteer timeout"
       ) as [string, string];
 
-      setSnapshots({ a: snapshotA, b: snapshotB, method: "Puppeteer" });
+      setSnapshots({ a: snapshotA, b: snapshotB, method: "Puppeteer", dimensions });
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
       setTheme(newTheme);
       setWipeDirection(direction);
@@ -241,7 +248,7 @@ export function useThemeWipe({
           "modern-screenshot timeout"
         ) as Snapshots;
 
-        setSnapshots({ ...snapshotsResult, method: "modern-screenshot" });
+        setSnapshots({ ...snapshotsResult, method: "modern-screenshot", dimensions });
         setWipeDirection(direction);
 
       } catch (e2: any) {
