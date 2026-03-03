@@ -54,6 +54,28 @@ export function serializeDOM(root: HTMLElement): string {
     }
   });
 
+  // 1.6. Inlining background images from inline styles
+  const allElements = root.querySelectorAll('*');
+  const allCloned = clone.querySelectorAll('*');
+  allElements.forEach((el, index) => {
+    const style = (el as HTMLElement).style;
+    if (style && style.backgroundImage && style.backgroundImage.includes('url(')) {
+      const clonedEl = allCloned[index] as HTMLElement;
+      if (clonedEl) {
+        // Simple regex to extract URL
+        const match = style.backgroundImage.match(/url\(["']?([^"']+)["']?\)/);
+        if (match && match[1] && !match[1].startsWith('data:')) {
+          // In a real scenario, we'd fetch and convert to data URL here.
+          // For now, ensure it's at least absolute if we can't inline.
+          const origin = window.location.origin;
+          if (match[1].startsWith('/')) {
+            clonedEl.style.backgroundImage = `url("${origin}${match[1]}")`;
+          }
+        }
+      }
+    }
+  });
+
   // 2. Form values
   const inputs = root.querySelectorAll('input, textarea, select');
   const clonedInputs = clone.querySelectorAll('input, textarea, select');
@@ -141,28 +163,6 @@ export async function getFullPageHTML(themeOverride?: "light" | "dark"): Promise
     doc.setAttribute(attr.name, attr.value);
   });
 
-  // 1. Capture all readable CSS rules to ensure visually perfect rendering in headless browsers
-  // that may not have access to local assets (like Browserless.io).
-  let inlineStyles = '';
-  try {
-    for (const sheet of Array.from(document.styleSheets)) {
-      try {
-        if (!sheet.cssRules) continue;
-        // Limit total inline size to stay within Vercel's 4.5MB payload limit
-        // (especially since we send two HTML payloads in one request)
-        if (inlineStyles.length > 1500000) break; // 1.5MB limit
-        for (const rule of Array.from(sheet.cssRules)) {
-          inlineStyles += rule.cssText + '\n';
-        }
-      } catch (e) {
-        // Handle cross-origin stylesheets (they may be blocked by CORS)
-        console.warn('Could not read cssRules from stylesheet', sheet.href, e);
-      }
-    }
-  } catch (e) {
-    console.error('Error reading stylesheets', e);
-  }
-
   if (themeOverride) {
     // next-themes typically uses class="dark" or class="light" on html
     if (themeOverride === "dark") {
@@ -186,15 +186,74 @@ export async function getFullPageHTML(themeOverride?: "light" | "dark"): Promise
     body.innerHTML = serializeDOM(document.body);
   }
 
+  // 1. Capture and resolve all readable CSS rules to ensure visually perfect rendering
+  // in headless browsers that may not have access to local assets.
+  let inlineStyles = '';
+  try {
+    const origin = window.location.origin;
+    for (const sheet of Array.from(document.styleSheets)) {
+      try {
+        if (!sheet.cssRules) continue;
+        // Limit total inline size to stay within Vercel limits
+        if (inlineStyles.length > 1500000) break;
+
+        for (const rule of Array.from(sheet.cssRules)) {
+          let cssText = rule.cssText;
+          // Resolve relative URLs in CSS (fonts, background-images) to absolute
+          cssText = cssText.replace(/url\(['"]?(\/[^'"]+)['"]?\)/g, (match, path) => {
+            if (path.startsWith('/') && !path.startsWith('//')) {
+              return `url("${origin}${path}")`;
+            }
+            return match;
+          });
+          inlineStyles += cssText + '\n';
+        }
+      } catch (e) {
+        console.warn('Could not read cssRules from stylesheet', sheet.href, e);
+      }
+    }
+  } catch (e) {
+    console.error('Error reading stylesheets', e);
+  }
+
+
   const head = doc.querySelector('head');
   if (head) {
-    // Inject the inlined styles
+    // Inject the inlined and resolved styles
     const styleTag = document.createElement('style');
     styleTag.textContent = inlineStyles;
     head.appendChild(styleTag);
 
+    // Convert all relative links to absolute to ensure resolution in headless browser
+    const origin = window.location.origin;
+    doc.querySelectorAll('link[href], script[src], img[src], source[src], source[srcset]').forEach(el => {
+      if (el.hasAttribute('href')) {
+        const href = el.getAttribute('href')!;
+        if (href.startsWith('/') && !href.startsWith('//')) {
+          el.setAttribute('href', origin + href);
+        }
+      }
+      if (el.hasAttribute('src')) {
+        const src = el.getAttribute('src')!;
+        if (src.startsWith('/') && !src.startsWith('//')) {
+          el.setAttribute('src', origin + src);
+        }
+      }
+      if (el.hasAttribute('srcset')) {
+        const srcset = el.getAttribute('srcset')!;
+        const absoluteSrcset = srcset.split(',').map(part => {
+          const [url, size] = part.trim().split(/\s+/);
+          if (url.startsWith('/') && !url.startsWith('//')) {
+            return (origin + url) + (size ? ' ' + size : '');
+          }
+          return part;
+        }).join(', ');
+        el.setAttribute('srcset', absoluteSrcset);
+      }
+    });
+
     const base = document.createElement('base');
-    base.href = window.location.origin;
+    base.href = origin + '/';
     head.insertBefore(base, head.firstChild);
 
     doc.setAttribute('data-scroll-x', window.scrollX.toString());
