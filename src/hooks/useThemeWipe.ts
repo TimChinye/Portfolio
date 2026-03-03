@@ -91,6 +91,30 @@ export function useThemeWipe({
     const direction: WipeDirection =
       currentTheme === "dark" ? "bottom-up" : "top-down";
 
+    const captureMask = async () => {
+      const vh = window.innerHeight;
+      const scrollY = window.scrollY;
+      const options = {
+        useCORS: true,
+        width: document.documentElement.clientWidth,
+        height: vh,
+        scale: 1, // Low scale is fine for a temporary mask
+        filter: (node: Node) => {
+          if (node instanceof HTMLElement || node instanceof SVGElement) {
+            if (node.hasAttribute('data-html2canvas-ignore')) return false;
+          }
+          return true;
+        },
+        style: {
+          width: `${document.documentElement.clientWidth}px`,
+          height: `${document.documentElement.scrollHeight}px`,
+          transform: `translateY(-${scrollY}px)`,
+          transformOrigin: 'top left',
+        }
+      };
+      return await domToPng(document.documentElement, options);
+    };
+
     const fetchSnapshotsBatch = async (newTheme: Theme) => {
       // 1. Snapshot A (current)
       const htmlA = await getFullPageHTML();
@@ -183,6 +207,10 @@ export function useThemeWipe({
     const forceFallback = (window as any).FORCE_FALLBACK || {};
 
     try {
+      // PHASE 0: Capture Mask to prevent theme flash
+      const mask = await captureMask();
+      setSnapshots({ a: mask, b: mask, method: "Capturing..." });
+
       if (forceFallback.puppeteer) {
         throw new Error("Puppeteer manually disabled");
       }

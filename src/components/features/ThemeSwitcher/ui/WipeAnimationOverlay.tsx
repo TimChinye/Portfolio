@@ -28,6 +28,15 @@ export function WipeAnimationOverlay({
           className="fixed inset-0 z-10000 pointer-events-none"
           data-html2canvas-ignore="true"
         >
+          {/* Static Background Layer (to prevent target theme flash before wipe starts) */}
+          <div
+            className="absolute inset-0 bg-no-repeat bg-size-[100%_100%]"
+            style={{
+              backgroundImage: `url(${snapshots.a})`,
+              width: contentWidth,
+            }}
+          />
+
           {/* Status Text */}
           {snapshots.method && (
             <div className="absolute top-8 left-1/2 -translate-x-1/2 z-[10001] bg-black/50 text-white px-4 py-1 rounded-full text-sm font-medium backdrop-blur-sm border border-white/10">
