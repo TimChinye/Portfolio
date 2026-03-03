@@ -181,15 +181,12 @@ export async function getFullPageHTML(themeOverride?: "light" | "dark"): Promise
 
   if (themeOverride) {
     // next-themes typically uses class="dark" or class="light" on html
-    if (themeOverride === "dark") {
-      doc.classList.add("dark");
-      doc.classList.remove("light");
-    } else {
-      doc.classList.add("light");
-      doc.classList.remove("dark");
-    }
+    doc.classList.remove("light", "dark");
+    doc.classList.add(themeOverride);
     // Also handle data-theme if present
     doc.setAttribute("data-theme", themeOverride);
+    // Ensure the background color matches the theme
+    doc.style.colorScheme = themeOverride;
   }
 
   const body = doc.querySelector('body');
@@ -298,9 +295,9 @@ export async function getFullPageHTML(themeOverride?: "light" | "dark"): Promise
   const scripts = doc.querySelectorAll('script, noscript, template, iframe');
   scripts.forEach(s => s.remove());
 
-  // Hide the switcher and overlay
+  // Hide the switcher and overlay - REMOVE them instead of just display: none
   const itemsToHide = doc.querySelectorAll('[data-html2canvas-ignore]');
-  itemsToHide.forEach(el => (el as HTMLElement).style.display = 'none');
+  itemsToHide.forEach(el => el.remove());
 
   const htmlAttrs = Array.from(doc.attributes).map(a => `${a.name}="${a.value}"`).join(' ');
   return `<!DOCTYPE html><html ${htmlAttrs}>${doc.innerHTML}</html>`;
