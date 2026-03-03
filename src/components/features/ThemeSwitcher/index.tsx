@@ -25,6 +25,7 @@ export function ThemeSwitcher({
   setWipeDirection,
 }: ThemeSwitcherProps) {
   const [mounted, setMounted] = useState(false);
+  const [isWarmingUp, setIsWarmingUp] = useState(true);
   
   const { resolvedTheme } = useTheme();
   const { toggleTheme, snapshots, isCapturing, originalTheme, animationStyles } = useThemeWipe({
@@ -36,7 +37,18 @@ export function ThemeSwitcher({
   useEffect(() => {
     setMounted(true);
     // Warm up the snapshot API on mount
-    fetch("/api/snapshot").catch(() => {});
+    setIsWarmingUp(true);
+    fetch("/api/snapshot")
+      .then(res => {
+        if (!res.ok) throw new Error("Warmup failed");
+        setIsWarmingUp(false);
+      })
+      .catch((err) => {
+        console.error("Theme switcher warmup error:", err);
+        // If warmup fails, we still unlock it so the user can try,
+        // but it will likely fallback to modern-screenshot.
+        setIsWarmingUp(false);
+      });
   }, []);
 
   if (!mounted) {
@@ -44,14 +56,15 @@ export function ThemeSwitcher({
   }
 
   const initialThemeForIcon = originalTheme || (resolvedTheme as Theme);
+  const isLoading = isCapturing || isWarmingUp;
 
   return (
     <>
       <ThemeToggleButtonIcon
-        onClick={toggleTheme}
+        onClick={isLoading ? () => {} : toggleTheme}
         progress={wipeProgress}
         initialTheme={initialThemeForIcon}
-        isLoading={isCapturing}
+        isLoading={isLoading}
       />
 
       {createPortal(

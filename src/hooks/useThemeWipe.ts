@@ -17,6 +17,7 @@ type UseThemeWipeProps = {
 export type Snapshots = {
   a: string; // Original theme
   b: string; // Target theme
+  method?: string; // Method used for snapshot
 };
 
 export function useThemeWipe({
@@ -31,8 +32,10 @@ export function useThemeWipe({
   const [originalTheme, setOriginalTheme] = useState<Theme | null>(null);
 
   const setScrollLock = (isLocked: boolean) => {
+    const hasScrollbar = window.innerWidth > document.documentElement.clientWidth;
     document.documentElement.style.overflow = isLocked ? 'hidden' : '';
-    document.documentElement.style.scrollbarGutter = isLocked ? 'stable' : '';
+    // Only reserve gutter space if a scrollbar was actually present to prevent layout shift on mobile
+    document.documentElement.style.scrollbarGutter = (isLocked && hasScrollbar) ? 'stable' : '';
   };
 
   const handleAnimationComplete = useCallback(() => {
@@ -88,30 +91,14 @@ export function useThemeWipe({
     const direction: WipeDirection =
       currentTheme === "dark" ? "bottom-up" : "top-down";
 
-    const fetchSnapshot = async (themeOverride?: "light" | "dark") => {
-      const html = getFullPageHTML(themeOverride);
-      const response = await fetch("/api/snapshot", {
-        method: "POST",
-        body: JSON.stringify({
-          html,
-          width: window.innerWidth,
-          height: window.innerHeight,
-          devicePixelRatio: window.devicePixelRatio,
-        }),
-      });
-      const data = await response.json();
-      if (data.error) throw new Error(data.error);
-      return data.snapshot;
-    };
-
-    const captureWithModernScreenshot = async (): Promise<Snapshots> => {
+    const captureMask = async () => {
       const vh = window.innerHeight;
       const scrollY = window.scrollY;
       const options = {
         useCORS: true,
-        width: document.documentElement.clientWidth,
+        width: window.innerWidth,
         height: vh,
-        scale: Math.max(window.devicePixelRatio, 2),
+        scale: 1, // Low scale is fine for a temporary mask
         filter: (node: Node) => {
           if (node instanceof HTMLElement || node instanceof SVGElement) {
             if (node.hasAttribute('data-html2canvas-ignore')) return false;
@@ -120,6 +107,74 @@ export function useThemeWipe({
         },
         style: {
           width: `${document.documentElement.clientWidth}px`,
+          height: `${document.documentElement.scrollHeight}px`,
+          transform: `translateY(-${scrollY}px)`,
+          transformOrigin: 'top left',
+        }
+      };
+      return await domToPng(document.documentElement, options);
+    };
+
+    const fetchSnapshotsBatch = async (newTheme: Theme) => {
+      // 1. Snapshot A (current)
+      const htmlA = await getFullPageHTML();
+
+      // 2. Switch theme (to handle layouts that require re-render)
+      setTheme(newTheme);
+      // Wait multiple frames and a small timeout to ensure all React components/effects have settled
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(r))));
+      await new Promise(r => setTimeout(r, 250));
+
+      // 3. Snapshot B (newly rendered theme)
+      const htmlB = await getFullPageHTML();
+
+      // 4. Restore original theme state before sending to API
+      // This ensures the live page matches Snapshot A when the wipe animation starts.
+      setTheme(currentTheme);
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      const response = await fetch("/api/snapshot", {
+        method: "POST",
+        body: JSON.stringify({
+          tasks: [
+            {
+              html: htmlA,
+              width: window.innerWidth,
+              height: window.innerHeight,
+              devicePixelRatio: window.devicePixelRatio,
+            },
+            {
+              html: htmlB,
+              width: window.innerWidth,
+              height: window.innerHeight,
+              devicePixelRatio: window.devicePixelRatio,
+            }
+          ]
+        }),
+      });
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+      return data.snapshots; // Array of [snapshotA, snapshotB]
+    };
+
+    const captureWithModernScreenshot = async (): Promise<Snapshots> => {
+      const vh = window.innerHeight;
+      const scrollY = window.scrollY;
+      const options = {
+        useCORS: true,
+        width: window.innerWidth,
+        height: vh,
+        scale: Math.max(window.devicePixelRatio, 2),
+        // Force font rendering and asset loading delay for modern-screenshot too
+        waitForFonts: true,
+        filter: (node: Node) => {
+          if (node instanceof HTMLElement || node instanceof SVGElement) {
+            if (node.hasAttribute('data-html2canvas-ignore')) return false;
+          }
+          return true;
+        },
+        style: {
+          width: `${window.innerWidth}px`,
           height: `${document.documentElement.scrollHeight}px`,
           transform: `translateY(-${scrollY}px)`,
           transformOrigin: 'top left',
@@ -150,15 +205,19 @@ export function useThemeWipe({
     };
 
     try {
-      // PHASE 1: Try Puppeteer (3s timeout)
+      // PHASE 0: Capture Mask to prevent theme flash
+      const mask = await captureMask();
+      setSnapshots({ a: mask, b: mask, method: "Capturing..." });
+
+      // PHASE 1: Try Puppeteer (20s timeout as per instructions)
       console.log("Attempting Puppeteer snapshot...");
       const [snapshotA, snapshotB] = await withTimeout(
-        Promise.all([fetchSnapshot(), fetchSnapshot(newTheme)]),
-        3000,
+        fetchSnapshotsBatch(newTheme),
+        20000,
         "Puppeteer timeout"
       ) as [string, string];
 
-      setSnapshots({ a: snapshotA, b: snapshotB });
+      setSnapshots({ a: snapshotA, b: snapshotB, method: "Puppeteer" });
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
       setTheme(newTheme);
       setWipeDirection(direction);
@@ -167,27 +226,31 @@ export function useThemeWipe({
       console.warn("Puppeteer failed or timed out, falling back to modern-screenshot:", e.message);
 
       try {
-        // PHASE 2: Try modern-screenshot (2s timeout)
-        const snapshots = await withTimeout(
+        // PHASE 2: Try modern-screenshot (15s timeout as per instructions)
+        const snapshotsResult = await withTimeout(
           captureWithModernScreenshot(),
-          2000,
+          15000,
           "modern-screenshot timeout"
         ) as Snapshots;
 
-        setSnapshots(snapshots);
+        setSnapshots({ ...snapshotsResult, method: "modern-screenshot" });
         setWipeDirection(direction);
 
       } catch (e2: any) {
-        console.warn("modern-screenshot failed or timed out, changing theme instantly:", e2.message);
-
         // PHASE 3: Fallback instantly
+        console.warn("modern-screenshot failed or timed out, changing theme instantly:", e2.message);
         setTheme(newTheme);
-        setSnapshots(null);
-        setScrollLock(false);
-        setAnimationTargetTheme(null);
-        setOriginalTheme(null);
-        setWipeDirection(null);
-        wipeProgress.set(0);
+        setSnapshots({ a: '', b: '', method: 'Instant' });
+        // Give it a moment to show the status before clearing
+        setTimeout(() => {
+          // Check if we haven't started a new capture in the meantime
+          setSnapshots(prev => (prev?.method === 'Instant' ? null : prev));
+          setScrollLock(false);
+          setAnimationTargetTheme(prev => (prev === newTheme ? null : prev));
+          setOriginalTheme(prev => (prev === currentTheme ? null : prev));
+          setWipeDirection(prev => (prev === null ? null : prev)); // Don't clear if animation started
+          wipeProgress.set(0);
+        }, 2000);
       }
     } finally {
       setIsCapturing(false);
