@@ -96,7 +96,7 @@ export function useThemeWipe({
       const scrollY = window.scrollY;
       const options = {
         useCORS: true,
-        width: document.documentElement.clientWidth,
+        width: window.innerWidth,
         height: vh,
         scale: 1, // Low scale is fine for a temporary mask
         filter: (node: Node) => {
@@ -162,7 +162,7 @@ export function useThemeWipe({
       const scrollY = window.scrollY;
       const options = {
         useCORS: true,
-        width: document.documentElement.clientWidth,
+        width: window.innerWidth,
         height: vh,
         scale: Math.max(window.devicePixelRatio, 2),
         // Force font rendering and asset loading delay for modern-screenshot too
@@ -174,7 +174,7 @@ export function useThemeWipe({
           return true;
         },
         style: {
-          width: `${document.documentElement.clientWidth}px`,
+          width: `${window.innerWidth}px`,
           height: `${document.documentElement.scrollHeight}px`,
           transform: `translateY(-${scrollY}px)`,
           transformOrigin: 'top left',

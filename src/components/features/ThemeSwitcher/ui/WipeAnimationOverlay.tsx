@@ -18,9 +18,6 @@ export function WipeAnimationOverlay({
   animationStyles: { clipPath, dividerTop },
   wipeDirection,
 }: WipeAnimationOverlayProps) {
-  // Use the client width to ensure the snapshot matches the content area (excluding scrollbar)
-  const contentWidth = typeof document !== 'undefined' ? `${document.documentElement.clientWidth}px` : '100%';
-
   return (
     <AnimatePresence>
       {snapshots && (
@@ -33,7 +30,6 @@ export function WipeAnimationOverlay({
             className="absolute inset-0 bg-no-repeat bg-size-[100%_100%]"
             style={{
               backgroundImage: `url(${snapshots.a})`,
-              width: contentWidth,
             }}
           />
 
@@ -49,7 +45,6 @@ export function WipeAnimationOverlay({
             className="absolute inset-0 bg-no-repeat bg-size-[100%_100%]"
             style={{
               backgroundImage: `url(${snapshots.b})`,
-              width: contentWidth,
             }}
           />
 
@@ -59,7 +54,6 @@ export function WipeAnimationOverlay({
             className="absolute inset-0 bg-no-repeat bg-size-[100%_100%]"
             style={{
               backgroundImage: `url(${snapshots.a})`,
-              width: contentWidth,
               clipPath,
             }}
           />
@@ -67,10 +61,9 @@ export function WipeAnimationOverlay({
           {/* Wipe Divider */}
           <motion.div
             key="theme-switcher-divider"
-            className="absolute left-0 h-1 bg-[#D9D24D]"
+            className="absolute left-0 w-full h-1 bg-[#D9D24D]"
             style={{
               top: dividerTop,
-              width: contentWidth,
               translate: wipeDirection === "top-down" ? "0 -100%" : "0 0",
             }}
           />
