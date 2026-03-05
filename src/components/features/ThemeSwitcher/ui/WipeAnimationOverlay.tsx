@@ -27,7 +27,7 @@ export function WipeAnimationOverlay({
         >
           {/* Static Background Layer (to prevent target theme flash before wipe starts) */}
           <div
-            className="absolute inset-0 bg-no-repeat bg-size-[100%_100%]"
+            className="absolute inset-0 bg-no-repeat bg-top bg-[length:100%_100%]"
             style={{
               backgroundImage: `url(${snapshots.a})`,
             }}
@@ -42,7 +42,7 @@ export function WipeAnimationOverlay({
 
           {/* Target Theme Snapshot (Bottom Layer - Revealed) */}
           <div
-            className="absolute inset-0 bg-no-repeat bg-size-[100%_100%]"
+            className="absolute inset-0 bg-no-repeat bg-top bg-[length:100%_100%]"
             style={{
               backgroundImage: `url(${snapshots.b})`,
             }}
@@ -51,7 +51,7 @@ export function WipeAnimationOverlay({
           {/* Original Theme Snapshot (Top Layer - Wiped Away) */}
           <motion.div
             key="theme-switcher-overlay"
-            className="absolute inset-0 bg-no-repeat bg-size-[100%_100%]"
+            className="absolute inset-0 bg-no-repeat bg-top bg-[length:100%_100%]"
             style={{
               backgroundImage: `url(${snapshots.a})`,
               clipPath,
@@ -64,7 +64,7 @@ export function WipeAnimationOverlay({
             className="absolute left-0 w-full h-1 bg-[#D9D24D]"
             style={{
               top: dividerTop,
-              translate: wipeDirection === "top-down" ? "0 -100%" : "0 0",
+              translate: "0 -50%",
             }}
           />
         </div>
