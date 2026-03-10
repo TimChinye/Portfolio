@@ -71,7 +71,7 @@ class PuppeteerManager {
   }
 
   public async getBrowser(): Promise<Browser> {
-    if (this.browser && this.browser.connected) {
+    if (this.browser && this.browser.isConnected()) {
       return this.browser;
     }
 

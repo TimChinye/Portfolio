@@ -58,6 +58,11 @@ export function WipeAnimationOverlay({
               translate: wipeDirection === "top-down" ? "0 -100%" : "0 0",
             }}
           />
+
+          {/* Dev Debug Text */}
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-yellow-400 text-black text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg pointer-events-none">
+            Method: {snapshots.method}
+          </div>
         </div>
       )}
     </AnimatePresence>

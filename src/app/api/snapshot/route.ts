@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import puppeteer from "puppeteer-core";
+import { Browser } from "puppeteer-core";
 import { puppeteerManager } from "@/utils/puppeteer-manager";
 
 export const maxDuration = 60;
@@ -31,67 +31,87 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let browser: any = null;
-  let page: any = null;
+  let browser: Browser | null = null;
 
   try {
-    const { html, width, height, devicePixelRatio = 2 } = await req.json();
+    const body = await req.json();
 
-    if (!html) {
-      return NextResponse.json({ error: "HTML content is required" }, { status: 400 });
+    // Support both single task (backward compatibility) and multiple tasks
+    const isMulti = Array.isArray(body.tasks);
+    const tasks = isMulti ? body.tasks : [body];
+
+    if (tasks.length === 0) {
+      return NextResponse.json({ error: "No tasks provided" }, { status: 400 });
     }
 
-    // Connect to the persistent browser instance
-    const wsEndpoint = await puppeteerManager.getWsEndpoint();
-    browser = await puppeteer.connect({ browserWSEndpoint: wsEndpoint });
+    if (tasks.some((t: any) => !t.html)) {
+      return NextResponse.json({ error: "HTML content is required for all tasks" }, { status: 400 });
+    }
 
-    page = await browser.newPage();
+    // Get the shared persistent browser instance
+    browser = await puppeteerManager.getBrowser();
 
-    // Set viewport correctly for this specific snapshot
-    const safeWidth = Math.min(Math.max(width || 1280, 100), 3840);
-    const safeHeight = Math.min(Math.max(height || 720, 100), 2160);
-    const safeScale = Math.min(Math.max(devicePixelRatio || 2, 1), 3);
+    const results: string[] = [];
 
-    await page.setViewport({
-      width: safeWidth,
-      height: safeHeight,
-      deviceScaleFactor: safeScale,
-    });
+    // Process tasks SEQUENTIALLY to stay within the 2-concurrency limit
+    for (const task of tasks) {
+      if (!browser || !browser.isConnected()) {
+        throw new Error("Browser connection lost");
+      }
 
-    // Performance: Disable JS
-    await page.setJavaScriptEnabled(false);
+      const page = await browser.newPage();
+      try {
+        const { html, width, height, devicePixelRatio = 2 } = task;
 
-    // Wait for full load
-    await page.setContent(html, { waitUntil: "load" });
+        // Set viewport correctly for this specific snapshot
+        const safeWidth = Math.min(Math.max(width || 1280, 100), 3840);
+        const safeHeight = Math.min(Math.max(height || 720, 100), 2160);
+        const safeScale = Math.min(Math.max(devicePixelRatio || 2, 1), 3);
 
-    // Tiny delay for layout/font rendering
-    await new Promise(r => setTimeout(r, 100));
+        await page.setViewport({
+          width: safeWidth,
+          height: safeHeight,
+          deviceScaleFactor: safeScale,
+        });
 
-    await page.evaluate(() => {
-      const htmlEl = document.documentElement;
-      const x = parseInt(htmlEl.getAttribute('data-scroll-x') || '0');
-      const y = parseInt(htmlEl.getAttribute('data-scroll-y') || '0');
-      window.scrollTo(x, y);
-    });
+        // Performance: Disable JS
+        await page.setJavaScriptEnabled(false);
 
-    const buffer = await page.screenshot({
-      type: "png",
-      fullPage: false,
-    });
+        // Wait for DOM to be ready
+        await page.setContent(html, { waitUntil: "load" });
 
-    const base64 = `data:image/png;base64,${buffer.toString("base64")}`;
-    return NextResponse.json({ snapshot: base64 });
+        // Tiny delay for layout/font rendering
+        await new Promise(r => setTimeout(r, 100));
+
+        await page.evaluate(() => {
+          const htmlEl = document.documentElement;
+          const x = parseInt(htmlEl.getAttribute('data-scroll-x') || '0');
+          const y = parseInt(htmlEl.getAttribute('data-scroll-y') || '0');
+          window.scrollTo(x, y);
+        });
+
+        const buffer = await page.screenshot({
+          type: "png",
+          fullPage: false,
+        });
+
+        results.push(`data:image/png;base64,${Buffer.from(buffer).toString("base64")}`);
+      } catch (err: any) {
+        console.error("Task failed:", err);
+        throw err;
+      } finally {
+        // Close EACH page immediately to free up connection/resources
+        await page.close().catch(() => {});
+      }
+    }
+
+    return NextResponse.json(isMulti ? { snapshots: results } : { snapshot: results[0] });
 
   } catch (error: any) {
     console.error("Snapshot API error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   } finally {
-    if (page) {
-      await page.close().catch(() => {});
-    }
-    if (browser) {
-      // We disconnect from the persistent browser, NOT close it
-      await browser.disconnect();
-    }
+    // We do NOT disconnect from the shared singleton browser here.
+    // That's what was causing the "Target closed" and "Navigating frame was detached" errors.
   }
 }
