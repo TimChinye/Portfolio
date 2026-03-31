@@ -1,12 +1,20 @@
 "use client";
 
-import { useState, useCallback, Dispatch, SetStateAction } from "react";
+import { useState, useCallback, Dispatch, SetStateAction, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { domToPng } from "modern-screenshot";
 import { getFullPageHTML } from "@/utils/dom-serializer";
 import { useWipeAnimation } from "@/hooks/useWipeAnimation";
 import { Theme, WipeDirection } from "@/components/features/ThemeSwitcher/types";
 import type { MotionValue } from "motion/react";
+
+// Global for developer overrides
+if (typeof window !== "undefined") {
+  (window as any).FORCE_FALLBACK = (window as any).FORCE_FALLBACK || {
+    disablePuppeteer: false,
+    disableModernScreenshot: false,
+  };
+}
 
 type UseThemeWipeProps = {
   wipeProgress: MotionValue<number>;
@@ -17,6 +25,7 @@ type UseThemeWipeProps = {
 export type Snapshots = {
   a: string; // Original theme
   b: string; // Target theme
+  method?: string; // Debug info
 };
 
 export function useThemeWipe({
@@ -27,8 +36,16 @@ export function useThemeWipe({
   const { setTheme, resolvedTheme } = useTheme();
   const [snapshots, setSnapshots] = useState<Snapshots | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
+  const [isWarmingUp, setIsWarmingUp] = useState(true);
   const [animationTargetTheme, setAnimationTargetTheme] = useState<Theme | null>(null);
   const [originalTheme, setOriginalTheme] = useState<Theme | null>(null);
+
+  useEffect(() => {
+    // Check warm-up status
+    fetch("/api/snapshot")
+      .then(() => setIsWarmingUp(false))
+      .catch(() => setIsWarmingUp(false));
+  }, []);
 
   const setScrollLock = (isLocked: boolean) => {
     document.documentElement.style.overflow = isLocked ? 'hidden' : '';
@@ -69,6 +86,8 @@ export function useThemeWipe({
   });
 
   const toggleTheme = useCallback(async () => {
+    if (isWarmingUp) return;
+
     const currentTheme = resolvedTheme as Theme;
     const newTheme: Theme = currentTheme === "dark" ? "light" : "dark";
 
@@ -88,20 +107,36 @@ export function useThemeWipe({
     const direction: WipeDirection =
       currentTheme === "dark" ? "bottom-up" : "top-down";
 
-    const fetchSnapshot = async (themeOverride?: "light" | "dark") => {
-      const html = getFullPageHTML(themeOverride);
+    const fetchBatchedSnapshots = async (): Promise<[string, string]> => {
+      const htmlA = getFullPageHTML();
+      const htmlB = getFullPageHTML(newTheme);
+
+      const payload = {
+        tasks: [
+          {
+            html: htmlA,
+            width: window.innerWidth,
+            height: window.innerHeight,
+            devicePixelRatio: window.devicePixelRatio,
+          },
+          {
+            html: htmlB,
+            width: window.innerWidth,
+            height: window.innerHeight,
+            devicePixelRatio: window.devicePixelRatio,
+          }
+        ]
+      };
+
       const response = await fetch("/api/snapshot", {
         method: "POST",
-        body: JSON.stringify({
-          html,
-          width: window.innerWidth,
-          height: window.innerHeight,
-          devicePixelRatio: window.devicePixelRatio,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
+
       const data = await response.json();
       if (data.error) throw new Error(data.error);
-      return data.snapshot;
+      return data.snapshots as [string, string];
     };
 
     const captureWithModernScreenshot = async (): Promise<Snapshots> => {
@@ -130,7 +165,7 @@ export function useThemeWipe({
       const a = await domToPng(document.documentElement, options);
 
       // Mask switch
-      setSnapshots({ a, b: a });
+      setSnapshots({ a, b: a, method: 'modern-screenshot' });
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
       // 2. Switch theme
@@ -139,7 +174,7 @@ export function useThemeWipe({
 
       // 3. Snapshot B (new)
       const b = await domToPng(document.documentElement, options);
-      return { a, b };
+      return { a, b, method: 'modern-screenshot' };
     };
 
     const withTimeout = (promise: Promise<any>, ms: number, errorMsg: string) => {
@@ -149,28 +184,34 @@ export function useThemeWipe({
       ]);
     };
 
-    try {
-      // PHASE 1: Try Puppeteer (3s timeout)
-      console.log("Attempting Puppeteer snapshot...");
-      const [snapshotA, snapshotB] = await withTimeout(
-        Promise.all([fetchSnapshot(), fetchSnapshot(newTheme)]),
-        3000,
-        "Puppeteer timeout"
-      ) as [string, string];
+    const forceFallback = (window as any).FORCE_FALLBACK || {};
 
-      setSnapshots({ a: snapshotA, b: snapshotB });
+    try {
+      // PHASE 1: Try Puppeteer
+      if (forceFallback.disablePuppeteer) throw new Error("Puppeteer manually disabled");
+
+      console.log("Attempting Puppeteer batched snapshots...");
+      const [snapshotA, snapshotB] = await withTimeout(
+        fetchBatchedSnapshots(),
+        10000, // Increased timeout to 10s for batched
+        "Puppeteer timeout"
+      );
+
+      setSnapshots({ a: snapshotA, b: snapshotB, method: 'puppeteer' });
       await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
       setTheme(newTheme);
       setWipeDirection(direction);
 
     } catch (e: any) {
-      console.warn("Puppeteer failed or timed out, falling back to modern-screenshot:", e.message);
+      console.warn("Puppeteer failed, falling back to modern-screenshot:", e.message);
 
       try {
-        // PHASE 2: Try modern-screenshot (2s timeout)
+        // PHASE 2: Try modern-screenshot
+        if (forceFallback.disableModernScreenshot) throw new Error("Modern-screenshot manually disabled");
+
         const snapshots = await withTimeout(
           captureWithModernScreenshot(),
-          2000,
+          7000, // Increased timeout
           "modern-screenshot timeout"
         ) as Snapshots;
 
@@ -178,7 +219,7 @@ export function useThemeWipe({
         setWipeDirection(direction);
 
       } catch (e2: any) {
-        console.warn("modern-screenshot failed or timed out, changing theme instantly:", e2.message);
+        console.warn("modern-screenshot failed, changing theme instantly:", e2.message);
 
         // PHASE 3: Fallback instantly
         setTheme(newTheme);
@@ -193,12 +234,13 @@ export function useThemeWipe({
       setIsCapturing(false);
       document.documentElement.classList.remove('disable-transitions');
     }
-  }, [snapshots, isCapturing, resolvedTheme, setTheme, setWipeDirection, animationTargetTheme, wipeProgress]);
+  }, [snapshots, isCapturing, isWarmingUp, resolvedTheme, setTheme, setWipeDirection, animationTargetTheme, wipeProgress]);
 
   return {
     toggleTheme,
     snapshots,
     isCapturing,
+    isWarmingUp,
     originalTheme,
     animationStyles,
   };
