@@ -1,11 +1,9 @@
 "use client";
 
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
-import { createPortal } from "react-dom";
 import { useTheme } from "next-themes";
 import { useThemeWipe } from "../../../hooks/useThemeWipe";
 import { ThemeToggleButtonIcon } from "./ui/ThemeToggleButtonIcon";
-import { WipeAnimationOverlay } from "./ui/WipeAnimationOverlay";
 import { Theme, WipeDirection } from "./types";
 import type { MotionValue } from "motion/react";
 
@@ -25,30 +23,16 @@ export function ThemeSwitcher({
   setWipeDirection,
 }: ThemeSwitcherProps) {
   const [mounted, setMounted] = useState(false);
-  const [isWarmingUp, setIsWarmingUp] = useState(true);
-  
+
   const { resolvedTheme } = useTheme();
-  const { toggleTheme, snapshots, isCapturing, originalTheme, animationStyles } = useThemeWipe({
+  const { toggleTheme, isCapturing, originalTheme } = useThemeWipe({
     wipeProgress,
-    wipeDirection,
-    setWipeDirection,
+    wipeDirection: null,
+    setWipeDirection: () => {},
   });
 
   useEffect(() => {
     setMounted(true);
-    // Warm up the snapshot API on mount
-    setIsWarmingUp(true);
-    fetch("/api/snapshot")
-      .then(res => {
-        if (!res.ok) throw new Error("Warmup failed");
-        setIsWarmingUp(false);
-      })
-      .catch((err) => {
-        console.error("Theme switcher warmup error:", err);
-        // If warmup fails, we still unlock it so the user can try,
-        // but it will likely fallback to modern-screenshot.
-        setIsWarmingUp(false);
-      });
   }, []);
 
   if (!mounted) {
@@ -56,25 +40,15 @@ export function ThemeSwitcher({
   }
 
   const initialThemeForIcon = originalTheme || (resolvedTheme as Theme);
-  const isLoading = isCapturing || isWarmingUp;
 
   return (
     <>
       <ThemeToggleButtonIcon
-        onClick={isLoading ? () => {} : toggleTheme}
+        onClick={toggleTheme}
         progress={wipeProgress}
         initialTheme={initialThemeForIcon}
-        isLoading={isLoading}
+        isLoading={isCapturing}
       />
-
-      {createPortal(
-        <WipeAnimationOverlay
-          snapshots={snapshots}
-          animationStyles={animationStyles}
-          wipeDirection={wipeDirection}
-        />,
-        document.body
-      )}
     </>
   );
 }
