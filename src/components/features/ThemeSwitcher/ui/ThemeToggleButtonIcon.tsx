@@ -5,7 +5,7 @@ import { Theme } from "../types";
 
 type Props = {
   onClick: () => void;
-  progress: MotionValue<number>;
+  progress?: MotionValue<number>;
   initialTheme: Theme;
   isLoading?: boolean;
 };
@@ -25,21 +25,21 @@ const getRayTransformParams = (isGoingToDark: boolean, index: number): [number[]
 export function ThemeToggleButtonIcon({ onClick, progress, initialTheme, isLoading }: Props) {
   const isGoingToDark = initialTheme === 'light';
 
-  // Main hooks
-  const svgRotate = useTransform(progress, [0, 100], isGoingToDark ? [40, 80] : [80, 40]);
-  const moonMaskX = useTransform(progress, [0, 100], isGoingToDark ? [0, 15] : [15, 0]);
-  const sunCircleScale = useTransform(progress, [0, 100], isGoingToDark ? [1, 0.55] : [0.55, 1]);
-  const sunCircleRotate = useTransform(progress, [0, 100], isGoingToDark ? [0, 90] : [90, 0]);
+  // Only use animations if progress is provided
+  const svgRotate = progress ? useTransform(progress, [0, 100], isGoingToDark ? [40, 80] : [80, 40]) : undefined;
+  const moonMaskX = progress ? useTransform(progress, [0, 100], isGoingToDark ? [0, 15] : [15, 0]) : undefined;
+  const sunCircleScale = progress ? useTransform(progress, [0, 100], isGoingToDark ? [1, 0.55] : [0.55, 1]) : undefined;
+  const sunCircleRotate = progress ? useTransform(progress, [0, 100], isGoingToDark ? [0, 90] : [90, 0]) : undefined;
 
   // Sun Ray Hooks
-  const sunRayScales = [
+  const sunRayScales = progress ? [
     useTransform(progress, ...getRayTransformParams(isGoingToDark, 0)),
     useTransform(progress, ...getRayTransformParams(isGoingToDark, 1)),
     useTransform(progress, ...getRayTransformParams(isGoingToDark, 2)),
     useTransform(progress, ...getRayTransformParams(isGoingToDark, 3)),
     useTransform(progress, ...getRayTransformParams(isGoingToDark, 4)),
     useTransform(progress, ...getRayTransformParams(isGoingToDark, 5)),
-  ];
+  ] : [];
 
   return (
     <button

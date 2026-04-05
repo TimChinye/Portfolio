@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useState, useMemo } from "react";
-import { AnimatePresence, useMotionValue } from "motion/react";
+import { AnimatePresence } from "motion/react";
 
 import { NavLinks } from "./NavLinks";
 import { NavbarLogo } from "./NavbarLogo";
@@ -11,7 +11,6 @@ import { MobileNavOverlay } from "./MobileNavOverlay";
 
 import { ThemeSwitcher } from "@/components/features/ThemeSwitcher";
 import { CustomLink as Link } from "@/components/ui/CustomLink";
-import type { WipeDirection } from "@/components/features/ThemeSwitcher/types";
 
 const navLinks = [
   { href: '/about', key: 'about', label: 'About' },
@@ -31,11 +30,6 @@ export function Navbar() {
   const [isHovered, setIsHovered] = useState(false);
   const [isScrambling, setIsScrambling] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
-  const wipeProgress = useMotionValue(0);
-  const [wipeDirection, setWipeDirection] = useState<WipeDirection | null>(
-    null
-  );
   
   const [linkLayout, setLinkLayout] = useState<NavLayout>({
     positions: [],
@@ -59,8 +53,6 @@ export function Navbar() {
         >
           <NavbarLogo
             variant={variant}
-            wipeProgress={wipeProgress}
-            wipeDirection={wipeDirection}
           />
         </Link>
         <div className="group pointer-events-auto flex h-fit items-center gap-4 rounded-full bg-white/75 py-4 px-6 shadow-lg backdrop-blur-sm dark:bg-black/75 flex-row">
@@ -84,11 +76,7 @@ export function Navbar() {
               onScrambleChange={setIsScrambling}
             />
           </div>
-          <ThemeSwitcher
-            wipeProgress={wipeProgress}
-            wipeDirection={wipeDirection}
-            setWipeDirection={setWipeDirection}
-          />
+          <ThemeSwitcher />
         </div>
       </nav>
 
