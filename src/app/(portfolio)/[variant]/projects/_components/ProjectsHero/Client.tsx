@@ -67,7 +67,7 @@ export function Client({ projects, ...props }: ProjectsHeroClientProps) {
       <main
         style={{ borderRadius: 0 }}
         className="
-        relative flex flex-col justify-between overflow-hidden bg-[#EFEFD0]
+        relative flex flex-col justify-between overflow-hidden bg-[#EFEFD0] dark:bg-[#D9C97C]
         max-md:min-h-[calc(100vh-(var(--spacing)*32))] max-md:w-full
         md:h-screen md:flex-1 md:flex-row md:rounded-tl-[4rem]
       ">
@@ -95,7 +95,7 @@ export function Client({ projects, ...props }: ProjectsHeroClientProps) {
         </div>
 
         {/* Highlighted Projects */}
-        <div className="flex shrink-0 bg-[#EFEFD0] max-md:w-full max-md:flex-col md:h-full md:flex-row">
+        <div className="flex shrink-0 bg-[#EFEFD0] dark:bg-[#CBBA6A] max-md:w-full max-md:flex-col md:h-full md:flex-row">
           {projects.map((project) => (
             <ProjectStrip key={project._id} project={project} />
           ))}

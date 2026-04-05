@@ -18,32 +18,35 @@ export function WipeAnimationOverlay({
   animationStyles: { clipPath, dividerTop },
   wipeDirection,
 }: WipeAnimationOverlayProps) {
-  // Use the client width to ensure the snapshot matches the content area (excluding scrollbar)
-  const contentWidth = typeof document !== 'undefined' ? `${document.documentElement.clientWidth}px` : '100%';
-
   return (
     <AnimatePresence>
       {snapshots && (
         <div
-          className="fixed inset-0 z-10000"
+          className="fixed inset-0 z-10000 pointer-events-none"
           data-html2canvas-ignore="true"
         >
+          {/* Static Background Layer (to prevent target theme flash before wipe starts) */}
+          <div
+            className="absolute inset-0 bg-no-repeat bg-top bg-[length:100%_100%]"
+            style={{
+              backgroundImage: `url(${snapshots.a})`,
+            }}
+          />
+
           {/* Target Theme Snapshot (Bottom Layer - Revealed) */}
           <div
-            className="absolute inset-0 bg-no-repeat bg-size-[100%_100%]"
+            className="absolute inset-0 bg-no-repeat bg-top bg-[length:100%_100%]"
             style={{
               backgroundImage: `url(${snapshots.b})`,
-              width: contentWidth,
             }}
           />
 
           {/* Original Theme Snapshot (Top Layer - Wiped Away) */}
           <motion.div
             key="theme-switcher-overlay"
-            className="absolute inset-0 bg-no-repeat bg-size-[100%_100%]"
+            className="absolute inset-0 bg-no-repeat bg-top bg-[length:100%_100%]"
             style={{
               backgroundImage: `url(${snapshots.a})`,
-              width: contentWidth,
               clipPath,
             }}
           />
@@ -51,11 +54,10 @@ export function WipeAnimationOverlay({
           {/* Wipe Divider */}
           <motion.div
             key="theme-switcher-divider"
-            className="absolute left-0 h-1 bg-[#D9D24D]"
+            className="absolute left-0 w-full h-1 bg-[#D9D24D]"
             style={{
               top: dividerTop,
-              width: contentWidth,
-              translate: wipeDirection === "top-down" ? "0 -100%" : "0 0",
+              translate: "0 -50%",
             }}
           />
         </div>

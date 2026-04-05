@@ -1,11 +1,9 @@
 "use client";
 
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
-import { createPortal } from "react-dom";
 import { useTheme } from "next-themes";
 import { useThemeWipe } from "../../../hooks/useThemeWipe";
 import { ThemeToggleButtonIcon } from "./ui/ThemeToggleButtonIcon";
-import { WipeAnimationOverlay } from "./ui/WipeAnimationOverlay";
 import { Theme, WipeDirection } from "./types";
 import type { MotionValue } from "motion/react";
 
@@ -25,18 +23,16 @@ export function ThemeSwitcher({
   setWipeDirection,
 }: ThemeSwitcherProps) {
   const [mounted, setMounted] = useState(false);
-  
+
   const { resolvedTheme } = useTheme();
-  const { toggleTheme, snapshots, isCapturing, originalTheme, animationStyles } = useThemeWipe({
+  const { toggleTheme, isCapturing, originalTheme } = useThemeWipe({
     wipeProgress,
-    wipeDirection,
-    setWipeDirection,
+    wipeDirection: null,
+    setWipeDirection: () => {},
   });
 
   useEffect(() => {
     setMounted(true);
-    // Warm up the snapshot API on mount
-    fetch("/api/snapshot").catch(() => {});
   }, []);
 
   if (!mounted) {
@@ -53,15 +49,6 @@ export function ThemeSwitcher({
         initialTheme={initialThemeForIcon}
         isLoading={isCapturing}
       />
-
-      {createPortal(
-        <WipeAnimationOverlay
-          snapshots={snapshots}
-          animationStyles={animationStyles}
-          wipeDirection={wipeDirection}
-        />,
-        document.body
-      )}
     </>
   );
 }
