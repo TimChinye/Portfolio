@@ -33,13 +33,6 @@ export function WipeAnimationOverlay({
             }}
           />
 
-          {/* Status Text */}
-          {snapshots.method && (
-            <div className="absolute top-8 left-1/2 -translate-x-1/2 z-[10001] bg-black/50 text-white px-4 py-1 rounded-full text-sm font-medium backdrop-blur-sm border border-white/10">
-              Method: {snapshots.method}
-            </div>
-          )}
-
           {/* Target Theme Snapshot (Bottom Layer - Revealed) */}
           <div
             className="absolute inset-0 bg-no-repeat bg-top bg-[length:100%_100%]"
