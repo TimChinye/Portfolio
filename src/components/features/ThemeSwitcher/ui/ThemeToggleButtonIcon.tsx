@@ -1,44 +1,35 @@
+// src/components/features/ThemeSwitcher/ui/ThemeToggleButtonIcon.tsx
 "use client";
 
 import { motion, MotionValue, useTransform } from "motion/react";
-import { Theme } from "../types";
 
 type Props = {
   onClick: () => void;
   progress?: MotionValue<number>;
-  initialTheme: Theme;
   isLoading?: boolean;
 };
 
-// Calculate transform ranges for sun rays based on theme direction
-const getRayTransformParams = (isGoingToDark: boolean, index: number): [number[], number[]] => {
-  // Stagger the start of each ray's animation
-  const darkRange: [number, number] = [50 + index * 5, 70 + index * 5];
-  const lightRange: [number, number] = [30 - index * 5, 50 - index * 5];
-
-  const inputRange = isGoingToDark ? darkRange : lightRange;
-  const outputRange: [number, number] = isGoingToDark ? [0, 1] : [1, 0];
-  
-  return [inputRange, outputRange];
+// Static ray mapping: rays fade out as progress goes 0 (Moon) → 100 (Sun)
+const getRayTransformParams = (index: number): [number[], number[]] => {
+  const start = 30 + index * 5;
+  const end = 50 + index * 5;
+  return [[start, end], [0, 1]];
 };
 
-export function ThemeToggleButtonIcon({ onClick, progress, initialTheme, isLoading }: Props) {
-  const isGoingToDark = initialTheme === 'light';
+export function ThemeToggleButtonIcon({ onClick, progress, isLoading }: Props) {
+  // Static mappings: 0 = Moon, 100 = Sun
+  const svgRotate = progress ? useTransform(progress, [0, 100], [40, 80]) : undefined;
+  const moonMaskX = progress ? useTransform(progress, [0, 100], [0, 15]) : undefined;
+  const sunCircleScale = progress ? useTransform(progress, [0, 100], [1, 0.55]) : undefined;
+  const sunCircleRotate = progress ? useTransform(progress, [0, 100], [0, 90]) : undefined;
 
-  // Only use animations if progress is provided
-  const svgRotate = progress ? useTransform(progress, [0, 100], isGoingToDark ? [40, 80] : [80, 40]) : undefined;
-  const moonMaskX = progress ? useTransform(progress, [0, 100], isGoingToDark ? [0, 15] : [15, 0]) : undefined;
-  const sunCircleScale = progress ? useTransform(progress, [0, 100], isGoingToDark ? [1, 0.55] : [0.55, 1]) : undefined;
-  const sunCircleRotate = progress ? useTransform(progress, [0, 100], isGoingToDark ? [0, 90] : [90, 0]) : undefined;
-
-  // Sun Ray Hooks
   const sunRayScales = progress ? [
-    useTransform(progress, ...getRayTransformParams(isGoingToDark, 0)),
-    useTransform(progress, ...getRayTransformParams(isGoingToDark, 1)),
-    useTransform(progress, ...getRayTransformParams(isGoingToDark, 2)),
-    useTransform(progress, ...getRayTransformParams(isGoingToDark, 3)),
-    useTransform(progress, ...getRayTransformParams(isGoingToDark, 4)),
-    useTransform(progress, ...getRayTransformParams(isGoingToDark, 5)),
+    useTransform(progress, ...getRayTransformParams(0)),
+    useTransform(progress, ...getRayTransformParams(1)),
+    useTransform(progress, ...getRayTransformParams(2)),
+    useTransform(progress, ...getRayTransformParams(3)),
+    useTransform(progress, ...getRayTransformParams(4)),
+    useTransform(progress, ...getRayTransformParams(5)),
   ] : [];
 
   return (
@@ -71,8 +62,8 @@ export function ThemeToggleButtonIcon({ onClick, progress, initialTheme, isLoadi
             {sunRayScales.map((scale, i) => (
               <motion.circle
                 key={i}
-                cx={9 + 8 * Math.cos(i * 60 * Math.PI / 180)}
-                cy={9 + 8 * Math.sin(i * 60 * Math.PI / 180)}
+                cx={9 + 8 * Math.cos((i * 60 * Math.PI) / 180)}
+                cy={9 + 8 * Math.sin((i * 60 * Math.PI) / 180)}
                 r="1.5"
                 className="fill-current"
                 style={{ scale }}
