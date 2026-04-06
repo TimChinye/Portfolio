@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, memo } from 'react';
 import clsx from 'clsx';
 
 type NoiseOverlayProps = {
@@ -10,13 +10,16 @@ type NoiseOverlayProps = {
   fps?: number;
 };
 
-const filterId = "noise-filter-overlay";
+const FILTER_ID = "noise-filter-overlay";
+const DEFAULT_OPACITY = 'opacity-15';
+const DEFAULT_BASE_FREQUENCY = 0.5;
+const DEFAULT_FPS = 24;
 
-export const NoiseOverlay = ({
+const NoiseOverlayComponent = ({
   className,
-  opacityClass = 'opacity-15',
-  baseFrequency = 0.5,
-  fps = 24,
+  opacityClass = DEFAULT_OPACITY,
+  baseFrequency = DEFAULT_BASE_FREQUENCY,
+  fps = DEFAULT_FPS,
 }: NoiseOverlayProps) => {
   const turbulenceRef = useRef<SVGFETurbulenceElement>(null);
 
@@ -54,7 +57,7 @@ export const NoiseOverlay = ({
     <>
       <svg className="absolute w-0 h-0" aria-hidden="true" data-html2canvas-ignore="true">
         <defs>
-          <filter id={filterId}>
+          <filter id={FILTER_ID}>
             <feTurbulence
               ref={turbulenceRef}
               type="fractalNoise"
@@ -81,9 +84,12 @@ export const NoiseOverlay = ({
           opacityClass,
           className
         )}
-        style={{ filter: `url(#${filterId})` }}
+        style={{ filter: `url(#${FILTER_ID})` }}
         data-html2canvas-ignore="true"
       />
     </>
   );
 };
+
+export const NoiseOverlay = memo(NoiseOverlayComponent);
+NoiseOverlay.displayName = 'NoiseOverlay';

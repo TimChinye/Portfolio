@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { motion } from 'motion/react';
 
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -10,7 +10,7 @@ type ScramblingTextProps = {
   onScrambleChange: (isActive: boolean) => void;
 };
 
-export function ScramblingText({ textOptions, onScrambleChange }: ScramblingTextProps) {
+export const ScramblingText = memo(function ScramblingText({ textOptions, onScrambleChange }: ScramblingTextProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayText, setDisplayText] = useState(textOptions[0]);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -41,7 +41,7 @@ export function ScramblingText({ textOptions, onScrambleChange }: ScramblingText
     return () => observer.disconnect();
   }, [isAnimating, displayText]);
 
-  const scramble = () => {
+  const scramble = useCallback(() => {
     if (isAnimating) return;
     
     setIsAnimating(true);
@@ -74,7 +74,7 @@ export function ScramblingText({ textOptions, onScrambleChange }: ScramblingText
       }
       currentIteration += 1 / 3;
     }, 30);
-  };
+  }, [isAnimating, currentIndex, textOptions, onScrambleChange]);
 
   useEffect(() => {
     return () => {
@@ -83,7 +83,8 @@ export function ScramblingText({ textOptions, onScrambleChange }: ScramblingText
         onScrambleChange(false);
       }
     };
-  }, [onScrambleChange]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <motion.div
@@ -97,4 +98,6 @@ export function ScramblingText({ textOptions, onScrambleChange }: ScramblingText
       <span ref={measurementRef} className="absolute invisible -z-999" />
     </motion.div>
   );
-}
+});
+
+ScramblingText.displayName = 'ScramblingText';

@@ -1,21 +1,21 @@
 "use client";
 
 import clsx from 'clsx';
-import React, { ComponentPropsWithoutRef, ElementType } from 'react';
+import React, { ComponentPropsWithoutRef, ElementType, memo, useMemo } from 'react';
 
 type WavyTextProps<T extends ElementType> = {
   as?: T;
   children: string;
 } & Omit<ComponentPropsWithoutRef<T>, 'as' | 'children'>;
 
-export const WavyText = <T extends ElementType = 'p'>({
+export const WavyText = memo(function WavyText<T extends ElementType = 'p'>({
   children,
   as,
   className,
   ...props
-}: WavyTextProps<T>) => {
+}: WavyTextProps<T>) {
   const Component = as || 'p';
-  const letters = children.split('');
+  const letters = useMemo(() => children.split(''), [children]);
 
   return (
     <Component {...props} className={clsx('wavy-text-container', props.className)}>
@@ -30,4 +30,6 @@ export const WavyText = <T extends ElementType = 'p'>({
       ))}
     </Component>
   );
-};
+});
+
+WavyText.displayName = 'WavyText';

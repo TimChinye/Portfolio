@@ -108,7 +108,7 @@ const InputBlank = ({
             aria-placeholder={formattedPlaceholder}
             style={{ '--placeholder': `"${formattedPlaceholder}"` } as React.CSSProperties}
             className={clsx(
-                "inline-block outline-none leading-tight",
+                "inline outline-none leading-tight",
                 "border-b-2 border-[#2F2F2B80] dark:border-[#F5F5EF80]",
                 "text-(length:--fs-main) text-[#2F2F2B] dark:text-[#F5F5EF]",
                 "min-w-[1ch] transition-width duration-200",
@@ -365,7 +365,7 @@ export function PuzzleForm({ variant }: PuzzleFormProps) {
             
             {timestamp && <input type="hidden" name="start_time" value={timestamp} />}
 
-            {/* --- Visible UI Elements --- */}
+            {/* Visible UI Elements */}
 
             <div className="text-(length:--fs-main) leading-normal">
                 <span>Hi! I&rsquo;m </span>

@@ -53,7 +53,7 @@ type InfoCardProps = {
   style?: MotionStyle;
 };
 
-export function InfoCard({ project, className, style }: InfoCardProps) {
+export function InfoCard({ project, onClose, className, style }: InfoCardProps) {
   const [hasMounted, setHasMounted] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
@@ -64,7 +64,7 @@ export function InfoCard({ project, className, style }: InfoCardProps) {
   const desktopAnimation = {
     initial: { opacity: 0, x: '100%', y: '0%' },
     animate: { opacity: 1, x: '0%', y: '0%' },
-    exit: { opacity: 0, x: '-100%', y: '0%' },
+    exit: { opacity: 0, x: '100%', y: '0%' },
   };
 
   const mobileAnimation = {
@@ -91,6 +91,16 @@ export function InfoCard({ project, className, style }: InfoCardProps) {
       )}
       style={style}
     >
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 md:top-8 md:right-8 p-2 cursor-pointer rounded-4xl bg-[#CCCCCC]/25 dark:bg-[#555555]/25 hover:bg-[#CCCCCC] dark:hover:bg-[#555555] transition-colors z-10"
+        aria-label="Close"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 6 6 18"/>
+          <path d="m6 6 12 12"/>
+        </svg>
+      </button>
 
       <div className="">
         <h3 className="text-[4em] font-newsreader dark leading-none tracking-tight">

@@ -1,4 +1,4 @@
-import { type RefObject, useLayoutEffect, useState } from 'react';
+import { type RefObject, useLayoutEffect, useState, useMemo } from 'react';
 import { useTheme } from 'next-themes';
 import { useScroll, UseScrollOptions, useTransform, type MotionStyle } from 'motion/react';
 import { parsebackgroundColourClasses } from '@/components/ui/Section';
@@ -17,7 +17,7 @@ export const useBackgroundColourScroll = ({
   const { resolvedTheme } = useTheme();
   const [startColor, setStartColor] = useState<string | null>(null);
 
-  const endColors = parsebackgroundColourClasses(endBgClasses);
+  const endColors = useMemo(() => parsebackgroundColourClasses(endBgClasses), [endBgClasses]);
   const currentEndColor = resolvedTheme === 'dark' ? endColors.dark : endColors.light;
 
   useLayoutEffect(() => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from 'next/navigation';
-import { useLayoutEffect, useRef, createRef } from 'react';
+import { useLayoutEffect, useRef, memo } from 'react';
 
 import { navLinkTexts } from './NavLinkTexts';
 import { ScramblingText } from './ScramblingText';
@@ -21,10 +21,14 @@ type NavLinksProps = {
   onScrambleChange: (isActive: boolean) => void;
 };
 
-export function NavLinks({ links, onLayoutChange, onScrambleChange }: NavLinksProps) {
+export const NavLinks = memo(function NavLinks({ links, onLayoutChange, onScrambleChange }: NavLinksProps) {
   const pathname = usePathname();
   const navRef = useRef<HTMLElement>(null);
-  const linkRefs = useRef(links.map(() => createRef<HTMLAnchorElement>()));
+  // Use a single ref containing an array of refs - stable across renders
+  const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  
+  // Ensure linkRefs array has the right length
+  linkRefs.current = links.map((_, i) => linkRefs.current[i] ?? null);
 
   // Measures the vertical position of each link to align the mobile "hamburger" indicator
   useLayoutEffect(() => {
@@ -34,9 +38,9 @@ export function NavLinks({ links, onLayoutChange, onScrambleChange }: NavLinksPr
       const navRect = navRef.current.getBoundingClientRect();
       const navTop = navRect.top;
       
-      const positions = linkRefs.current.map((ref) => {
-        if (!ref.current) return 0;
-        const rect = ref.current.getBoundingClientRect();
+      const positions = linkRefs.current.map((el) => {
+        if (!el) return 0;
+        const rect = el.getBoundingClientRect();
         return (rect.top - navTop) + (rect.height / 2);
       });
       
@@ -63,7 +67,7 @@ export function NavLinks({ links, onLayoutChange, onScrambleChange }: NavLinksPr
 
         return (
           <Link
-            ref={linkRefs.current[index]}
+            ref={(el) => { linkRefs.current[index] = el; }}
             key={link.key}
             href={link.href}
             className={`flex items-center text-sm hover:text-[#948D00] hover:dark:text-[#D9D24D] ${isActive ? 'font-bold' : ''}`}
@@ -74,4 +78,6 @@ export function NavLinks({ links, onLayoutChange, onScrambleChange }: NavLinksPr
       })}
     </nav>
   );
-}
+});
+
+NavLinks.displayName = 'NavLinks';

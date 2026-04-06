@@ -15,7 +15,7 @@ const ProjectStrip = ({ project }: { project: HighlightedProject }) => {
     <Link
       href={`/project/${project.slug.current}`}
       className={clsx(
-        "group relative flex gap-4 border-black transition-colors duration-300 hover:bg-[#E4E191]",
+        "group relative flex gap-4 border-black transition-colors duration-300 hover:bg-[#E4E191] dark:hover:bg-[#B5A25C]",
         "max-md:text-[2rem] max-md:w-full max-md:items-center max-md:justify-between max-md:border-t-[3px] max-md:py-[0.45em] max-md:px-[0.375em]",
         "md:text-[min(4rem,4.5vw)] md:h-full md:flex-col md:items-center md:border-l-[3px] md:py-[0.75em] md:px-[0.625em]"
       )}
@@ -40,7 +40,7 @@ const ProjectStrip = ({ project }: { project: HighlightedProject }) => {
         </span>
 
         {project.isNew && (
-          <span className="bg-[#DEDA71] text-[#3D3B0D] font-figtree font-bold uppercase text-[0.25em] px-[0.75em] py-[0.5em] leading-none rounded-sm">
+          <span className="bg-[#DEDA71] group-hover:bg-[#D3Cf45] dark:bg-[#E9D487] dark:group-hover:bg-[#D9C97C] text-[#3D3B0D] font-figtree font-bold uppercase text-[0.25em] px-[0.75em] py-[0.5em] leading-none rounded-sm">
             NEW
           </span>
         )}
@@ -79,7 +79,7 @@ export function Client({ projects, ...props }: ProjectsHeroClientProps) {
             {TEXT.TITLE.map((line, i) => (
               <h1
                 key={i}
-                className="bg-[#ECE9A7] px-2 font-figtree font-black text-[clamp(4rem,10vw,10rem)] leading-[0.85] tracking-[-0.025em] text-black"
+                className="bg-[#ECE9A7] dark:bg-[#B5A25C] p-2 px-4 font-figtree font-black text-[clamp(4rem,10vw,10rem)] leading-[0.85] tracking-[-0.025em] text-black"
               >
                 {line}
               </h1>
@@ -95,7 +95,7 @@ export function Client({ projects, ...props }: ProjectsHeroClientProps) {
         </div>
 
         {/* Highlighted Projects */}
-        <div className="flex shrink-0 bg-[#EFEFD0] dark:bg-[#CBBA6A] max-md:w-full max-md:flex-col md:h-full md:flex-row">
+        <div className="group flex shrink-0 bg-[#EFEFD0] dark:bg-[#CBBA6A] max-md:w-full max-md:flex-col md:h-full md:flex-row">
           {projects.map((project) => (
             <ProjectStrip key={project._id} project={project} />
           ))}

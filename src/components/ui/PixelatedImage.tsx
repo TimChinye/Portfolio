@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useId, useRef } from 'react';
+import { useEffect, useId, useRef, useMemo, useCallback, memo } from 'react';
 import Image, { ImageProps } from 'next/image';
 import clsx from 'clsx';
 
@@ -16,7 +16,7 @@ interface PixelatedImageProps extends Omit<ImageProps, 'className'> {
   pixelationStart?: number;
 }
 
-export const PixelatedImage: React.FC<PixelatedImageProps> = ({
+const PixelatedImageComponent = ({
   className = '',
   wrapperClassName = '',
   durationIn,
@@ -29,7 +29,7 @@ export const PixelatedImage: React.FC<PixelatedImageProps> = ({
   alt,
   src,
   ...props
-}) => {
+}: PixelatedImageProps) => {
   const filterId = useId();
   // Ensure the ID is valid for CSS selectors
   const uniqueFilterId = `pixelate-${filterId.replace(/[^a-zA-Z0-9-_]/g, '')}`;
@@ -41,13 +41,13 @@ export const PixelatedImage: React.FC<PixelatedImageProps> = ({
   
   const currentRadiusRef = useRef<number>(pixelationStart);
 
-  const defaults = {
+  const defaults = useMemo(() => ({
     duration: 1000,
     pixelationOut: Math.max(1, pixelationOut),
     pixelationIn: Math.max(1, pixelationIn),
-  };
+  }), [pixelationOut, pixelationIn]);
 
-  const setPixelationState = (radius: number) => {
+  const setPixelationState = useCallback((radius: number) => {
     if (!containerRef.current || !morphologyRef.current || !compositeRef.current) return;
 
     const { offsetWidth, offsetHeight } = containerRef.current;
@@ -73,9 +73,9 @@ export const PixelatedImage: React.FC<PixelatedImageProps> = ({
     morphologyRef.current.setAttribute('radius', `${Math.max(0, radiusX)} ${Math.max(0, radiusY)}`);
     compositeRef.current.setAttribute('width', `${Math.max(0, pixelWidth)}`);
     compositeRef.current.setAttribute('height', `${Math.max(0, pixelHeight)}`);
-  };
+  }, [defaults.pixelationOut]);
 
-  const animatePixelation = (
+  const animatePixelation = useCallback((
     targetRadius: number,
     stepsToAnimate: number | 'max',
     durationMs: number
@@ -110,17 +110,17 @@ export const PixelatedImage: React.FC<PixelatedImageProps> = ({
     };
 
     requestRef.current = requestAnimationFrame(animationStep);
-  };
+  }, [setPixelationState]);
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = useCallback(() => {
     const dur = durationIn ?? 500;
     animatePixelation(defaults.pixelationOut, stepsIn, dur);
-  };
+  }, [durationIn, defaults.pixelationOut, stepsIn, animatePixelation]);
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     const dur = durationOut ?? 1000;
     animatePixelation(defaults.pixelationIn, stepsOut, dur);
-  };
+  }, [durationOut, defaults.pixelationIn, stepsOut, animatePixelation]);
 
   useEffect(() => {
     // Initial State
@@ -213,3 +213,6 @@ export const PixelatedImage: React.FC<PixelatedImageProps> = ({
     </div>
   );
 };
+
+export const PixelatedImage = memo(PixelatedImageComponent);
+PixelatedImage.displayName = 'PixelatedImage';

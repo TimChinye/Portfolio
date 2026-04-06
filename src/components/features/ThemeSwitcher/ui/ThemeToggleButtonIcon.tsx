@@ -1,6 +1,7 @@
 // src/components/features/ThemeSwitcher/ui/ThemeToggleButtonIcon.tsx
 "use client";
 
+import { memo } from "react";
 import { motion, MotionValue, useTransform } from "motion/react";
 
 type Props = {
@@ -16,21 +17,25 @@ const getRayTransformParams = (index: number): [number[], number[]] => {
   return [[start, end], [0, 1]];
 };
 
-export function ThemeToggleButtonIcon({ onClick, progress, isLoading }: Props) {
-  // Static mappings: 0 = Moon, 100 = Sun
-  const svgRotate = progress ? useTransform(progress, [0, 100], [40, 80]) : undefined;
-  const moonMaskX = progress ? useTransform(progress, [0, 100], [0, 15]) : undefined;
-  const sunCircleScale = progress ? useTransform(progress, [0, 100], [1, 0.55]) : undefined;
-  const sunCircleRotate = progress ? useTransform(progress, [0, 100], [0, 90]) : undefined;
+const LOADING_ICON_CLASS = "relative inline-block w-full h-full inset-[2px_-2px] before:content-[''] before:absolute before:inset-0 before:rounded-full before:bg-black dark:before:bg-white after:content-[''] after:absolute after:inset-0 after:rounded-full after:bg-black dark:after:bg-white before:animate-[animloader_1s_linear_infinite] after:animate-[animloader_1s_linear_infinite] after:animate-delay-[0.25s]";
 
-  const sunRayScales = progress ? [
-    useTransform(progress, ...getRayTransformParams(0)),
-    useTransform(progress, ...getRayTransformParams(1)),
-    useTransform(progress, ...getRayTransformParams(2)),
-    useTransform(progress, ...getRayTransformParams(3)),
-    useTransform(progress, ...getRayTransformParams(4)),
-    useTransform(progress, ...getRayTransformParams(5)),
-  ] : [];
+export const ThemeToggleButtonIcon = memo(function ThemeToggleButtonIcon({ onClick, progress, isLoading }: Props) {
+  // All hooks must be called unconditionally at top level
+  const safeProgress = progress ?? new MotionValue(0);
+  const svgRotate = useTransform(safeProgress, [0, 100], [40, 80]);
+  const moonMaskX = useTransform(safeProgress, [0, 100], [0, 15]);
+  const sunCircleScale = useTransform(safeProgress, [0, 100], [1, 0.55]);
+  const sunCircleRotate = useTransform(safeProgress, [0, 100], [0, 90]);
+
+  // Sun ray scales - always call all 6 hooks unconditionally
+  const sunRayScale0 = useTransform(safeProgress, ...getRayTransformParams(0));
+  const sunRayScale1 = useTransform(safeProgress, ...getRayTransformParams(1));
+  const sunRayScale2 = useTransform(safeProgress, ...getRayTransformParams(2));
+  const sunRayScale3 = useTransform(safeProgress, ...getRayTransformParams(3));
+  const sunRayScale4 = useTransform(safeProgress, ...getRayTransformParams(4));
+  const sunRayScale5 = useTransform(safeProgress, ...getRayTransformParams(5));
+
+  const sunRayScales = [sunRayScale0, sunRayScale1, sunRayScale2, sunRayScale3, sunRayScale4, sunRayScale5];
 
   return (
     <button
@@ -39,7 +44,7 @@ export function ThemeToggleButtonIcon({ onClick, progress, isLoading }: Props) {
       aria-label="Toggle theme"
     >
       {isLoading ? (
-        <span className="relative inline-block w-full h-full inset-[2px_-2px] before:content-[''] before:absolute before:inset-0 before:rounded-full before:bg-black dark:before:bg-white after:content-[''] after:absolute after:inset-0 after:rounded-full after:bg-black dark:after:bg-white before:animate-[animloader_1s_linear_infinite] after:animate-[animloader_1s_linear_infinite] after:animate-delay-[0.25s]"></span>
+        <span className={LOADING_ICON_CLASS} />
       ) : (
         <motion.svg
           viewBox="0 0 18 18"
@@ -74,4 +79,6 @@ export function ThemeToggleButtonIcon({ onClick, progress, isLoading }: Props) {
       )}
     </button>
   );
-}
+});
+
+ThemeToggleButtonIcon.displayName = 'ThemeToggleButtonIcon';

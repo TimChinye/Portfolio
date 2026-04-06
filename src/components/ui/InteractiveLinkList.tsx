@@ -1,9 +1,9 @@
 // src/components/InteractiveLinkList.tsx
 "use client";
 
-import { useState }from 'react';
-import { CustomLink as Link }from '@/components/ui/CustomLink';
-import { motion }from 'motion/react';
+import { useState, useCallback, memo } from 'react';
+import { CustomLink as Link } from '@/components/ui/CustomLink';
+import { motion } from 'motion/react';
 
 type LinkItem = {
   label: string;
@@ -19,7 +19,7 @@ type InteractiveLinkListProps = {
   strikethroughClassName?: string;
 };
 
-export function InteractiveLinkList({
+export const InteractiveLinkList = memo(function InteractiveLinkList({
   links,
   listClassName = '',
   listItemClassName = '',
@@ -28,10 +28,13 @@ export function InteractiveLinkList({
 }: InteractiveLinkListProps) {
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
 
+  const handleMouseLeave = useCallback(() => setHoveredLink(null), []);
+  const createMouseEnterHandler = useCallback((key: string) => () => setHoveredLink(key), []);
+
   return (
     <ul
       className={listClassName}
-      onMouseLeave={() => setHoveredLink(null)}
+      onMouseLeave={handleMouseLeave}
     >
       {links.map((link) => {
         const linkKey = link.key || link.label;
@@ -41,7 +44,7 @@ export function InteractiveLinkList({
           <li
             key={linkKey}
             className={`relative ${listItemClassName}`}
-            onMouseEnter={() => setHoveredLink(linkKey)}
+            onMouseEnter={createMouseEnterHandler(linkKey)}
           >
             <Link
               href={link.href}
@@ -62,4 +65,6 @@ export function InteractiveLinkList({
       })}
     </ul>
   );
-}
+});
+
+InteractiveLinkList.displayName = 'InteractiveLinkList';

@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useId, memo } from 'react';
 import clsx from 'clsx';
 
 type KeyCapProps = {
@@ -10,14 +10,14 @@ type KeyCapProps = {
   className?: string;
 };
 
-export const KeyCap = ({
+export const KeyCap = memo(function KeyCap({
   textColor = "#000000",
   topColor = "#EFEFD0",
   sideGradientStart = "#EFEFD0",
   sideGradientEnd = "#DEDA71",
   children,
   className,
-}: KeyCapProps) => {
+}: KeyCapProps) {
   const gradientId = useId();
 
   // Dynamic Sizing Logic
@@ -187,4 +187,6 @@ export const KeyCap = ({
       </text>
     </svg>
   );
-};
+});
+
+KeyCap.displayName = 'KeyCap';

@@ -4,8 +4,11 @@
 import { CustomLink as Link } from "@/components/ui/CustomLink";
 import { motion } from "motion/react";
 import { usePathname } from 'next/navigation';
+import { memo } from 'react';
 import type { NavLayout } from "./index";
 import type { NavLinkItem } from './config';
+
+const TRANSITION = { type: "spring", stiffness: 400, damping: 30 } as const;
 
 type HamburgerIconProps = {
   isHovered: boolean;
@@ -16,7 +19,7 @@ type HamburgerIconProps = {
   onClick: () => void;
 };
 
-export function HamburgerIcon({ isHovered, isScrambling, links, layout, isOpen, onClick }: HamburgerIconProps) {
+export const HamburgerIcon = memo(function HamburgerIcon({ isHovered, isScrambling, links, layout, isOpen, onClick }: HamburgerIconProps) {
   const pathname = usePathname();
   const { positions, navCenterY } = layout;
 
@@ -24,9 +27,6 @@ export function HamburgerIcon({ isHovered, isScrambling, links, layout, isOpen, 
   const compactSpacing = 8;
   const totalCompactHeight = (lineCount - 1) * compactSpacing;
   const startY = -totalCompactHeight / 2;
-
-  // Common transition for all animations
-  const transition = { type: "spring", stiffness: 400, damping: 30 } as const;
 
   return (
     <>
@@ -57,7 +57,7 @@ export function HamburgerIcon({ isHovered, isScrambling, links, layout, isOpen, 
               className="absolute block h-0.5 bg-current origin-center w-3/4"
               initial={false}
               animate={animateProps}
-              transition={transition}
+              transition={TRANSITION}
             />
           );
         })}
@@ -81,7 +81,7 @@ export function HamburgerIcon({ isHovered, isScrambling, links, layout, isOpen, 
               className="absolute w-full"
               initial={false}
               animate={{ y: (isScrambling || isHovered) ? hoverY : defaultY }}
-              transition={transition}
+              transition={TRANSITION}
             >
               <Link
                 href={link.href}
@@ -101,4 +101,6 @@ export function HamburgerIcon({ isHovered, isScrambling, links, layout, isOpen, 
       </div>
     </>
   );
-}
+});
+
+HamburgerIcon.displayName = 'HamburgerIcon';

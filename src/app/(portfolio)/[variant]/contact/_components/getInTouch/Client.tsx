@@ -19,10 +19,10 @@ export function Client() {
 
   return (
     <div className="relative w-full flex items-center justify-center p-8 -translate-y-16">
-      {/* Base Stroke (Static) */}
-      <div className="absolute z-10 w-full">
+      {/* Top Solid Text */}
+      <div className="absolute z-50 w-full">
         <Graphic
-          fillClassName="fill-transparent"
+          fillClassName="fill-black dark:fill-white"
           strokeClassName="stroke-black dark:stroke-white"
         />
       </div>
@@ -43,14 +43,6 @@ export function Client() {
           />
         </motion.div>
       ))}
-      
-      {/* Top Solid Text */}
-      <div className="absolute z-50 w-full">
-        <Graphic
-          fillClassName="fill-black dark:fill-white"
-          strokeClassName="stroke-black dark:stroke-white"
-        />
-      </div>
     </div>
   );
 }

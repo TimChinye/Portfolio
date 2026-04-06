@@ -1,6 +1,6 @@
 "use client";
 
-import { ElementType, ReactNode, useEffect, useRef, useMemo, useState, useLayoutEffect, forwardRef, ForwardedRef, createContext, useContext } from 'react';
+import { ElementType, ReactNode, useEffect, useRef, useMemo, useState, useLayoutEffect, forwardRef, ForwardedRef, createContext, useContext, useCallback } from 'react';
 import { motion, useScroll, useTransform, cubicBezier, type UseScrollOptions, type MotionStyle, type MotionValue } from 'motion/react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useTheme } from "next-themes";
@@ -26,6 +26,11 @@ export const parsebackgroundColourClasses = (classes: string) => {
   const darkColor = darkMatch || lightColor;
   
   return { light: lightColor, dark: darkColor };
+};
+
+// Memoized version for hooks
+export const useParseBackgroundColourClasses = (classes: string) => {
+  return useMemo(() => parsebackgroundColourClasses(classes), [classes]);
 };
 
 type Easing = readonly [number, number, number, number];
@@ -94,32 +99,42 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
 
   const isMobile = useMediaQuery('(max-width: 768px)');
 
-  const resolveResponsiveProp = <T,>(prop: ResponsiveRange<T> | undefined): T | undefined => {
+  const resolveResponsiveProp = useCallback(<T,>(prop: ResponsiveRange<T> | undefined): T | undefined => {
     if (prop && typeof prop === 'object' && !Array.isArray(prop)) {
       return isMobile ? (prop as ResponsiveRangeObject<T>).mobile : (prop as ResponsiveRangeObject<T>).desktop;
     }
     return prop as T | undefined;
-  };
+  }, [isMobile]);
   
-  const resolvedYRange = resolveResponsiveProp(yRange);
-  const resolvedScaleRange = resolveResponsiveProp(scaleRange);
-  const resolvedRadiusRange = resolveResponsiveProp(radiusRange);
+  const resolvedYRange = useMemo(() => resolveResponsiveProp(yRange), [resolveResponsiveProp, yRange]);
+  const resolvedScaleRange = useMemo(() => resolveResponsiveProp(scaleRange), [resolveResponsiveProp, scaleRange]);
+  const resolvedRadiusRange = useMemo(() => resolveResponsiveProp(radiusRange), [resolveResponsiveProp, radiusRange]);
   
   const baseAnimationRange = useMemo(() => {
     return resolveResponsiveProp(animationRange) as string[];
-  }, [isMobile, JSON.stringify(animationRange)]);
+  }, [resolveResponsiveProp, animationRange]);
 
   const baseStickyAnimationRange = useMemo(() => {
     return resolveResponsiveProp(stickyAnimationRange) as string[];
-  }, [isMobile, JSON.stringify(stickyAnimationRange)]);
+  }, [resolveResponsiveProp, stickyAnimationRange]);
 
   const [dynamicAnimationRange, setDynamicAnimationRange] = useState(baseAnimationRange);
   const [dynamicStickyAnimationRange, setDynamicStickyAnimationRange] = useState(baseStickyAnimationRange);
 
   useLayoutEffect(() => {
     if (!enablePaddingOffset) {
-      setDynamicAnimationRange(baseAnimationRange);
-      setDynamicStickyAnimationRange(baseStickyAnimationRange);
+      // Only update if values actually changed (compare as strings)
+      const baseAnimStr = baseAnimationRange?.join(',');
+      const baseStickyStr = baseStickyAnimationRange?.join(',');
+      const currentAnimStr = dynamicAnimationRange?.join(',');
+      const currentStickyStr = dynamicStickyAnimationRange?.join(',');
+      
+      if (baseAnimStr !== currentAnimStr) {
+        setDynamicAnimationRange(baseAnimationRange);
+      }
+      if (baseStickyStr !== currentStickyStr) {
+        setDynamicStickyAnimationRange(baseStickyAnimationRange);
+      }
       return;
     }
 
@@ -137,10 +152,20 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
       const endString = `end ${endOffset}`;
 
       if (baseAnimationRange && baseAnimationRange.length >= 2) {
-        setDynamicAnimationRange([baseAnimationRange[0], endString]);
+        const newRange = [baseAnimationRange[0], endString];
+        const currentStr = dynamicAnimationRange?.join(',');
+        const newStr = newRange.join(',');
+        if (currentStr !== newStr) {
+          setDynamicAnimationRange(newRange);
+        }
       }
       if (baseStickyAnimationRange && baseStickyAnimationRange.length >= 2) {
-        setDynamicStickyAnimationRange([baseStickyAnimationRange[0], endString]);
+        const newRange = [baseStickyAnimationRange[0], endString];
+        const currentStr = dynamicStickyAnimationRange?.join(',');
+        const newStr = newRange.join(',');
+        if (currentStr !== newStr) {
+          setDynamicStickyAnimationRange(newRange);
+        }
       }
     };
 

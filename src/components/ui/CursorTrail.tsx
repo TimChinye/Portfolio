@@ -21,10 +21,15 @@ const FOLLOWER_CONFIG = {
   minOpacity: 0.25,
   maxOpacity: 1,
   spawnRadius: 12 * SPACING,
-  fadeDuration: 2, // seconds
+  fadeDuration: 2,
 };
 
-// Component
+const MAIN_CIRCLE_SPRING = { damping: 50, stiffness: 800, mass: 0.1 };
+
+const BASE_CLASSES = "fixed rounded-full pointer-events-none";
+const Z_INDEX_CLASS = "z-1";
+const CIRCLE_TYPE = [['border-2 border-black', 'bg-black dark:bg-white'], ['bg-[#2F2F2B]', 'border-2 border-[#2F2F2B] dark:border-white']];
+const CIRCLE_SOLID = true;
 
 export function CursorTrail() {
   const [mounted, setMounted] = useState(false);
@@ -36,18 +41,17 @@ export function CursorTrail() {
   const mouseX = useMotionValue(-200);
   const mouseY = useMotionValue(-200);
 
-  const mainCircleSpring = { damping: 50, stiffness: 800, mass: 0.1 };
-  const smoothMouseX = useSpring(mouseX, mainCircleSpring);
-  const smoothMouseY = useSpring(mouseY, mainCircleSpring);
+  const smoothMouseX = useSpring(mouseX, MAIN_CIRCLE_SPRING);
+  const smoothMouseY = useSpring(mouseY, MAIN_CIRCLE_SPRING);
 
   const removeCircle = useCallback((id: number) => {
     setTrail((prev) => prev.filter((c) => c.id !== id));
   }, []);
 
-  const randomSkewedNum = (strength: number, min: number, max: number) => {
+  const randomSkewedNum = useCallback((strength: number, min: number, max: number) => {
     const rand = Math.pow(Math.random(), strength);
     return rand * (max - min) + min;
-  };
+  }, []);
 
   const handleMouseMove = useCallback((e: MouseEvent | TouchEvent) => {
     const point = "touches" in e ? e.touches[0] : e;
@@ -111,18 +115,12 @@ export function CursorTrail() {
 
   if (!mounted) return null;
 
-  const baseClasses = "fixed rounded-full pointer-events-none";
-  const zIndexClass = "z-1";
-
-  const circleSolid = true;
-  const circleType = [['border-2 border-black', 'bg-black dark:bg-white'], ['bg-[#2F2F2B]', 'border-2 border-[#2F2F2B] dark:border-white']]
-
   return (
     <div id="cursorWrapper">
       {/* Main Circle */}
       <motion.div
         id="mainCursor"
-        className={`w-9 h-9 ${baseClasses} -translate-x-1/2 -translate-y-1/2 ${zIndexClass} ${circleType[+circleSolid][0]} [#cursorWrapper:has(+_main_>_a:hover)_&]:mix-blend-difference [#cursorWrapper:has(+_main_>_a:hover)_&]:invert dark:invert`}
+        className={`w-9 h-9 ${BASE_CLASSES} -translate-x-1/2 -translate-y-1/2 ${Z_INDEX_CLASS} ${CIRCLE_TYPE[+CIRCLE_SOLID][0]} [#cursorWrapper:has(+_main_>_a:hover)_&]:mix-blend-difference [#cursorWrapper:has(+_main_>_a:hover)_&]:invert dark:invert`}
         style={{
           left: smoothMouseX,
           top: smoothMouseY,
@@ -136,7 +134,7 @@ export function CursorTrail() {
       {trail.map((circle) => (
         <motion.div
           key={circle.id}
-          className={`${baseClasses} ${zIndexClass} ${circleType[+circleSolid][1]}`}
+          className={`${BASE_CLASSES} ${Z_INDEX_CLASS} ${CIRCLE_TYPE[+CIRCLE_SOLID][1]}`}
           style={{
             width: circle.size,
             height: circle.size,
