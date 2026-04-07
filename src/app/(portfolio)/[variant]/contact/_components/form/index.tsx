@@ -23,7 +23,7 @@ export function ContactFormSection({ variant }: ContactFormSectionProps) {
         
         {/* Availability Widget */}
         <div className="block col-span-2 relative text-[1rem] md:text-[clamp(0.625rem,1.125vw,1rem)]">
-          <div className="md:h-screen sticky top-0 flex items-center justify-center">
+          <div className="md:h-dvh sticky top-0 flex items-center justify-center">
             <AvailabilityWidget />
           </div>
         </div>

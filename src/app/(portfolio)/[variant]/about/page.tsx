@@ -22,7 +22,7 @@ export default async function AboutPage({ params }: Props) {
   return (
     <Section 
       wrapperClassName='m-0 pb-32'
-      className='rounded-none content-center text-center min-h-screen flex flex-col items-center justify-center gap-12 px-6'
+      className='rounded-none content-center text-center min-h-dvh flex flex-col items-center justify-center gap-12 px-6'
       bgClasses="bg-[#F5F5EF] dark:bg-[#1A1A17]"
     >
       {/* Header / Badge */}

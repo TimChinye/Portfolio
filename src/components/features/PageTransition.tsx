@@ -83,7 +83,7 @@ export function PageTransition({ children, isNotFound = false }: PageTransitionP
       {/* Overlay */}
       <motion.div
         key={`${pathname}-transition-overlay`}
-        className="fixed top-0 left-0 w-full h-screen bg-[#D9D24D] z-1000"
+        className="fixed top-0 left-0 w-full h-dvh bg-[#D9D24D] z-1000"
         {...overlayAnimation}
       />
 
@@ -91,7 +91,7 @@ export function PageTransition({ children, isNotFound = false }: PageTransitionP
       <AnimatePresence mode="wait">
         <motion.div
           key={pathname}
-          className="min-h-screen content-center"
+          className="min-h-dvh content-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, transition: { delay: 0.4, duration: 0 } }}
           exit={{ opacity: 0, transition: { duration: 0 } }}

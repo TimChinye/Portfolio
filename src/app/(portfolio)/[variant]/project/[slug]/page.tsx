@@ -53,7 +53,7 @@ export default async function ProjectPage({ params }: Props) {
   return (
     <Section 
       wrapperClassName='m-0 pb-32'
-      className='rounded-none content-center min-h-screen py-32 px-6'
+      className='rounded-none content-center min-h-dvh py-32 px-6'
       bgClasses="bg-[#F5F5EF] dark:bg-[#1A1A17]"
     >
       <div className="max-w-5xl mx-auto flex flex-col gap-16">

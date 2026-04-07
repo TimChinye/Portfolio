@@ -88,21 +88,32 @@ export function BubbleCursor({ hoveredProject }: BubbleCursorProps) {
       mouseY.set(e.clientY);
   }, [mouseX, mouseY]);
 
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+      const touch = e.touches[0];
+      if (touch) {
+          mouseX.set(touch.clientX);
+          mouseY.set(touch.clientY);
+      }
+  }, [mouseX, mouseY]);
+
   useEffect(() => {
     const unsubscribe = zoomLevel.on("change", (latestOpacity) => {
       const isCurrentlyActive = isTracking.current;
 
       if (latestOpacity > 0 && !isCurrentlyActive) {
         window.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("touchmove", handleTouchMove, { passive: true });
         isTracking.current = true;
       } else if (latestOpacity <= 0 && isCurrentlyActive) {
         window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("touchmove", handleTouchMove);
         isTracking.current = false;
       }
     });
 
     if (zoomLevel.get() > 0) {
         window.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("touchmove", handleTouchMove, { passive: true });
         isTracking.current = true;
     }
 
@@ -111,9 +122,10 @@ export function BubbleCursor({ hoveredProject }: BubbleCursorProps) {
       unsubscribe();
       if (isTracking.current) {
         window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("touchmove", handleTouchMove);
       }
     };
-  }, [zoomLevel, handleMouseMove]);
+  }, [zoomLevel, handleMouseMove, handleTouchMove]);
 
   if (!isMounted) return null;
 

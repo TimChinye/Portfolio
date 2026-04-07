@@ -51,7 +51,7 @@ export default async function ProjectsPage({ params }: Props) {
             <div 
               key={project._id} 
               id={project.slug.current}
-              className="group sticky top-0 min-h-screen flex flex-col md:flex-row border-t-2 border-black/10 dark:border-white/10"
+              className="group sticky top-0 min-h-dvh flex flex-col md:flex-row border-t-2 border-black/10 dark:border-white/10"
             >
               {/* Project Index / Mobile Header */}
               <div className="p-6 md:p-12 flex justify-between items-start md:w-32 md:shrink-0 md:border-r-2 md:border-black/10 dark:md:border-white/10">

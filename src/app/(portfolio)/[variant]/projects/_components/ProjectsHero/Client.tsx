@@ -59,17 +59,18 @@ export function Client({ projects, ...props }: ProjectsHeroClientProps) {
       
       {/* Sidebar Placeholder */}
       <div
-        style={{ width: 0 }}
-        className="shrink-0 bg-transparent max-md:fixed max-md:bottom-0 max-md:left-0 max-md:z-50 max-md:h-32 max-md:w-full md:h-screen md:w-56"
+        style={{ width: 0, height: 0 }}
+        className="shrink-0 bg-transparent max-md:fixed max-md:bottom-0 max-md:left-0 max-md:z-50 max-md:h-32 max-md:w-full md:h-dvh md:w-56"
       />
 
       {/* Main Content Area */}
+      {/* max-md:min-h-[calc(100vh-(var(--spacing)*32))] */}
       <main
         style={{ borderRadius: 0 }}
         className="
         relative flex flex-col justify-between overflow-hidden bg-[#EFEFD0] dark:bg-[#D9C97C]
-        max-md:min-h-[calc(100vh-(var(--spacing)*32))] max-md:w-full
-        md:h-screen md:flex-1 md:flex-row md:rounded-tl-[4rem]
+        max-md:min-h-dvh max-md:w-full
+        md:h-dvh md:flex-1 md:flex-row md:rounded-tl-[4rem]
       ">
         {/* Hero Text & Description */}
         <div className="contain-inline-size flex flex-col justify-center p-8 md:p-16 lg:p-20 flex-1">

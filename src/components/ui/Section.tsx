@@ -273,7 +273,7 @@ const SectionComponent = forwardRef(function Section<T extends ElementType = 'se
           'sticky top-0 box-content',
           !className?.match(/\b(([\w-]+):)?overflow(-[\w\[\]-]+)?(?=\s|'|"|$)/)?.[0] && 'overflow-hidden',
           !className?.match(/\b(([\w-]+):)?(h)-(\d+(\.\d+)?|px|full|screen|fit|auto|\[[^\]]+\])(?=\s|'|"|$)/)?.[0] && 'h-fit',
-          fillScreen && 'min-h-screen',
+          fillScreen && 'min-h-dvh',
           !className?.match(/\b(([\w-]+):)?rounded(-[\w\[\]-]+)?(?=\s|'|"|$)/)?.[0] && (
           isFirstElement ? 'rounded-none' : (!resolvedRadiusRange && 'rounded-t-[6rem] md:rounded-t-[8rem]')),
           !className?.match(/\b(([\w-]+):)?(p[tblrxyse]?)-(\d+|\[[^\]]+\])(?=\s|'|"|$)/)?.[0] && (

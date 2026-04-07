@@ -85,7 +85,7 @@ export const ContactSection = ({ variant, ...props }: ContactSectionProps) => {
 
   return (
     <Section {...props}>
-      <div className="h-screen w-full content-center text-center">
+      <div className="h-dvh w-full content-center text-center">
         <h1 className="font-newsreader leading-[100%] text-center text-[min(10.25vw,12.985rem)] text-[#7B7B78] dark:text-[#c9c9c6]">
           Let&apos;s build something
           <br />

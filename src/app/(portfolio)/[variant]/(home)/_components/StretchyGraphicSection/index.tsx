@@ -69,7 +69,7 @@ export const StretchyGraphicSection = ({ variant, ...props }: StretchyGraphicSec
     >
       <div
         style={{ '--gap': 'calc(0.75em / 4)' } as CSSProperties}
-        className={"container-size p-[0.5em] md:p-[0.75em] gap-(--gap) grid grid-cols-1 grid-rows-2 w-full h-[60vw] max-h-screen font-figtree font-black uppercase leading-[0.7125em] text-black dark:text-white"}
+        className={"container-size p-[0.5em] md:p-[0.75em] gap-(--gap) grid grid-cols-1 grid-rows-2 w-full h-[60vw] max-h-dvh font-figtree font-black uppercase leading-[0.7125em] text-black dark:text-white"}
       >
           <PerpetualText scrollYProgress={contentProgress} />
           <GrowthText

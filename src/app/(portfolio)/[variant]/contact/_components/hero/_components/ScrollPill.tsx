@@ -1,19 +1,23 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { motion, useSpring, useTransform, MotionValue } from 'motion/react';
-import { useMousePosition } from '@/hooks/useMousePosition';
+import { useEffect, useState, useCallback } from 'react';
+import { motion, useSpring, useTransform, MotionValue, useMotionValue } from 'motion/react';
 
 type ScrollPillProps = {
   scrollProgress: MotionValue<number>;
+  externalX?: MotionValue<number>;
+  externalY?: MotionValue<number>;
+  isInPaintCanvasRef?: React.RefObject<boolean>;
 };
 
 // Distance from cursor center.
 // 60px ensures it clears the 64px brush size comfortably.
 const OFFSET = 60; 
 
-export function ScrollPill({ scrollProgress }: ScrollPillProps) {
-  const { clientX, clientY } = useMousePosition();
+export function ScrollPill({ scrollProgress, externalX, externalY, isInPaintCanvasRef }: ScrollPillProps) {
+  // Internal position (always use this for spring input)
+  const internalX = useMotionValue(0);
+  const internalY = useMotionValue(0);
   
   // We need window dimensions to determine the "center" lines
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -24,12 +28,58 @@ export function ScrollPill({ scrollProgress }: ScrollPillProps) {
     };
     handleResize();
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
+  // Sync external position to internal
+  useEffect(() => {
+    if (!externalX) return;
+    const unsubscribe = externalX.on("change", (latest) => {
+      internalX.set(latest);
+    });
+    return () => unsubscribe();
+  }, [externalX, internalX]);
+
+  useEffect(() => {
+    if (!externalY) return;
+    const unsubscribe = externalY.on("change", (latest) => {
+      internalY.set(latest);
+    });
+    return () => unsubscribe();
+  }, [externalY, internalY]);
+
+  // Mouse handler (desktop continuous tracking)
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    internalX.set(e.clientX);
+    internalY.set(e.clientY);
+  }, [internalX, internalY]);
+
+  // Touch handler - jump to position on tap (only when NOT in PaintCanvas text)
+  const handleTouchStart = useCallback((e: TouchEvent) => {
+    const touch = e.touches[0];
+    if (touch && !isInPaintCanvasRef?.current) {
+      internalX.set(touch.clientX);
+      internalY.set(touch.clientY);
+    } else if (touch) {
+      // Skipping touch handler - inside PaintCanvas text
+    }
+  }, [internalX, internalY, isInPaintCanvasRef]);
+
+  useEffect(() => {
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchstart', handleTouchStart);
+    };
+  }, [handleMouseMove, handleTouchStart]);
+
   const cursorSpringConfig = { damping: 40, stiffness: 300, mass: 0.5 };
-  const smoothCursorX = useSpring(clientX, cursorSpringConfig);
-  const smoothCursorY = useSpring(clientY, cursorSpringConfig);
+  const smoothCursorX = useSpring(internalX, cursorSpringConfig);
+  const smoothCursorY = useSpring(internalY, cursorSpringConfig);
 
   // Get the offset based on quadrant
   const targetOffsetX = useTransform(smoothCursorX, (v) => {

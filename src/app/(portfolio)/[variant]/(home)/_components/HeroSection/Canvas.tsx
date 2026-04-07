@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useMemo } from 'react';
-import { motion, MotionStyle, useSpring, useTransform } from 'motion/react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { motion, MotionStyle, useSpring, useTransform, useMotionValue } from 'motion/react';
 import { useMousePosition } from '@/hooks/useMousePosition';
 import type { HeroProject } from '@/sanity/lib/queries';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -81,6 +81,24 @@ export function Canvas({ projects, setActiveProject, setHoveredProject }: Canvas
     const [hasMounted, setHasMounted] = useState(false);
     const [cardLayouts, setCardLayouts] = useState<CardLayout[]>([]);
 
+    // Touch drag state
+    const isDragging = useRef(false);
+    const dragStart = useRef({ x: 0, y: 0 });
+    const lastDragPos = useRef({ x: 0, y: 0 });
+    const dragDirection = useRef<'horizontal' | 'vertical' | null>(null);
+
+    // Combine mouse and touch positions - use touch values when dragging on mobile
+    const inputX = useMotionValue(0);
+    const inputY = useMotionValue(0);
+
+    // Initialize to center on mount
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            inputX.set(window.innerWidth / 2);
+            inputY.set(window.innerHeight / 2);
+        }
+    }, []);
+
     // Calculate card size dynamically based on the total number of projects
     // to ensure they fit within the canvas without excessive overlapping.
     const baseCardSizeRem = useMemo(() => {
@@ -115,8 +133,68 @@ export function Canvas({ projects, setActiveProject, setHoveredProject }: Canvas
         return () => window.removeEventListener('resize', handleResize);
     }, [clientX, clientY]);
 
-    const translateX = useTransform(clientX, [0, viewportSize.width], [-1, 1]);
-    const translateY = useTransform(clientY, [0, viewportSize.height], [-1, 1]);
+    useEffect(() => {
+        const unsubscribeX = clientX.on("change", (v) => {
+            if (!isDragging.current) {
+                inputX.set(v);
+            }
+        });
+        const unsubscribeY = clientY.on("change", (v) => {
+            if (!isDragging.current) {
+                inputY.set(v);
+            }
+        });
+        return () => {
+            unsubscribeX();
+            unsubscribeY();
+        };
+    }, [clientX, clientY, inputX, inputY]);
+
+    // Touch event handlers with direction detection
+    const handleTouchStart = useCallback((e: React.TouchEvent) => {
+        const touch = e.touches[0];
+        dragStart.current = { x: touch.clientX, y: touch.clientY };
+        lastDragPos.current = { x: touch.clientX, y: touch.clientY };
+        isDragging.current = true;
+        dragDirection.current = null; // Reset direction
+        
+        // Initialize touch position from current input
+        inputX.set(touch.clientX);
+        inputY.set(touch.clientY);
+    }, [inputX, inputY]);
+
+    const handleTouchMove = useCallback((e: React.TouchEvent) => {
+        if (!isDragging.current) return;
+        
+        const touch = e.touches[0];
+        const deltaX = Math.abs(touch.clientX - dragStart.current.x);
+        const deltaY = Math.abs(touch.clientY - dragStart.current.y);
+        
+        // Determine direction after 10px of movement
+        if (!dragDirection.current && (deltaX > 10 || deltaY > 10)) {
+            dragDirection.current = deltaX > deltaY ? 'horizontal' : 'vertical';
+        }
+        
+        // If vertical scroll, let it scroll naturally
+        if (dragDirection.current === 'vertical') {
+            return;
+        }
+        
+        // If horizontal drag, prevent default and move grid
+        if (dragDirection.current === 'horizontal') {
+            e.preventDefault();
+            inputX.set(touch.clientX);
+            inputY.set(touch.clientY);
+        }
+    }, [inputX, inputY]);
+
+    const handleTouchEnd = useCallback(() => {
+        isDragging.current = false;
+        dragDirection.current = null;
+    }, []);
+
+    const translateX = useTransform(inputX, [0, viewportSize.width], [-1, 1]);
+    const translateY = useTransform(inputY, [0, viewportSize.height], [-1, 1]);
 
     const springConfig = { damping: 50, stiffness: 400, mass: 1 };
     const smoothX = useSpring(translateX, springConfig);
@@ -129,60 +207,70 @@ export function Canvas({ projects, setActiveProject, setHoveredProject }: Canvas
     const canvasY = useTransform(smoothY, (perc) => `calc(${perc} * ${overhangY})`);
 
     return (
-        <motion.div
-            className="absolute pointer-events-none dark:brightness-95"
-            style={{
-                '--canvas-scale': CANVAS_SCALE,
-                inset: `calc(${overhangY}) calc(${overhangX})`,
-                x: canvasX,
-                y: canvasY,
-            } as MotionStyle}
-        >
-            {hasMounted && projects.map((project, index) => {
-                const layout = cardLayouts[index];
-                if (!layout) return null;
+        <>
+            {/* Touch overlay for mobile drag - outside pointer-events-none parent */}
+            <div 
+                className="fixed inset-0 z-5"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                style={{ touchAction: 'pan-y' }}
+            />
+            <motion.div
+                className="absolute pointer-events-none dark:brightness-95"
+                style={{
+                    '--canvas-scale': CANVAS_SCALE,
+                    inset: `calc(${overhangY}) calc(${overhangX})`,
+                    x: canvasX,
+                    y: canvasY,
+                } as MotionStyle}
+            >
+                {hasMounted && projects.map((project, index) => {
+                    const layout = cardLayouts[index];
+                    if (!layout) return null;
 
-                const { left, top } = layout;
+                    const { left, top } = layout;
 
-                return (
-                    <motion.div
-                        key={project._id}
-                        className="absolute pointer-events-auto"
-                        style={{
-                            width: `${baseCardSizeRem}rem`,
-                            height: `${baseCardSizeRem}rem`,
-                            left,
-                            top,
-                            translate: '-50% -50%'
-                        }}
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ 
-                            duration: 0.5, 
-                            delay: Math.min(1.5, index * 0.05),
-                            ease: [0.22, 1, 0.36, 1] 
-                        }}
-                    >
-                        <button
-                            onClick={() => setActiveProject(project)}
-                            onMouseEnter={() => setHoveredProject(project)}
-                            onMouseLeave={() => setHoveredProject(null)}
-                            className="size-full cursor-pointer block rounded-2xl md:rounded-4xl p-4 overflow-hidden shadow-lg transition-transform duration-500 bg-[#F5F5EF] dark:bg-[#1A1A17]"
-                            aria-label={`View details for ${project.title}`}
+                    return (
+                        <motion.div
+                            key={project._id}
+                            className="absolute pointer-events-auto"
+                            style={{
+                                width: `${baseCardSizeRem}rem`,
+                                height: `${baseCardSizeRem}rem`,
+                                left,
+                                top,
+                                translate: '-50% -50%'
+                            }}
+                            initial={{ opacity: 0, scale: 0 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ 
+                                duration: 0.5, 
+                                delay: Math.min(1.5, index * 0.05),
+                                ease: [0.22, 1, 0.36, 1] 
+                            }}
                         >
-                            <Image
-                                src={project.thumbnailUrl}
-                                alt={`Thumbnail for ${project.title}`}
-                                width={400}
-                                height={400}
-                                className="size-full object-cover rounded-[inherit]"
-                                sizes={`${Math.ceil(baseCardSizeRem)}rem`}
-                                priority={index < 8}
-                            />
-                        </button>
-                    </motion.div>
-                );
-            })}
-        </motion.div>
+                            <button
+                                onClick={() => setActiveProject(project)}
+                                onMouseEnter={() => setHoveredProject(project)}
+                                onMouseLeave={() => setHoveredProject(null)}
+                                className="size-full cursor-pointer block rounded-2xl md:rounded-4xl p-4 overflow-hidden shadow-lg transition-transform duration-500 bg-[#F5F5EF] dark:bg-[#1A1A17] relative z-10"
+                                aria-label={`View details for ${project.title}`}
+                            >
+                                <Image
+                                    src={project.thumbnailUrl}
+                                    alt={`Thumbnail for ${project.title}`}
+                                    width={400}
+                                    height={400}
+                                    className="size-full object-cover rounded-[inherit]"
+                                    sizes={`${Math.ceil(baseCardSizeRem)}rem`}
+                                    priority={index < 8}
+                                />
+                            </button>
+                        </motion.div>
+                    );
+                })}
+            </motion.div>
+        </>
     );
 }
