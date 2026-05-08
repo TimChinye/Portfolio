@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { useTheme } from "next-themes";
-import { useMotionValue, animate, MotionValue } from "motion/react";
+import { useMotionValue, animate } from "motion/react";
 import { useThemeWipe } from "../../../hooks/useThemeWipe";
 import { ThemeToggleButtonIcon } from "./ui/ThemeToggleButtonIcon";
 import { Theme } from "./types";
