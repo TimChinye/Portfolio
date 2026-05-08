@@ -210,7 +210,7 @@ export function Canvas({ projects, setActiveProject, setHoveredProject }: Canvas
         <>
             {/* Touch overlay for mobile drag - outside pointer-events-none parent */}
             <div 
-                className="fixed inset-0 z-5"
+                className="fixed inset-0"
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
