@@ -1,3 +1,4 @@
+import { headers } from 'next/headers';
 import { getNotFoundPage } from '@/sanity/lib/queries';
 
 import { CursorTrail } from "@/components/ui/CursorTrail";
@@ -14,18 +15,29 @@ interface NotFoundPageData {
 }
 
 export default async function NotFound() {
+  const headersList = await headers();
+  const host = headersList.get('host') || '';
+  const isFontsSubdomain = host.startsWith('fonts.');
+
   const content: NotFoundPageData | null = await getNotFoundPage();
   
   // Fallback content if Sanity fetch fails
   const errorCode = content?.errorCode || '404.';
   const errorMessage = content?.errorMessage || 'Woops.';
-  const subheading = content?.subheading || "The page you are looking for doesn't exist";
-  const buttonText = content?.buttonText || 'Go home';
   
+  // Custom copy for fonts subdomain vs normal portfolio
+  const subheading = isFontsSubdomain
+    ? "The font you are looking for doesn't exist"
+    : (content?.subheading || "The page you are looking for doesn't exist");
+
+  const buttonText = isFontsSubdomain
+    ? "Browse all fonts"
+    : (content?.buttonText || 'Go home');
+
   return (
     <PageTransition isNotFound>
       <CursorTrail />
-      <main className="h-full flex flex-col justify-center items-center gap-8">
+      <main className="h-full flex flex-col justify-center items-center gap-8 text-center px-4">
         <PortfolioIcon className="size-16 text-black dark:text-white" />
         <h1 className="text-6xl font-bold">
           <span className="text-black dark:text-white">{errorCode}</span>{' '}

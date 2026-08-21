@@ -2,6 +2,7 @@ import "./globals.css";
 
 import { Analytics } from '@vercel/analytics/next';
 import localFont from "next/font/local";
+import { ThemeProvider } from "@/components/ui/ThemeProvider";
 
 const figtree = localFont({
   src: [
@@ -19,7 +20,6 @@ const figtree = localFont({
   display: 'swap',
   variable: '--font-figtree',
 });
-
 
 const newsreader = localFont({
   src: [
@@ -44,10 +44,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`h-full bg-[#F5F5EF] dark:bg-[#1A1A17] text-[#2F2F2B] dark:text-[#F5F5EF] ${figtree.variable} ${newsreader.variable} font-figtree text-[clamp(0px,1.5dvh,24px)]`} suppressHydrationWarning>
+    <html 
+      lang="en" 
+      className={`h-full bg-[#F5F5EF] dark:bg-[#1A1A17] text-[#2F2F2B] dark:text-[#F5F5EF] ${figtree.variable} ${newsreader.variable} font-figtree text-[clamp(0px,1.5dvh,24px)]`} 
+      suppressHydrationWarning
+    >
       <body className="h-full" suppressHydrationWarning>
-        {children}
-        <Analytics />
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+          <Analytics />
+        </ThemeProvider>
       </body>
     </html>
   );

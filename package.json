@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/process-fonts.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/process-fonts.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -45,7 +47,9 @@
     "dotenv-cli": "^10.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.0.7",
-    "typescript": "^5"
+    "fontkit": "^2.0.4",
+    "typescript": "^5",
+    "wawoff2": "^2.0.1"
   },
   "overrides": {
     "@types/react": "19.2.2",

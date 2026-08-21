@@ -1,7 +1,6 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import { ProgressBar } from '@/components/features/ProgressBar';
 import { Navbar } from '@/components/shared/Navbar';
 import { Favicon } from '@/components/shared/Favicon';
@@ -17,11 +16,9 @@ export default function PortfolioLayout({
   return (
     <>
       <Favicon variant={variant || 'tim'} />
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <ProgressBar />
-        <Navbar />
-        {children}
-      </ThemeProvider>
+      <ProgressBar />
+      <Navbar />
+      {children}
     </>
   );
 }
