@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { PortfolioIcon } from '@/components/ui/PortfolioIcon';
 import { ThemeSwitcher } from '@/components/features/ThemeSwitcher';
-import { CustomLink } from '@/components/ui/CustomLink';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface FontFileItem {
@@ -93,6 +92,13 @@ export default function FontsCatalogPage() {
 
   const previewTargetsRef = useRef<Map<string, HTMLElement>>(new Map());
   const apiBase = typeof window !== 'undefined' ? window.location.origin : '';
+  const rootPortfolioUrl = useMemo(() => {
+    if (typeof window === 'undefined') return '/';
+    const host = window.location.host;
+    if (host.includes('tigerfolio.com')) return 'https://tigerfolio.com';
+    if (host.includes('timchinye.com')) return 'https://timchinye.com';
+    return 'http://localhost:3000';
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -137,6 +143,15 @@ export default function FontsCatalogPage() {
     };
   }, []);
 
+  // Synchronize external updates to sampleText across all unfocused preview cards
+  useEffect(() => {
+    previewTargetsRef.current.forEach((target) => {
+      if (target && target !== document.activeElement && target.innerText !== sampleText) {
+        target.innerText = sampleText;
+      }
+    });
+  }, [sampleText]);
+
   const copyToClipboard = useCallback((text: string, msg: string) => {
     navigator.clipboard.writeText(text).then(() => {
       setToast({ message: msg, visible: true });
@@ -147,7 +162,7 @@ export default function FontsCatalogPage() {
   const applyPreset = (text: string) => {
     setSampleText(text);
     previewTargetsRef.current.forEach(target => {
-      target.innerText = text;
+      if (target) target.innerText = text;
     });
   };
 
@@ -218,7 +233,7 @@ export default function FontsCatalogPage() {
   }
 
   return (
-    <div className={`min-h-screen bg-[#F5F5EF] dark:bg-[#1A1A17] text-[#2F2F2B] dark:text-[#F5F5EF] font-sans transition-colors duration-200 antialiased selection:bg-[#D9D24D] selection:text-black`}>
+    <div className="min-h-screen bg-[#F5F5EF] dark:bg-[#1A1A17] text-[#2F2F2B] dark:text-[#F5F5EF] font-sans transition-colors duration-200 antialiased selection:bg-[#D9D24D] selection:text-black">
       {/* Toast Notification */}
       <AnimatePresence mode="wait">
         {toast.visible && (
@@ -242,7 +257,11 @@ export default function FontsCatalogPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20 gap-4">
             <div className="flex items-center gap-3">
-              <CustomLink href="/" aria-label="Return to homepage" className="pointer-events-auto">
+              <a 
+                href={rootPortfolioUrl} 
+                aria-label="Return to portfolio homepage" 
+                className="pointer-events-auto transition-transform hover:scale-105"
+              >
                 <div className="w-10 h-10 rounded-xl bg-[#A69552] dark:text-black text-[#F5F5EF] flex items-center justify-center shadow-sm p-1.5">
                   <PortfolioIcon 
                     className="w-full h-full" 
@@ -253,7 +272,7 @@ export default function FontsCatalogPage() {
                     translateY={14} 
                   />
                 </div>
-              </CustomLink>
+              </a>
               <div>
                 <span className="font-bold tracking-tight text-sm md:text-base font-sans">Custom Fonts CDN</span>
               </div>
@@ -265,7 +284,7 @@ export default function FontsCatalogPage() {
                 <code className="text-[#2F2F2B] dark:text-[#F5F5EF] select-all font-semibold">{apiBase}/css2</code>
                 <button 
                   onClick={() => copyToClipboard(`${apiBase}/css2`, 'Endpoint URL copied!')}
-                  className="text-[#2F2F2B]/60 hover:text-[#2F2F2B] dark:text-[#F5F5EF]/60 dark:hover:text-white transition-colors"
+                  className="text-[#2F2F2B]/60 hover:text-[#2F2F2B] dark:text-[#F5F5EF]/60 dark:hover:text-white transition-colors cursor-pointer"
                   title="Copy endpoint"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -297,16 +316,16 @@ export default function FontsCatalogPage() {
               />
               <button 
                 onClick={() => applyPreset('The quick brown fox jumps over the lazy dog')} 
-                className="absolute right-2 px-2 py-1 text-[11px] font-semibold text-[#2F2F2B]/70 hover:text-[#2F2F2B] dark:text-[#F5F5EF]/70 dark:hover:text-white bg-[#E9E8B1]/40 dark:bg-[#2F2F2B] rounded-md transition-colors font-sans"
+                className="absolute right-2 px-2 py-1 text-[11px] font-semibold text-[#2F2F2B]/70 hover:text-[#2F2F2B] dark:text-[#F5F5EF]/70 dark:hover:text-white bg-[#E9E8B1]/40 dark:bg-[#2F2F2B] rounded-md transition-colors font-sans cursor-pointer"
               >
                 Reset
               </button>
             </div>
 
             <div className="lg:col-span-3 flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0 scrollbar-none font-sans text-xs tracking-tight">
-              <button onClick={() => applyPreset('The quick brown fox jumps over the lazy dog')} className="whitespace-nowrap font-semibold px-2.5 py-2 rounded-lg bg-[#E9E8B1]/20 hover:bg-[#E9E8B1]/40 text-[#2F2F2B] dark:text-[#F5F5EF] transition-all border border-[#2F2F2B]/30 dark:border-transparent">Pangram</button>
-              <button onClick={() => applyPreset('ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789')} className="whitespace-nowrap font-semibold px-2.5 py-2 rounded-lg bg-[#E9E8B1]/20 hover:bg-[#E9E8B1]/40 text-[#2F2F2B] dark:text-[#F5F5EF] transition-all border border-[#2F2F2B]/30 dark:border-transparent">Alphabet</button>
-              <button onClick={() => applyPreset('0123456789 ()[]{}#$&%+-=*/@')} className="whitespace-nowrap font-semibold px-2.5 py-2 rounded-lg bg-[#E9E8B1]/20 hover:bg-[#E9E8B1]/40 text-[#2F2F2B] dark:text-[#F5F5EF] transition-all border border-[#2F2F2B]/30 dark:border-transparent">Numerals</button>
+              <button onClick={() => applyPreset('The quick brown fox jumps over the lazy dog')} className="whitespace-nowrap font-semibold px-2.5 py-2 rounded-lg bg-[#E9E8B1]/20 hover:bg-[#E9E8B1]/40 text-[#2F2F2B] dark:text-[#F5F5EF] transition-all border border-[#2F2F2B]/30 dark:border-transparent cursor-pointer">Pangram</button>
+              <button onClick={() => applyPreset('ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789')} className="whitespace-nowrap font-semibold px-2.5 py-2 rounded-lg bg-[#E9E8B1]/20 hover:bg-[#E9E8B1]/40 text-[#2F2F2B] dark:text-[#F5F5EF] transition-all border border-[#2F2F2B]/30 dark:border-transparent cursor-pointer">Alphabet</button>
+              <button onClick={() => applyPreset('0123456789 ()[]{}#$&%+-=*/@')} className="whitespace-nowrap font-semibold px-2.5 py-2 rounded-lg bg-[#E9E8B1]/20 hover:bg-[#E9E8B1]/40 text-[#2F2F2B] dark:text-[#F5F5EF] transition-all border border-[#2F2F2B]/30 dark:border-transparent cursor-pointer">Numerals</button>
             </div>
 
             <div className="lg:col-span-3 flex items-center gap-3 bg-[#E9E8B1]/20 dark:bg-[#1A1A17] border border-[#2F2F2B]/15 dark:border-[#F5F5EF]/15 rounded-xl px-3.5 py-2">
@@ -335,7 +354,7 @@ export default function FontsCatalogPage() {
                 <button
                   key={key}
                   onClick={() => setActiveCategory(key as any)}
-                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
                     activeCategory === key
                       ? 'font-bold bg-[#A69552] text-[#F5F5EF] dark:text-black'
                       : 'bg-transparent hover:bg-[#2F2F2B]/10 dark:hover:bg-[#2F2F2B] text-[#2F2F2B] dark:text-[#F5F5EF]'
@@ -375,7 +394,6 @@ export default function FontsCatalogPage() {
           return (
             <article
               key={font.family}
-              ref={(el) => { if (el) previewTargetsRef.current.set(targetId, el); }}
               className="bg-[#F5F5EF] dark:bg-[#2F2F2B]/50 border border-[#2F2F2B]/15 dark:border-[#F5F5EF]/15 hover:border-[#A69552] rounded-2xl p-6 md:p-7 shadow-sm transition-all duration-200 space-y-5"
             >
               {/* Card Header */}
@@ -388,7 +406,7 @@ export default function FontsCatalogPage() {
                     </span>
                     <button
                       onClick={() => copyToClipboard(fontFamilySnippet, 'CSS font-family copied!')}
-                      className="group flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-mono bg-[#E9E8B1]/40 dark:bg-[#1A1A17] text-[#2F2F2B] dark:text-[#F5F5EF]/90 border border-[#2F2F2B]/20 dark:border-white/10 hover:border-[#A69552] transition-colors"
+                      className="group flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-mono bg-[#E9E8B1]/40 dark:bg-[#1A1A17] text-[#2F2F2B] dark:text-[#F5F5EF]/90 border border-[#2F2F2B]/20 dark:border-white/10 hover:border-[#A69552] transition-colors cursor-pointer"
                       title="Click to copy font-family rule"
                     >
                       <span>font-family: <strong>'{font.family}', {genericFallback}</strong></span>
@@ -403,19 +421,19 @@ export default function FontsCatalogPage() {
                 <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto font-sans">
                   <button 
                     onClick={() => copyToClipboard(fontFamilySnippet, 'CSS font-family declaration copied!')}
-                    className="px-3 py-2 rounded-xl text-xs font-mono font-bold bg-[#E9E8B1]/30 hover:bg-[#E9E8B1]/60 text-[#2F2F2B] dark:text-[#F5F5EF] transition-colors border border-[#2F2F2B]/20 dark:border-transparent"
+                    className="px-3 py-2 rounded-xl text-xs font-mono font-bold bg-[#E9E8B1]/30 hover:bg-[#E9E8B1]/60 text-[#2F2F2B] dark:text-[#F5F5EF] transition-colors border border-[#2F2F2B]/20 dark:border-transparent cursor-pointer"
                   >
                     Copy CSS Rule
                   </button>
                   <button 
                     onClick={() => copyToClipboard(htmlSnippet, 'HTML <link> tag copied!')}
-                    className="px-3 py-2 rounded-xl text-xs font-mono font-bold bg-[#E9E8B1]/20 hover:bg-[#E9E8B1]/40 text-[#2F2F2B] dark:text-[#F5F5EF] transition-colors border border-[#2F2F2B]/20 dark:border-transparent"
+                    className="px-3 py-2 rounded-xl text-xs font-mono font-bold bg-[#E9E8B1]/20 hover:bg-[#E9E8B1]/40 text-[#2F2F2B] dark:text-[#F5F5EF] transition-colors border border-[#2F2F2B]/20 dark:border-transparent cursor-pointer"
                   >
                     Copy &lt;link&gt;
                   </button>
                   <button 
                     onClick={() => copyToClipboard(cssImportSnippet, '@import rule copied!')}
-                    className="px-3.5 py-2 rounded-xl text-xs font-mono font-bold bg-[#A69552] hover:bg-[#A69552]/90 text-[#F5F5EF] dark:text-black transition-all shadow-sm"
+                    className="px-3.5 py-2 rounded-xl text-xs font-mono font-bold bg-[#A69552] hover:bg-[#A69552]/90 text-[#F5F5EF] dark:text-black transition-all shadow-sm cursor-pointer"
                   >
                     Copy @import
                   </button>
@@ -458,7 +476,7 @@ export default function FontsCatalogPage() {
                         <button
                           key={value}
                           onClick={() => setStepMode(font.family, value)}
-                          className={`px-2 py-0.5 rounded font-bold transition-all ${
+                          className={`px-2 py-0.5 rounded font-bold transition-all cursor-pointer ${
                             currentStep === value
                               ? 'bg-[#A69552] text-white dark:text-black shadow-xs'
                               : 'text-[#2F2F2B]/70 dark:text-[#F5F5EF]/70 hover:text-black dark:hover:text-white'
@@ -480,12 +498,12 @@ export default function FontsCatalogPage() {
                         <button
                           key={w}
                           onClick={() => toggleWeightSelection(font.family, w)}
-                          className={`px-2.5 py-1 rounded-lg text-xs font-mono font-semibold transition-all border ${
+                          className={`px-2.5 py-1 rounded-lg text-xs font-mono font-semibold transition-all border cursor-pointer ${
                             isSelected
                               ? 'bg-[#A69552] text-white dark:text-black border-[#A69552]'
                               : 'bg-transparent text-[#2F2F2B]/60 dark:text-[#F5F5EF]/60 border-[#2F2F2B]/20 dark:border-white/10 hover:border-[#A69552]'
                           } ${isCurrentlyPreviewed ? 'ring-2 ring-offset-1 ring-[#A69552]' : ''}`}
-                          title={`Click to toggle ${w} in URL. Double-click or select to preview.`}
+                          title={`Click to toggle ${w} in URL`}
                         >
                           {w} {isSelected ? '✓' : ''}
                         </button>
@@ -495,7 +513,7 @@ export default function FontsCatalogPage() {
                     {distinctWeights.length > 1 && (
                       <button
                         onClick={() => toggleSelectAllWeights(font.family, distinctWeights)}
-                        className="px-2 py-1 text-[10px] font-mono text-[#2F2F2B]/60 dark:text-[#F5F5EF]/60 hover:text-[#A69552] underline ml-1"
+                        className="px-2 py-1 text-[10px] font-mono text-[#2F2F2B]/60 dark:text-[#F5F5EF]/60 hover:text-[#A69552] underline ml-1 cursor-pointer"
                       >
                         {distinctWeights.every(w => selectedWeights.includes(w)) ? 'Deselect All' : 'Select All'}
                       </button>
@@ -506,7 +524,7 @@ export default function FontsCatalogPage() {
                 {hasItalicFiles && (
                   <button 
                     onClick={() => toggleItalicState(font.family)}
-                    className={`ml-auto text-xs font-mono font-bold px-3 py-1 rounded-lg transition-colors border ${
+                    className={`ml-auto text-xs font-mono font-bold px-3 py-1 rounded-lg transition-colors border cursor-pointer ${
                       isItalic
                         ? 'bg-[#A69552] text-white dark:text-black border-[#A69552]'
                         : 'bg-transparent text-[#2F2F2B] dark:text-[#F5F5EF] border-[#2F2F2B]/20 dark:border-white/10 hover:border-[#A69552]'
@@ -521,7 +539,18 @@ export default function FontsCatalogPage() {
               <div className="py-4 overflow-x-auto min-h-[100px] flex items-center">
                 <div 
                   id={targetId}
+                  ref={(el) => {
+                    if (el) {
+                      previewTargetsRef.current.set(targetId, el);
+                      if (el.innerText !== sampleText && el !== document.activeElement) {
+                        el.innerText = sampleText;
+                      }
+                    } else {
+                      previewTargetsRef.current.delete(targetId);
+                    }
+                  }}
                   contentEditable={true}
+                  suppressContentEditableWarning={true}
                   spellCheck={false}
                   className="w-full leading-tight tracking-tight focus:outline-none text-[#2F2F2B] dark:text-[#F5F5EF] cursor-text"
                   style={{
@@ -531,15 +560,15 @@ export default function FontsCatalogPage() {
                     fontSize: `${fontSize}px`,
                   }}
                   onInput={(e) => {
-                    const text = e.currentTarget.innerText;
-                    previewTargetsRef.current.forEach(target => {
-                      if (target.id !== targetId) target.innerText = text;
+                    const text = e.currentTarget.innerText || '';
+                    previewTargetsRef.current.forEach((target, id) => {
+                      if (id !== targetId && target && target !== document.activeElement) {
+target.innerText = text;
+}
                     });
                     setSampleText(text);
                   }}
-                >
-                  {sampleText}
-                </div>
+                />
               </div>
 
               {/* Dynamic URL String Preview */}

@@ -6,6 +6,7 @@ import { useLayoutEffect, useRef, memo } from 'react';
 import { navLinkTexts } from './NavLinkTexts';
 import { ScramblingText } from './ScramblingText';
 import type { NavLayout } from './index';
+import { getMainSiteUrl } from './config';
 
 import { CustomLink as Link } from "@/components/ui/CustomLink";
 
@@ -69,7 +70,7 @@ export const NavLinks = memo(function NavLinks({ links, onLayoutChange, onScramb
           <Link
             ref={(el) => { linkRefs.current[index] = el; }}
             key={link.key}
-            href={link.href}
+            href={getMainSiteUrl(link.href)}
             className={`flex items-center text-sm hover:text-[#948D00] hover:dark:text-[#D9D24D] ${isActive ? 'font-bold' : ''}`}
           >
             <ScramblingText textOptions={textOptions} onScrambleChange={onScrambleChange} />

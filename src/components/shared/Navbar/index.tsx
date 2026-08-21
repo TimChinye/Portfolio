@@ -11,6 +11,7 @@ import { MobileNavOverlay } from "./MobileNavOverlay";
 
 import { ThemeSwitcher } from "@/components/features/ThemeSwitcher";
 import { CustomLink as Link } from "@/components/ui/CustomLink";
+import { getMainSiteUrl } from "./config";
 
 const navLinks = [
   { href: '/about', key: 'about', label: 'About' },
@@ -47,7 +48,7 @@ export function Navbar() {
         data-html2canvas-ignore="true"
       >
         <Link
-          href="/"
+          href={getMainSiteUrl('/')}
           aria-label="Return to homepage"
           onClick={() => isMobileMenuOpen && setIsMobileMenuOpen(false)}
         >

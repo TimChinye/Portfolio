@@ -7,7 +7,7 @@ const require = createRequire(import.meta.url);
 const fontkit = require('fontkit');
 
 const SOURCE_DIR = path.join(process.cwd(), 'public-fonts');
-const OUTPUT_DIR = path.join(process.cwd(), 'public', 'hosted-fonts');
+const OUTPUT_DIR = path.join(process.cwd(), 'public', 'tstatic');
 const DATA_DIR = path.join(process.cwd(), 'src', 'data');
 const MANIFEST_FILE = path.join(DATA_DIR, 'fonts-manifest.json');
 
@@ -132,7 +132,7 @@ async function processAllFonts() {
   };
 
   fs.writeFileSync(MANIFEST_FILE, JSON.stringify(manifest, null, 2));
-  console.log(`Successfully processed ${files.length} fonts into /public/hosted-fonts/`);
+  console.log(`Successfully processed ${files.length} fonts into /public/tstatic/`);
 }
 
 processAllFonts();

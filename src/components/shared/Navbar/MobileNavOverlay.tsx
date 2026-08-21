@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { CustomLink as Link } from "@/components/ui/CustomLink";
 import { motion } from 'motion/react';
 
-import type { NavLinkItem } from './config';
+import { getMainSiteUrl, type NavLinkItem } from './config';
 
 const socialLinks = [
   { label: 'CODEPEN', href: 'https://codepen.io' },
@@ -49,7 +49,7 @@ export function MobileNavOverlay({ links, onClose }: MobileNavOverlayProps) {
                   onMouseEnter={() => setHoveredMainLink(link.key)}
                 >
                 <Link
-                  href={link.href}
+                  href={getMainSiteUrl(link.href)}
                   onClick={onClose}
                   className="text-4xl uppercase font-newsreader transition-opacity duration-300"
                   style={{ opacity: isAnotherLinkHovered ? 0.25 : 1 }}

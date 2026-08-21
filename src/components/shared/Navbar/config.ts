@@ -7,6 +7,20 @@ export const navLinks = [
 // Make the type always perfectly sync with the array's data.
 export type NavLinkItem = typeof navLinks[number];
 
+/**
+ * Returns an absolute URL pointing to the main domain if currently on fonts.* subdomain.
+ */
+export const getMainSiteUrl = (path: string = '/'): string => {
+  if (typeof window === 'undefined') return path;
+  const { protocol, host } = window.location;
+  if (host.startsWith('fonts.')) {
+    const mainHost = host.replace(/^fonts\./, '');
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    return `${protocol}//${mainHost}${cleanPath}`;
+  }
+  return path;
+};
+
 export const navRoutes = [
   { path: '/contact', index: 4 },
   { path: '/projects', index: 3 },

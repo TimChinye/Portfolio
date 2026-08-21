@@ -1,4 +1,3 @@
-// src/components/features/ThemeSwitcher/ui/ThemeToggleButtonIcon.tsx
 "use client";
 
 import { memo } from "react";

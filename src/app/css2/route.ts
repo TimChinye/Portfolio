@@ -24,6 +24,9 @@ interface Manifest {
   fonts: FontFamilyManifest[];
 }
 
+const VALID_FONT_DISPLAYS = new Set(['auto', 'block', 'swap', 'fallback', 'optional']);
+const VALID_AXES = new Set(['ital', 'wght']);
+
 function getManifest(): Manifest {
   const manifestPath = path.join(process.cwd(), 'src', 'data', 'fonts-manifest.json');
   if (!fs.existsSync(manifestPath)) {
@@ -37,6 +40,11 @@ interface RequestedVariant {
   wght?: { min: number; max: number };
 }
 
+type ParseResult = {
+  variants?: RequestedVariant[];
+  error?: string;
+};
+
 /**
  * Parses Google Fonts v2 axis syntax, e.g.:
  *   "wght@400;700"
@@ -44,48 +52,80 @@ interface RequestedVariant {
  *   "ital,wght@0,400;0,700;1,400"
  * Values may be single static weights ("400") or ranges ("100..900").
  */
-function parseAxisSpec(axesPart: string): RequestedVariant[] | null {
-  const [axesList, valuesPart] = axesPart.split('@');
-  const axes = axesList
-    .split(',')
-    .map(a => a.trim())
-    .filter(Boolean);
-  const variantStrings = (valuesPart ?? '')
-    .split(';')
-    .map(v => v.trim())
-    .filter(Boolean);
+function parseAxisSpec(axesPart: string): ParseResult {
+  const [axesListStr, valuesPart] = axesPart.split('@');
+if (!axesListStr || !valuesPart) {
+    return { error: `Malformed axis query '${axesPart}'. Expected format 'axis@value'.` };
+  }
 
-  if (axes.length === 0) return null;
-  if (!valuesPart || variantStrings.length === 0) return [];
+  const axes = axesListStr.split(',').map(a => a.trim().toLowerCase()).filter(Boolean);
+  if (axes.length === 0) {
+    return { error: `No axes provided in '${axesPart}'.` };
+  }
+
+  // Validate all requested axes
+  for (const axis of axes) {
+    if (!VALID_AXES.has(axis)) {
+      return { error: `Invalid axis '${axis}'. Supported axes: ${Array.from(VALID_AXES).join(', ')}.` };
+    }
+  }
+
+  const variantStrings = valuesPart.split(';').map(v => v.trim()).filter(Boolean);
+  if (variantStrings.length === 0) {
+    return { error: `No axis values supplied after '@' in '${axesPart}'.` };
+  }
 
   const variants: RequestedVariant[] = [];
 
   for (const variantString of variantStrings) {
     const values = variantString.split(',').map(v => v.trim());
+if (values.length !== axes.length) {
+      return {
+        error: `Invalid variant '${variantString}' for axis spec '${axesListStr}'. Expected ${axes.length} value(s), got ${values.length}.`
+      };
+    }
+
     const variant: RequestedVariant = {};
 
-    axes.forEach((axis, i) => {
+    for (let i = 0; i < axes.length; i++) {
+      const axis = axes[i];
       const raw = values[i];
-      if (raw === undefined || raw === '') return;
-
+      
       if (axis === 'ital') {
         if (raw === '0') variant.ital = 0;
         else if (raw === '1') variant.ital = 1;
+else {
+          return { error: `Invalid italic value '${raw}'. Value for 'ital' must be 0 or 1.` };
+        }
       } else if (axis === 'wght') {
         const rangeMatch = raw.match(/^(\d+)\.\.(\d+)$/);
         if (rangeMatch) {
-          variant.wght = { min: parseInt(rangeMatch[1], 10), max: parseInt(rangeMatch[2], 10) };
+          const min = parseInt(rangeMatch[1], 10);
+          const max = parseInt(rangeMatch[2], 10);
+          if (min > max || min < 1 || max > 1000) {
+            return { error: `Invalid weight range '${raw}'.` };
+          }
+          variant.wght = { min, max };
         } else if (/^\d+$/.test(raw)) {
           const n = parseInt(raw, 10);
+if (n < 1 || n > 1000) {
+            return { error: `Invalid weight value '${raw}'. Weight must be between 1 and 1000.` };
+          }
           variant.wght = { min: n, max: n };
+} else {
+          return { error: `Invalid weight '${raw}'. Expected a number (e.g. 400) or range (e.g. 300..900).` };
         }
       }
-    });
+    }
 
     variants.push(variant);
   }
 
-  return variants;
+  return { variants };
+}
+
+function normalizeName(name: string): string {
+  return name.toLowerCase().replace(/[\s\-_]+/g, '');
 }
 
 /**
@@ -94,22 +134,17 @@ function parseAxisSpec(axesPart: string): RequestedVariant[] | null {
  * (e.g. "Figtree" matches "Figtree Light", "Bomber Friends" matches "BomberFriends").
  */
 function findFamilyGroup(manifest: Manifest, requestedName: string): FontFamilyManifest | undefined {
-  const normalize = (name: string) => name.toLowerCase().replace(/\s+/g, '');
-  const requested = normalize(requestedName);
-
-  const exact = manifest.fonts.find(f => normalize(f.family) === requested);
-  if (exact) return exact;
-
-  return manifest.fonts.find(
-    f => normalize(f.family).startsWith(requested) || requested.startsWith(normalize(f.family))
-  );
+  const target = normalizeName(requestedName);
+  return manifest.fonts.find(f => normalizeName(f.family) === target);
 }
 
 /** Whether a manifest file satisfies a requested variant (ital + wght axis). */
 function fileMatchesVariant(file: FontFileItem, variant: RequestedVariant): boolean {
+  // If ital is specified, it must strictly match the file style (0 for normal, 1 for italic)
   if (variant.ital !== undefined && variant.ital !== (file.style === 'italic' ? 1 : 0)) {
     return false;
   }
+
   if (variant.wght) {
     if (file.isVariable) {
       // Variable fonts serve any axis range they physically support
@@ -119,6 +154,7 @@ function fileMatchesVariant(file: FontFileItem, variant: RequestedVariant): bool
       if (file.weightMin < variant.wght.min || file.weightMin > variant.wght.max) return false;
     }
   }
+
   return true;
 }
 
@@ -139,22 +175,29 @@ export async function GET(request: NextRequest) {
   const manifest = getManifest();
 
   const familyParams = searchParams.getAll('family');
-  const display = searchParams.get('display') || 'swap';
+  const rawDisplay = searchParams.get('display');
+  const textParam = searchParams.get('text'); // Subset string
+
+  // Only assign display if explicitly matching one of the valid CSS font-display keywords
+  const display = rawDisplay && VALID_FONT_DISPLAYS.has(rawDisplay.toLowerCase()) 
+    ? rawDisplay.toLowerCase() 
+    : null;
 
   const host = request.headers.get('host') || 'fonts.timchinye.com';
   const protocol = host.includes('localhost') ? 'http' : 'https';
   const baseUrl = `${protocol}://${host}`;
 
   const cssRules: string[] = [];
+const errors: string[] = [];
 
   // No query: generate CSS for ALL hosted fonts
   if (familyParams.length === 0) {
     for (const fontGroup of manifest.fonts) {
       for (const file of fontGroup.files) {
-        cssRules.push(generateFontFaceRule(fontGroup.family, file, baseUrl, display, null));
+        cssRules.push(generateFontFaceRule(fontGroup.family, file, baseUrl, display, null, textParam));
       }
     }
-    return respond(cssRules.join('\n\n'));
+    return respond(cssRules.join('\n\n'), 200);
   }
 
   for (const familyQuery of familyParams) {
@@ -163,70 +206,79 @@ export async function GET(request: NextRequest) {
 
     const matchedGroup = findFamilyGroup(manifest, targetFamilyName);
 
-    if (!matchedGroup) continue;
+    if (!matchedGroup) {
+      errors.push(`Font family '${targetFamilyName}' is not available.`);
+continue;
+}
 
-    // Simplified request (no axis syntax): serve all instances of the family
-    if (!axesPart) {
+        if (!axesPart) {
+      // Default: serve normal weight 400 if available, or all variable/static files
       for (const file of matchedGroup.files) {
-        cssRules.push(generateFontFaceRule(matchedGroup.family, file, baseUrl, display, null));
+        cssRules.push(generateFontFaceRule(matchedGroup.family, file, baseUrl, display, null, textParam));
       }
       continue;
     }
 
-    const variants = parseAxisSpec(axesPart);
+    const parseResult = parseAxisSpec(axesPart);
 
-    // Unknown/malformed axis syntax: fall back to serving all instances
-    if (variants === null) {
-      for (const file of matchedGroup.files) {
-        cssRules.push(generateFontFaceRule(matchedGroup.family, file, baseUrl, display, null));
-      }
-      continue;
+        if (parseResult.error) {
+        errors.push(parseResult.error);
+            continue;
     }
 
-    // Axis named but no values given (e.g. "family=Poppins:wght@")
-    if (variants.length === 0) {
-      for (const file of matchedGroup.files) {
-        cssRules.push(generateFontFaceRule(matchedGroup.family, file, baseUrl, display, null));
-      }
-      continue;
-    }
+const variants = parseResult.variants || [];
+    let familyMatchedCount = 0;
 
     for (const file of matchedGroup.files) {
       const matchingVariants = variants.filter(v => fileMatchesVariant(file, v));
       if (matchingVariants.length === 0) continue;
 
-      // Static files get one @font-face per requested weight (declared at its real weight)
+      familyMatchedCount++;
+
       if (!file.isVariable) {
-        for (const variant of matchingVariants) {
-          void variant;
-          cssRules.push(generateFontFaceRule(matchedGroup.family, file, baseUrl, display, null));
-        }
+        cssRules.push(generateFontFaceRule(matchedGroup.family, file, baseUrl, display, null, textParam));
         continue;
       }
 
-      // Variable files: a single face covering the merged requested range
-      const merged = mergeWghtRanges(matchingVariants);
+            const merged = mergeWghtRanges(matchingVariants);
       const overriddenWght = merged
         ? {
             min: Math.max(merged.min, file.weightMin),
             max: Math.min(merged.max, file.weightMax),
           }
         : null;
-      cssRules.push(generateFontFaceRule(matchedGroup.family, file, baseUrl, display, overriddenWght));
+      cssRules.push(generateFontFaceRule(matchedGroup.family, file, baseUrl, display, overriddenWght, textParam));
+    }
+
+    if (familyMatchedCount === 0) {
+      const availableWeights = matchedGroup.files.map(f => `${f.weight} (${f.style})`).join(', ');
+      errors.push(`No matching styles/weights found for '${targetFamilyName}:${axesPart}'. Available: ${availableWeights}`);
     }
   }
 
-  return respond(cssRules.join('\n\n'));
+  if (errors.length > 0 || cssRules.length === 0) {
+    return new NextResponse(`/* Fonts API Error */\n/* ${errors.join('\n * ')} */\n`, {
+      status: 400,
+      headers: {
+        'Content-Type': 'text/css; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      },
+    });
+  }
+
+  return respond(cssRules.join('\n\n'), 200);
 }
 
 function generateFontFaceRule(
   family: string,
   file: FontFileItem,
   baseUrl: string,
-  display: string,
-  overriddenWght: { min: number; max: number } | null
+  display: string | null,
+  overriddenWght: { min: number; max: number } | null,
+  textSubset: string | null
 ): string {
-  const fontUrl = `${baseUrl}/hosted-fonts/${file.file}`;
+  const fontUrl = `${baseUrl}/tstatic/${file.file}`;
 
   let fontWeight: string;
   if (overriddenWght) {
@@ -235,18 +287,32 @@ function generateFontFaceRule(
     fontWeight = file.weight;
   }
 
-  return `@font-face {
-  font-family: '${family}';
-  font-style: ${file.style};
-  font-weight: ${fontWeight};
-  font-display: ${display};
-  src: url('${fontUrl}') format('${file.format}');
-}`;
+  const lines: string[] = [
+    `  font-family: '${family}';`,
+    `  font-style: ${file.style};`,
+    `  font-weight: ${fontWeight};`
+  ];
+
+  if (display) {
+    lines.push(`  font-display: ${display};`);
+  }
+
+  if (textSubset) {
+    // Generate unicode-range for the requested characters
+    const codePoints = Array.from(new Set(textSubset.split(''))).map(
+      c => `U+${c.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0')}`
+    );
+    lines.push(`  unicode-range: ${codePoints.join(', ')};`);
+  }
+
+  lines.push(`  src: url('${fontUrl}') format('${file.format}');`);
+
+  return `@font-face {\n${lines.join('\n')}\n}`;
 }
 
-function respond(body: string) {
+function respond(body: string, status = 200) {
   return new NextResponse(body, {
-    status: 200,
+    status,
     headers: {
       'Content-Type': 'text/css; charset=utf-8',
       'Access-Control-Allow-Origin': '*',

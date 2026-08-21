@@ -1,4 +1,3 @@
-// src/components/Navbar/HamburgerIcon.tsx
 "use client";
 
 import { CustomLink as Link } from "@/components/ui/CustomLink";
@@ -6,7 +5,7 @@ import { motion } from "motion/react";
 import { usePathname } from 'next/navigation';
 import { memo } from 'react';
 import type { NavLayout } from "./index";
-import type { NavLinkItem } from './config';
+import { getMainSiteUrl, type NavLinkItem } from './config';
 
 const TRANSITION = { type: "spring", stiffness: 400, damping: 30 } as const;
 
@@ -84,7 +83,7 @@ export const HamburgerIcon = memo(function HamburgerIcon({ isHovered, isScrambli
               transition={TRANSITION}
             >
               <Link
-                href={link.href}
+                href={getMainSiteUrl(link.href)}
                 aria-label={link.label}
                 className="block size-full py-1.5 hover:text-[#948D00] hover:dark:text-[#D9D24D]"
               >

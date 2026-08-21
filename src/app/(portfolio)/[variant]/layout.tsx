@@ -1,5 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { draftMode } from "next/headers";
 import { VisualEditing } from "next-sanity/visual-editing";
 
@@ -19,6 +20,10 @@ export default async function PageLayout({
 }>) {
   const resolvedParams = await params;
   const variant = resolvedParams.variant as 'tim' | 'tiger';
+
+  if (variant !== 'tim' && variant !== 'tiger') {
+    notFound();
+  }
 
   return (
     <>
@@ -60,6 +65,10 @@ export async function generateMetadata({ params }: {
 }): Promise<Metadata> {
   const resolvedParams = await params;
   const variant = resolvedParams.variant as 'tim' | 'tiger';
+
+  if (variant !== 'tim' && variant !== 'tiger') {
+    return {};
+  }
   
   const globalData = await getGlobalContent();
 
